@@ -40,8 +40,8 @@ export default function Footer() {
         {/* Logo dan Info */}
         <div className="flex flex-col items-center md:items-start gap-7">
           <div className="flex items-center gap-4 mb-2">
-            <div className="w-20 h-20 rounded-full bg-white/90 flex items-center justify-center shadow-lg text-primary text-3xl font-bold">D</div>
-            <div className="w-32 h-16 rounded-2xl bg-white/80 flex items-center justify-center shadow text-primary text-xl font-bold">Sidomulyo</div>
+            <img src="https://upload.wikimedia.org/wikipedia/id/7/7a/Manchester_United_FC_crest.svg" alt="Logo MU" className="w-14 h-14 object-contain drop-shadow-lg" />
+            <span className="text-2xl font-extrabold tracking-widest uppercase" style={{ fontFamily: 'inherit' }}>Desa Sidomulyo</span>
           </div>
           <div className="text-2xl font-bold">Desa Sidomulyo</div>
           <div className="text-white/80 text-base">Jl. Raya Sidomulyo No. 1, Kec. Contoh, Kab. Contoh, Jawa Timur</div>

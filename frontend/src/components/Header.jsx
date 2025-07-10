@@ -7,10 +7,10 @@ const menu = [
   {
     label: 'Profil Desa',
     dropdown: [
-      { label: 'Tentang', href: '#' },
-      { label: 'Visi-Misi', href: '#' },
-      { label: 'Struktur Organisasi', href: '#' },
-      { label: 'Statistik', href: '#' },
+      { label: 'Tentang', href: '/profil/tentang' },
+      { label: 'Visi-Misi', href: '/profil/visi-misi' },
+      { label: 'Struktur Organisasi', href: '/profil/struktur-organisasi' },
+      { label: 'Statistik', href: '/profil/statistik' },
     ],
   },
   {
@@ -45,9 +45,8 @@ const menu = [
 function Logo({ scrolled }) {
   return (
     <div className="flex items-center gap-3 select-none">
-      <img src="/logo-kabupaten.png" alt="Logo Kab" className="w-10 h-10 object-contain drop-shadow-lg" />
-      <span className="text-gray-400 hidden md:inline text-2xl font-bold">|</span>
-      <img src="/logo-sidomulyo.png" alt="Logo Sidomulyo" className="w-28 h-8 object-contain -mt-1 drop-shadow-lg" />
+      <img src="https://upload.wikimedia.org/wikipedia/id/7/7a/Manchester_United_FC_crest.svg" alt="Logo MU" className="w-10 h-10 object-contain drop-shadow-lg" />
+      <span className="text-2xl font-extrabold tracking-widest uppercase" style={{ fontFamily: 'inherit' }}>Desa Sidomulyo</span>
     </div>
   );
 }
@@ -60,8 +59,8 @@ export default function Header() {
   const [activeMenu, setActiveMenu] = useState(null);
   const location = useLocation();
 
-  // Deteksi halaman dengan hero/cover (dashboard utama & surat online)
-  const isHeroBg = location.pathname === '/' || location.pathname.startsWith('/layanan/surat-online');
+  // Selalu anggap semua halaman sebagai heroBg
+  const isHeroBg = true;
 
   useEffect(() => {
     const onScroll = () => {

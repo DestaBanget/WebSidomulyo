@@ -10,6 +10,9 @@ import Footer from './components/Footer';
 import FloatingButton from './components/FloatingButton';
 import { Routes, Route } from 'react-router-dom';
 import SuratOnline from './components/SuratOnline';
+import Tentang from './components/Tentang';
+import VisiMisi from './components/VisiMisi';
+import StrukturOrganisasi from './components/StrukturOrganisasi';
 
 function PlaceholderLogo({ label }) {
   return (
@@ -64,6 +67,10 @@ function App() {
             <Pariwisata />
           </>
         } />
+        <Route path="/profil/tentang" element={<Tentang />} />
+        <Route path="/profil/visi-misi" element={<VisiMisi />} />
+        <Route path="/profil/struktur-organisasi" element={<StrukturOrganisasi />} />
+        <Route path="/profil/statistik" element={<StatistikDesa />} />
         <Route path="/layanan/surat-online" element={<SuratOnline />} />
       </Routes>
       <Footer />
