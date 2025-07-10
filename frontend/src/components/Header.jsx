@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { FiMenu, FiX } from 'react-icons/fi';
 import { FaChevronDown } from 'react-icons/fa';
+import { useLocation } from 'react-router-dom';
 
 const menu = [
   {
@@ -32,7 +33,7 @@ const menu = [
   {
     label: 'Layanan',
     dropdown: [
-      { label: 'Surat Online', href: '#' },
+      { label: 'Surat Online', href: '/layanan/surat-online' },
       { label: 'Pengaduan', href: '#' },
       { label: 'Panduan', href: '#' },
     ],
@@ -57,6 +58,10 @@ export default function Header() {
   const [dropdownTimeout, setDropdownTimeout] = useState(null);
   const [scrolled, setScrolled] = useState(false);
   const [activeMenu, setActiveMenu] = useState(null);
+  const location = useLocation();
+
+  // Deteksi halaman dengan hero/cover (dashboard utama & surat online)
+  const isHeroBg = location.pathname === '/' || location.pathname.startsWith('/layanan/surat-online');
 
   useEffect(() => {
     const onScroll = () => {
@@ -78,11 +83,9 @@ export default function Header() {
   // Animasi backdrop blur untuk mobile menu
   return (
     <header
-      className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${
-        scrolled
-          ? 'backdrop-blur-lg bg-white/90 shadow text-primary'
-          : 'bg-transparent text-white'
-      }`}
+      className={`fixed top-0 left-0 w-full z-50 transition-all duration-300
+        ${isHeroBg && !scrolled ? 'bg-transparent text-white shadow-none' : 'backdrop-blur-lg bg-white/90 shadow text-primary'}`}
+      style={isHeroBg && !scrolled ? {} : {}}
     >
       <div className="max-w-7xl mx-auto flex items-center justify-between px-4 py-3 md:py-4">
         <Logo scrolled={scrolled} />
