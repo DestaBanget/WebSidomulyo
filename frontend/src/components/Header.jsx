@@ -106,7 +106,7 @@ export default function Header() {
                     <FaChevronDown className="ml-1 text-xs" />
                   </button>
                   <div
-                    className={`absolute left-0 mt-3 w-56 bg-white/95 shadow-2xl rounded-2xl py-3 transition-all duration-300 z-30
+                    className={`absolute top-full left-0 mt-2 w-56 bg-white/95 shadow-2xl rounded-2xl py-3 transition-all duration-300 z-30
                       ${dropdownOpen === idx ? 'opacity-100 translate-y-0 pointer-events-auto' : 'opacity-0 -translate-y-2 pointer-events-none'}
                     `}
                     style={{transformOrigin: 'top'}}
@@ -123,38 +123,55 @@ export default function Header() {
                   </div>
                 </>
               ) : (
-                <a href={item.href} className={`font-semibold px-4 py-2 rounded-xl hover:bg-primary/10 transition-all duration-200 flex items-center h-16 ${activeMenu === idx ? 'text-primary bg-primary/10' : ''}`}>{item.label}</a>
+                <button
+                  className={`font-semibold px-4 py-2 rounded-xl flex items-center h-16 hover:bg-primary/10 hover:text-primary focus:outline-none transition-all duration-200 ${activeMenu === idx ? 'text-primary bg-primary/10' : ''}`}
+                  onMouseEnter={() => handleDropdownEnter(idx)}
+                  onMouseLeave={handleDropdownLeave}
+                  onFocus={() => setActiveMenu(idx)}
+                  onBlur={() => setActiveMenu(null)}
+                  tabIndex={0}
+                  onClick={() => window.location.href = item.href}
+                >
+                  {item.label}
+                </button>
               )}
             </div>
           ))}
         </nav>
         {/* Hamburger */}
         <button
-          className="lg:hidden flex items-center justify-center w-10 h-10 rounded-full hover:bg-primary/10 transition"
+          className="lg:hidden flex items-center justify-center w-10 h-10 rounded-full transition"
           onClick={() => setMobileOpen((v) => !v)}
           aria-label="Open menu"
         >
-          {mobileOpen ? <FiX size={28} /> : <FiMenu size={28} />}
+          {mobileOpen ? (
+            <FiX size={28} className="text-primary" />
+          ) : (
+            <FiMenu size={28} className={`${scrolled ? 'text-primary' : 'text-white'}`} />
+          )}
         </button>
       </div>
       {/* Mobile Menu + Backdrop */}
       {mobileOpen && (
         <div className="fixed inset-0 z-40">
           <div className="absolute inset-0 bg-black/30 backdrop-blur-sm animate-fadeIn" onClick={() => setMobileOpen(false)} />
-          <nav className="absolute top-0 right-0 w-72 max-w-full h-full bg-white shadow-2xl px-6 py-8 animate-slideInLeft flex flex-col gap-6">
+          <nav
+            className="absolute top-0 right-0 w-72 max-w-full h-full bg-white text-primary shadow-2xl px-6 py-8 animate-slideInLeft flex flex-col gap-6 border-l border-gray-200"
+            style={{ backgroundColor: '#fff' }}
+          >
             <Logo scrolled={true} />
             <div className="flex flex-col gap-2 mt-6">
               {menu.map((item) => (
                 <div key={item.label} className="mb-1">
                   {item.dropdown ? (
                     <details className="group">
-                      <summary className="font-semibold cursor-pointer py-2 flex items-center gap-2 hover:text-primary select-none">{item.label} <FaChevronDown className="text-xs group-open:rotate-180 transition-transform" /></summary>
+                      <summary className="font-semibold cursor-pointer py-2 flex items-center gap-2 hover:text-primary select-none">{item.label} <FaChevronDown className="text-xs group-open:rotate-180 transition-transform text-primary" /></summary>
                       <div className="pl-4 flex flex-col gap-1 mt-1">
                         {item.dropdown.map((d) => (
                           <a
                             key={d.label}
                             href={d.href}
-                            className="block py-1 text-base text-gray-700 hover:text-primary"
+                            className="block py-1 text-base text-primary hover:underline"
                           >
                             {d.label}
                           </a>
@@ -162,7 +179,7 @@ export default function Header() {
                       </div>
                     </details>
                   ) : (
-                    <a href={item.href} className="font-semibold block py-2 hover:text-primary">{item.label}</a>
+                    <a href={item.href} className="font-semibold block py-2 text-primary hover:underline">{item.label}</a>
                   )}
                 </div>
               ))}
