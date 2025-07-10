@@ -34,19 +34,18 @@ export default function PariwisataPage() {
   return (
     <div className="min-h-screen bg-white pb-10">
       {/* Hero Section */}
-      <div className="relative w-full flex items-center justify-center text-white px-4 text-center min-h-[320px] md:min-h-[420px]" style={{
-        background: 'linear-gradient(180deg, rgba(30,64,175,0.85) 0%, rgba(30,64,175,0.0) 100%), url(/contoh-pariwisata.jpg)',
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
+      <div className="w-full min-h-[400px] md:min-h-[500px] flex flex-col items-center justify-center text-center px-4" style={{
+        background: 'linear-gradient(90deg, #2563eb 0%, #60a5fa 100%)',
+        color: '#fff',
+        borderRadius: '0 0 2.5rem 2.5rem',
       }}>
         <div className="relative z-10 flex flex-col items-center justify-center w-full h-full py-20">
           <h1 className="text-4xl md:text-5xl font-extrabold mb-2 drop-shadow-lg">Pariwisata</h1>
           <p className="max-w-2xl mx-auto text-lg md:text-xl font-medium drop-shadow mb-2">Terpesona oleh pesona alam dan keunikan budaya. Temukan pengalaman tak terlupakan di destinasi pariwisata kami.</p>
         </div>
       </div>
-
       {/* Destinasi Wisata */}
-      <section className="max-w-5xl mx-auto px-4 py-10">
+      <section className="max-w-5xl mx-auto px-4 py-10 mt-10">
         {loading ? (
           <div className="text-center text-gray-400 text-lg py-20">Memuat data...</div>
         ) : error ? (

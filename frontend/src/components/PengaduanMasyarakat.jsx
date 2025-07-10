@@ -25,15 +25,16 @@ export default function PengaduanMasyarakat() {
   return (
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
-      <div className="relative w-full flex items-center justify-center text-white px-4 text-center min-h-[320px] md:min-h-[420px]" style={{
-        backgroundImage: 'url(/surat.jpg)',
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-      }}>
-        <div className="absolute inset-0" style={{
-          background: 'linear-gradient(180deg, rgba(30,64,175,0.85) 0%, rgba(30,64,175,0.0) 100%)',
-          zIndex: 1,
-        }} />
+      <div
+        className="relative w-full flex items-center justify-center text-white px-4 text-center min-h-[400px] md:min-h-[500px]"
+        style={{
+          backgroundImage: "linear-gradient(90deg,rgba(37,99,235,0.7),rgba(96,165,250,0.7)), url('/surat.jpg')",
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          color: '#fff',
+          borderRadius: '0 0 2.5rem 2.5rem',
+        }}
+      >
         <div className="relative z-10 flex flex-col items-center justify-center w-full h-full py-10 md:py-20">
           <h1 className="text-4xl md:text-6xl font-extrabold mb-4 drop-shadow-lg">Pengaduan Masyarakat</h1>
           <p className="max-w-2xl mx-auto text-lg md:text-2xl font-medium drop-shadow mb-2">Sistem terbuka untuk menyalurkan permasalahan dan memperbaiki pelayanan. Kami mendengar, bertindak, dan membangun solusi bersama untuk meningkatkan kualitas hidup.</p>

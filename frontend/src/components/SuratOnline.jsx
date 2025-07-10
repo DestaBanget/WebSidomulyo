@@ -224,16 +224,16 @@ export default function SuratOnline() {
   return (
     <div className="min-h-screen bg-white pb-10">
       {/* Hero Section */}
-      <div className="relative w-full flex items-center justify-center text-white px-4 text-center min-h-[400px] md:min-h-[600px]" style={{
-        backgroundImage: 'url(/surat2.jpeg)',
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-      }}>
-        {/* Overlay gradient biru */}
-        <div className="absolute inset-0" style={{
-          background: 'linear-gradient(180deg, rgba(30,64,175,0.85) 0%, rgba(30,64,175,0.0) 100%)',
-          zIndex: 1,
-        }} />
+      <div
+        className="relative w-full flex items-center justify-center text-white px-4 text-center min-h-[400px] md:min-h-[500px]"
+        style={{
+          backgroundImage: "linear-gradient(90deg,rgba(37,99,235,0.7),rgba(96,165,250,0.7)), url('/surat2.jpeg')",
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          color: '#fff',
+          borderRadius: '0 0 2.5rem 2.5rem',
+        }}
+      >
         <div className="relative z-10 flex flex-col items-center justify-center w-full h-full py-10 md:py-20">
           <h1 className="text-4xl md:text-6xl font-extrabold mb-6 drop-shadow-lg">Surat Online</h1>
           <p className="max-w-2xl mx-auto text-lg md:text-2xl font-medium drop-shadow mb-4 md:mb-8">Kemudahan pembuatan surat keterangan secara digital. Segera akses layanan ini untuk pengalaman yang lebih efisien dan terhubung dengan cepat.</p>
@@ -241,7 +241,7 @@ export default function SuratOnline() {
       </div>
 
       {/* Mekanisme Section */}
-      <section className="max-w-5xl mx-auto px-4 py-14">
+      <section className="max-w-5xl mx-auto px-4 py-14 mt-10">
         <h2 className="text-center text-primary font-bold text-lg mb-10 tracking-widest">MEKANISME SURAT ONLINE</h2>
         <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-5 gap-8 mb-4">
           {mekanisme.map((m, i) => (

@@ -67,9 +67,11 @@ export default function AgendaPage() {
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
       {/* Hero Section */}
-      <div className="relative w-full h-[320px] md:h-[380px] flex items-center justify-center bg-primary/80">
-        <img src="https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=1200&q=80" alt="Agenda" className="absolute inset-0 w-full h-full object-cover object-center opacity-60" />
-        <div className="absolute inset-0 bg-gradient-to-b from-primary/80 to-primary/60" />
+      <div className="relative w-full h-[400px] md:h-[500px] flex items-center justify-center bg-primary/80" style={{
+        background: 'linear-gradient(90deg, #2563eb 0%, #60a5fa 100%)',
+        color: '#fff',
+        borderRadius: '0 0 2.5rem 2.5rem',
+      }}>
         <div className="relative z-10 flex flex-col items-center justify-center w-full h-full">
           <h1 className="text-5xl md:text-6xl font-extrabold text-white mb-4 drop-shadow-lg">Agenda</h1>
           <p className="text-white text-lg md:text-xl font-medium mb-6 drop-shadow">Jadwal kegiatan dan agenda penting desa Sidomulyo.</p>
@@ -83,7 +85,7 @@ export default function AgendaPage() {
         </div>
       </div>
       {/* Grid Cards */}
-      <div className="flex-1 w-full max-w-7xl mx-auto px-4 md:px-8 py-12">
+      <div className="flex-1 w-full max-w-7xl mx-auto px-4 md:px-8 py-12 mt-10">
         {loading ? (
           <div className="text-center text-gray-400 text-lg py-20">Memuat data...</div>
         ) : error ? (
