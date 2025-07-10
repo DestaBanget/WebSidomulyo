@@ -13,6 +13,8 @@ import SuratOnline from './components/SuratOnline';
 import Tentang from './components/Tentang';
 import VisiMisi from './components/VisiMisi';
 import StrukturOrganisasi from './components/StrukturOrganisasi';
+import PengaduanMasyarakat from './components/PengaduanMasyarakat';
+import PanduanLayanan from './components/PanduanLayanan';
 
 function PlaceholderLogo({ label }) {
   return (
@@ -72,6 +74,8 @@ function App() {
         <Route path="/profil/struktur-organisasi" element={<StrukturOrganisasi />} />
         <Route path="/profil/statistik" element={<StatistikDesa />} />
         <Route path="/layanan/surat-online" element={<SuratOnline />} />
+        <Route path="/layanan/pengaduan" element={<PengaduanMasyarakat />} />
+        <Route path="/layanan/panduan" element={<PanduanLayanan />} />
       </Routes>
       <Footer />
       <FloatingButton />

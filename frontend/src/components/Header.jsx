@@ -34,8 +34,8 @@ const menu = [
     label: 'Layanan',
     dropdown: [
       { label: 'Surat Online', href: '/layanan/surat-online' },
-      { label: 'Pengaduan', href: '#' },
-      { label: 'Panduan', href: '#' },
+      { label: 'Pengaduan', href: '/layanan/pengaduan' },
+      { label: 'Panduan', href: '/layanan/panduan' },
     ],
   },
   { label: 'Pariwisata', href: '#' },
