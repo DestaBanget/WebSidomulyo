@@ -8,6 +8,8 @@ import BeritaDesa from './components/BeritaDesa';
 import Pariwisata from './components/Pariwisata';
 import Footer from './components/Footer';
 import FloatingButton from './components/FloatingButton';
+import { Routes, Route } from 'react-router-dom';
+import SuratOnline from './components/SuratOnline';
 
 function PlaceholderLogo({ label }) {
   return (
@@ -51,12 +53,19 @@ function App() {
   return (
     <>
       <Header />
-      <Hero />
-      <SelayangPandang />
-      <StatistikDesa />
-      <BeritaDesa />
-      <LayananUnggulan />
-      <Pariwisata />
+      <Routes>
+        <Route path="/" element={
+          <>
+            <Hero />
+            <SelayangPandang />
+            <StatistikDesa />
+            <BeritaDesa />
+            <LayananUnggulan />
+            <Pariwisata />
+          </>
+        } />
+        <Route path="/layanan/surat-online" element={<SuratOnline />} />
+      </Routes>
       <Footer />
       <FloatingButton />
       {/* Komponen lain akan menyusul di sini */}
