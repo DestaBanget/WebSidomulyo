@@ -34,8 +34,8 @@ const menu = [
     label: 'Layanan',
     dropdown: [
       { label: 'Surat Online', href: '/layanan/surat-online' },
-      { label: 'Pengaduan', href: '/layanan/pengaduan' },
-      { label: 'Panduan', href: '/layanan/panduan' },
+      { label: 'Pengaduan', href: '#' },
+      { label: 'Panduan', href: '#' },
     ],
   },
   { label: 'Pariwisata', href: '#' },
@@ -82,15 +82,11 @@ export default function Header() {
   // Animasi backdrop blur untuk mobile menu
   return (
     <header
-      className={`fixed top-0 left-0 w-full z-50 transition-all duration-300
-        ${mobileOpen
-          ? 'bg-white text-primary shadow'
-          : isHeroBg && !scrolled
-            ? 'bg-transparent text-white shadow-none'
-            : 'backdrop-blur-lg bg-white/90 shadow text-primary'
-        }`
+      className={mobileOpen
+        ? 'fixed top-0 left-0 w-full z-50 bg-white text-primary shadow transition-none'
+        : `fixed top-0 left-0 w-full z-50 transition-all duration-300 ${isHeroBg && !scrolled ? 'bg-transparent text-white shadow-none' : 'backdrop-blur-lg bg-white/90 shadow text-primary'}`
       }
-      style={mobileOpen ? {} : (isHeroBg && !scrolled ? {} : {})}
+      style={mobileOpen ? {backgroundColor: '#fff', color: '#1e40af', boxShadow: '0 2px 8px 0 rgba(30,64,175,0.08)'} : {}}
     >
       <div className="max-w-7xl mx-auto flex items-center justify-between px-4 py-3 md:py-4">
         <Logo scrolled={scrolled} />
@@ -163,10 +159,7 @@ export default function Header() {
       {mobileOpen && (
         <div className="fixed inset-0 z-40">
           <div className="absolute inset-0 bg-black/30 backdrop-blur-sm animate-fadeIn" onClick={() => setMobileOpen(false)} />
-          <nav
-            className="absolute top-0 right-0 w-72 max-w-full h-full bg-white text-primary shadow-2xl px-6 py-8 animate-slideInLeft flex flex-col gap-6 border-l border-gray-200"
-            style={{ backgroundColor: '#fff' }}
-          >
+          <nav className="absolute top-0 right-0 w-72 max-w-full h-full bg-white text-primary shadow-2xl px-6 py-8 animate-slideInLeft flex flex-col gap-6 border-l border-gray-200" style={{ backgroundColor: '#fff' }}>
             <Logo scrolled={true} />
             <div className="flex flex-col gap-2 mt-6">
               {menu.map((item) => (

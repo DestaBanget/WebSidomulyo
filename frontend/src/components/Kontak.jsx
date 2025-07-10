@@ -1,0 +1,75 @@
+import React, { useState } from 'react';
+import { FaInstagram, FaFacebook, FaWhatsapp, FaEnvelope } from 'react-icons/fa';
+
+export default function Kontak() {
+  const [data, setData] = useState({ nama: '', email: '', noHp: '', pesan: '' });
+  const handleChange = (e) => setData({ ...data, [e.target.name]: e.target.value });
+  const handleSubmit = (e) => { e.preventDefault(); alert('Pesan terkirim!'); };
+
+  return (
+    <div className="min-h-screen bg-white pb-10">
+      {/* Hero Section */}
+      <div className="relative w-full flex items-center justify-center text-white px-4 text-center min-h-[320px] md:min-h-[420px]" style={{
+        background: 'linear-gradient(180deg, rgba(30,64,175,0.85) 0%, rgba(30,64,175,0.0) 100%), url(/surat.jpg)',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+      }}>
+        <div className="relative z-10 flex flex-col items-center justify-center w-full h-full py-20">
+          <h1 className="text-4xl md:text-5xl font-extrabold mb-2 drop-shadow-lg">Kontak</h1>
+          <p className="max-w-2xl mx-auto text-lg md:text-xl font-medium drop-shadow mb-2">Hubungi kami untuk mendapatkan informasi lebih lanjut tentang desa kami. Dengan senang hati, kami siap membantu Anda merencanakan kunjungan atau menjawab pertanyaan Anda.</p>
+        </div>
+      </div>
+
+      {/* Alamat dan Kontak */}
+      <section className="max-w-5xl mx-auto px-4 py-10 grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+        <div>
+          <div className="font-bold text-primary mb-2">ALAMAT DAN KONTAK</div>
+          <div className="mb-2 text-gray-700">Desa Sidomulyo, Kec. Jabung, Kabupaten Malang, Jawa Timur</div>
+          <div className="flex gap-3 mt-4">
+            <a href="#" className="text-primary text-2xl hover:text-primary/80"><FaInstagram /></a>
+            <a href="#" className="text-primary text-2xl hover:text-primary/80"><FaFacebook /></a>
+            <a href="#" className="text-primary text-2xl hover:text-primary/80"><FaWhatsapp /></a>
+            <a href="#" className="text-primary text-2xl hover:text-primary/80"><FaEnvelope /></a>
+          </div>
+        </div>
+        <div>
+          <iframe
+            title="Google Maps Desa Sidomulyo"
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15805.354933177488!2d112.76544949999999!3d-7.9639025!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dd62fa878b73867%3A0x18da21b9d7e3c22d!2sSidomulyo%2C%20Kec.%20Jabung%2C%20Kabupaten%20Malang%2C%20Jawa%20Timur!5e0!3m2!1sid!2sid!4v1752174662144!5m2!1sid!2sid"
+            width="100%"
+            height="320"
+            style={{ border: '2px solid #1e40af', borderRadius: '18px', boxShadow: '0 4px 24px 0 rgba(30,64,175,0.10)', maxWidth: '100%' }}
+            allowFullScreen=""
+            loading="lazy"
+            referrerPolicy="no-referrer-when-downgrade"
+          ></iframe>
+        </div>
+      </section>
+
+      {/* Form Pesan/Masukan */}
+      <section className="max-w-2xl mx-auto px-4 py-10">
+        <div className="text-center font-bold text-primary mb-2">PESAN ATAU MASUKAN</div>
+        <div className="text-center text-gray-700 mb-6">Sampaikan pesan ataupun masukan anda pada formulir di bawah ini. Alamat email dan kontak anda tidak akan dipublikasikan.</div>
+        <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow-xl p-8 flex flex-col gap-4">
+          <div>
+            <label className="block mb-1 text-sm font-semibold">Nama lengkap <span className="text-red-500">*</span></label>
+            <input name="nama" value={data.nama} onChange={handleChange} className="w-full px-4 py-2 border-2 border-primary bg-gray-50 rounded-lg shadow-sm focus:outline-none focus:border-blue-600 mb-2" required />
+          </div>
+          <div>
+            <label className="block mb-1 text-sm font-semibold">Email <span className="text-red-500">*</span></label>
+            <input name="email" value={data.email} onChange={handleChange} className="w-full px-4 py-2 border-2 border-primary bg-gray-50 rounded-lg shadow-sm focus:outline-none focus:border-blue-600 mb-2" required />
+          </div>
+          <div>
+            <label className="block mb-1 text-sm font-semibold">Nomor ponsel <span className="text-red-500">*</span></label>
+            <input name="noHp" value={data.noHp} onChange={handleChange} className="w-full px-4 py-2 border-2 border-primary bg-gray-50 rounded-lg shadow-sm focus:outline-none focus:border-blue-600 mb-2" required />
+          </div>
+          <div>
+            <label className="block mb-1 text-sm font-semibold">Pesan atau masukan</label>
+            <textarea name="pesan" value={data.pesan} onChange={handleChange} className="w-full px-4 py-2 border-2 border-primary bg-gray-50 rounded-lg shadow-sm focus:outline-none focus:border-blue-600 mb-2" />
+          </div>
+          <button type="submit" className="w-full bg-primary text-white font-bold py-2 rounded-lg hover:bg-primary/90 transition">Kirim</button>
+        </form>
+      </section>
+    </div>
+  );
+} 
