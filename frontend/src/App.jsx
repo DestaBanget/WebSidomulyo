@@ -17,6 +17,13 @@ import PengaduanMasyarakat from './components/PengaduanMasyarakat';
 import PanduanLayanan from './components/PanduanLayanan';
 import Kontak from './components/Kontak';
 import PariwisataPage from './components/PariwisataPage';
+import BPD from './components/BPD';
+import LPM from './components/LPM';
+import PKK from './components/PKK';
+import KarangTaruna from './components/KarangTaruna';
+import BeritaPage from './components/BeritaPage';
+import PengumumanPage from './components/PengumumanPage';
+import AgendaPage from './components/AgendaPage';
 
 function PlaceholderLogo({ label }) {
   return (
@@ -80,6 +87,13 @@ function App() {
         <Route path="/layanan/panduan" element={<PanduanLayanan />} />
         <Route path="/kontak" element={<Kontak />} />
         <Route path="/pariwisata" element={<PariwisataPage />} />
+        <Route path="/lembaga/bpd" element={<BPD />} />
+        <Route path="/lembaga/lpm" element={<LPM />} />
+        <Route path="/lembaga/pkk" element={<PKK />} />
+        <Route path="/lembaga/karang-taruna" element={<KarangTaruna />} />
+        <Route path="/publikasi/berita" element={<BeritaPage />} />
+        <Route path="/publikasi/pengumuman" element={<PengumumanPage />} />
+        <Route path="/publikasi/agenda" element={<AgendaPage />} />
       </Routes>
       <Footer />
       <FloatingButton />

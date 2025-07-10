@@ -216,6 +216,11 @@ const persyaratanMap = {
 
 export default function SuratOnline() {
   const [modalSurat, setModalSurat] = React.useState(null);
+  const [search, setSearch] = React.useState('');
+  const filteredSurat = daftarSurat.filter(s =>
+    s.title.toLowerCase().includes(search.toLowerCase()) ||
+    s.desc.toLowerCase().includes(search.toLowerCase())
+  );
   return (
     <div className="min-h-screen bg-white pb-10">
       {/* Hero Section */}
@@ -252,8 +257,20 @@ export default function SuratOnline() {
       {/* Daftar Surat Section */}
       <section className="max-w-7xl mx-auto px-4 py-6">
         <h2 className="text-center text-primary font-bold text-lg mb-6 tracking-widest">LAYANAN SURAT ONLINE</h2>
+        <div className="flex justify-center mb-8">
+          <input
+            type="text"
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            placeholder="Cari surat yang ingin diajukan..."
+            className="w-full max-w-xl px-5 py-3 rounded-full border-2 border-primary/30 focus:border-primary outline-none text-lg bg-white placeholder-gray-400 shadow"
+          />
+        </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {daftarSurat.map((s, i) => (
+          {filteredSurat.length === 0 && (
+            <div className="col-span-full text-center text-gray-400 text-lg py-20">Tidak ada surat ditemukan.</div>
+          )}
+          {filteredSurat.map((s, i) => (
             <div
               key={s.title}
               className="bg-white rounded-xl shadow-md p-6 flex flex-col gap-2 border border-gray-100 transition-all duration-300 transform hover:scale-105 hover:-translate-y-1 hover:shadow-2xl group cursor-pointer"

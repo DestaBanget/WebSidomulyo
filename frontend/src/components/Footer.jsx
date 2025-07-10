@@ -12,7 +12,11 @@ const menuFooter = [
   },
   {
     title: 'Publikasi',
-    links: ['Berita', 'Pengumuman', 'Agenda'],
+    links: [
+      { label: 'Berita', href: '/publikasi/berita' },
+      { label: 'Pengumuman', href: '/publikasi/pengumuman' },
+      { label: 'Agenda', href: '/publikasi/agenda' },
+    ],
   },
   {
     title: 'Layanan',
@@ -53,7 +57,11 @@ export default function Footer() {
             <div key={m.title}>
               <div className="font-semibold mb-3 text-white/90 text-lg">{m.title}</div>
               <ul className="space-y-2">
-                {m.links.map((l) => (
+                {Array.isArray(m.links) ? m.links.map((l) => (
+                  <li key={l.label || l}>
+                    <a href={l.href || '#'} className="text-white/80 hover:text-white underline-offset-2 hover:underline transition text-base">{l.label || l}</a>
+                  </li>
+                )) : m.links.map((l) => (
                   <li key={l}>
                     <a href="#" className="text-white/80 hover:text-white underline-offset-2 hover:underline transition text-base">{l}</a>
                   </li>

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { FiMenu, FiX } from 'react-icons/fi';
 import { FaChevronDown } from 'react-icons/fa';
-import { useLocation } from 'react-router-dom';
+import { useLocation, Link } from 'react-router-dom';
 
 const menu = [
   {
@@ -16,38 +16,38 @@ const menu = [
   {
     label: 'Lembaga Masyarakat',
     dropdown: [
-      { label: 'BPD', href: '#' },
-      { label: 'LPM', href: '#' },
-      { label: 'PKK', href: '#' },
-      { label: 'Karang Taruna', href: '#' },
+      { label: 'BPD', href: '/lembaga/bpd' },
+      { label: 'LPM', href: '/lembaga/lpm' },
+      { label: 'PKK', href: '/lembaga/pkk' },
+      { label: 'Karang Taruna', href: '/lembaga/karang-taruna' },
     ],
   },
   {
     label: 'Publikasi',
     dropdown: [
-      { label: 'Berita', href: '#' },
-      { label: 'Pengumuman', href: '#' },
-      { label: 'Agenda', href: '#' },
+      { label: 'Berita', href: '/publikasi/berita' },
+      { label: 'Pengumuman', href: '/publikasi/pengumuman' },
+      { label: 'Agenda', href: '/publikasi/agenda' },
     ],
   },
   {
     label: 'Layanan',
     dropdown: [
       { label: 'Surat Online', href: '/layanan/surat-online' },
-      { label: 'Pengaduan', href: '#' },
-      { label: 'Panduan', href: '#' },
+      { label: 'Pengaduan', href: '/layanan/pengaduan' },
+      { label: 'Panduan', href: '/layanan/panduan' },
     ],
   },
-  { label: 'Pariwisata', href: '#' },
-  { label: 'Kontak', href: '#' },
+  { label: 'Pariwisata', href: '/pariwisata' },
+  { label: 'Kontak', href: '/kontak' },
 ];
 
 function Logo({ scrolled }) {
   return (
-    <div className="flex items-center gap-3 select-none">
+    <Link to="/" className="flex items-center gap-3 select-none">
       <img src="https://upload.wikimedia.org/wikipedia/id/7/7a/Manchester_United_FC_crest.svg" alt="Logo MU" className="w-10 h-10 object-contain drop-shadow-lg" />
       <span className="text-2xl font-extrabold tracking-widest uppercase" style={{ fontFamily: 'inherit' }}>Desa Sidomulyo</span>
-    </div>
+    </Link>
   );
 }
 

@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
-const destinasi = [
+const dummyPariwisata = [
   {
     nama: 'Pantai Selat Baru Pamesi',
     img: '/contoh-pantai.jpg',
@@ -16,6 +16,21 @@ const destinasi = [
 ];
 
 export default function PariwisataPage() {
+  const [pariwisata, setPariwisata] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    fetch('/api/pariwisata')
+      .then(res => {
+        if (!res.ok) throw new Error('Gagal memuat data');
+        return res.json();
+      })
+      .then(data => setPariwisata(data))
+      .catch(() => setPariwisata(dummyPariwisata))
+      .finally(() => setLoading(false));
+  }, []);
+
   return (
     <div className="min-h-screen bg-white pb-10">
       {/* Hero Section */}
@@ -32,19 +47,30 @@ export default function PariwisataPage() {
 
       {/* Destinasi Wisata */}
       <section className="max-w-5xl mx-auto px-4 py-10">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {destinasi.map((d) => (
-            <div key={d.nama} className="rounded-2xl overflow-hidden shadow-lg bg-gray-100 group transition hover:scale-105 hover:shadow-2xl cursor-pointer">
-              <div className="h-48 w-full bg-gray-200 relative">
-                <img src={d.img} alt={d.nama} className="object-cover w-full h-full group-hover:brightness-90 transition" />
-                <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
-                  <span className="text-white text-lg md:text-xl font-bold text-center drop-shadow-lg">{d.nama}</span>
+        {loading ? (
+          <div className="text-center text-gray-400 text-lg py-20">Memuat data...</div>
+        ) : error ? (
+          <div className="text-center text-red-500 text-lg py-20">{error}</div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {pariwisata.length === 0 && (
+              <div className="col-span-full text-center text-gray-400 text-lg py-20">Tidak ada destinasi ditemukan.</div>
+            )}
+            {pariwisata.map((d) => (
+              <div key={d.nama || d.id} className="rounded-2xl overflow-hidden shadow-lg bg-gray-100 group transition hover:scale-105 hover:shadow-2xl cursor-pointer">
+                <div className="h-48 w-full bg-gray-200 relative">
+                  <img src={d.img} alt={d.nama} className="object-cover w-full h-full group-hover:brightness-90 transition" />
+                  <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
+                    <span className="text-white text-lg md:text-xl font-bold text-center drop-shadow-lg">{d.nama}</span>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
-        </div>
-        <div className="text-center text-gray-500 mt-10">Hasil akhir dari pariwisata</div>
+            ))}
+          </div>
+        )}
+        {!loading && pariwisata.length > 0 && (
+          <div className="text-center text-gray-500 mt-10">Hasil akhir dari pariwisata</div>
+        )}
       </section>
     </div>
   );
