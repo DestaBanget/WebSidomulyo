@@ -84,8 +84,14 @@ export default function Header() {
   return (
     <header
       className={`fixed top-0 left-0 w-full z-50 transition-all duration-300
-        ${isHeroBg && !scrolled ? 'bg-transparent text-white shadow-none' : 'backdrop-blur-lg bg-white/90 shadow text-primary'}`}
-      style={isHeroBg && !scrolled ? {} : {}}
+        ${mobileOpen
+          ? 'bg-white text-primary shadow'
+          : isHeroBg && !scrolled
+            ? 'bg-transparent text-white shadow-none'
+            : 'backdrop-blur-lg bg-white/90 shadow text-primary'
+        }`
+      }
+      style={mobileOpen ? {} : (isHeroBg && !scrolled ? {} : {})}
     >
       <div className="max-w-7xl mx-auto flex items-center justify-between px-4 py-3 md:py-4">
         <Logo scrolled={scrolled} />
@@ -150,7 +156,7 @@ export default function Header() {
           {mobileOpen ? (
             <FiX size={28} className="text-primary" />
           ) : (
-            <FiMenu size={28} className={`${scrolled ? 'text-primary' : 'text-white'}`} />
+            <FiMenu size={28} className={`${mobileOpen || scrolled ? 'text-primary' : 'text-white'}`} />
           )}
         </button>
       </div>
