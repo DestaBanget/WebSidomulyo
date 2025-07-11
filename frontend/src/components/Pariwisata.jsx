@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 const wisata = [
   {
@@ -39,7 +40,8 @@ export default function Pariwisata() {
       <h2 className="text-2xl md:text-3xl font-extrabold text-primary mb-10 text-center tracking-tight drop-shadow-lg">Pariwisata Desa</h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-12">
         {wisata.slice(0, 6).map((w) => (
-          <div
+          <Link
+            to={`/pariwisata/${w.id}`}
             key={w.id}
             className="relative rounded-3xl overflow-hidden shadow-xl group h-56 md:h-64 cursor-pointer transition-all duration-500 hover:shadow-2xl hover:-translate-y-2 hover:scale-105 hover:ring-2 hover:ring-primary/20"
             style={{boxShadow: '0 8px 32px 0 rgba(31, 38, 135, 0.10), 0 1.5px 4px 0 rgba(0,0,0,0.04)'}}
@@ -55,7 +57,7 @@ export default function Pariwisata() {
               </span>
             </div>
             <div className="absolute inset-0 pointer-events-none rounded-3xl group-hover:shadow-inner group-hover:shadow-primary/10 transition-all duration-500" />
-          </div>
+          </Link>
         ))}
       </div>
       <div className="flex justify-center mt-10">

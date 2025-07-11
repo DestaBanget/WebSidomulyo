@@ -25,6 +25,11 @@ import BeritaPage from './components/BeritaPage';
 import PengumumanPage from './components/PengumumanPage';
 import AgendaPage from './components/AgendaPage';
 import ScrollToTop from './components/ScrollToTop';
+import BeritaDetail from './components/BeritaDetail';
+import PengumumanDetail from './components/PengumumanDetail';
+import AgendaDetail from './components/AgendaDetail';
+import PariwisataDetail from './components/PariwisataDetail';
+// TODO: import PengumumanDetail, AgendaDetail, PariwisataDetail jika sudah dibuat
 
 function PlaceholderLogo({ label }) {
   return (
@@ -127,6 +132,11 @@ function App() {
         <Route path="/publikasi/berita" element={<BeritaPage />} />
         <Route path="/publikasi/pengumuman" element={<PengumumanPage />} />
         <Route path="/publikasi/agenda" element={<AgendaPage />} />
+        <Route path="/publikasi/berita/:id" element={<BeritaDetail />} />
+        <Route path="/publikasi/pengumuman/:id" element={<PengumumanDetail />} />
+        <Route path="/publikasi/agenda/:id" element={<AgendaDetail />} />
+        <Route path="/pariwisata/:id" element={<PariwisataDetail />} />
+        {/* TODO: Tambahkan route untuk PengumumanDetail, AgendaDetail, PariwisataDetail */}
       </Routes>
       <Footer />
       <FloatingButton />

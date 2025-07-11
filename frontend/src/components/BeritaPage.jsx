@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 
 const dummyBerita = [
   {
@@ -96,7 +97,7 @@ export default function BeritaPage() {
               <div className="col-span-full text-center text-gray-400 text-lg py-20">Tidak ada berita ditemukan.</div>
             )}
             {filtered.map(b => (
-              <div key={b.id} className="bg-white rounded-3xl shadow-xl overflow-hidden flex flex-col group transition-all duration-500 hover:shadow-2xl hover:-translate-y-2 hover:scale-105 hover:ring-2 hover:ring-primary/20 relative">
+              <Link to={`/publikasi/berita/${b.id}`} key={b.id} className="bg-white rounded-3xl shadow-xl overflow-hidden flex flex-col group transition-all duration-500 hover:shadow-2xl hover:-translate-y-2 hover:scale-105 hover:ring-2 hover:ring-primary/20 relative">
                 <div className="relative h-52 overflow-hidden">
                   <img src={b.img} alt={b.title} className="w-full h-full object-cover group-hover:scale-110 group-hover:brightness-95 transition-transform duration-700" />
                 </div>
@@ -105,7 +106,7 @@ export default function BeritaPage() {
                   <p className="text-gray-500 text-base mb-4 line-clamp-3 min-h-[4.2em]">{b.desc}</p>
                   <span className="text-gray-400 text-sm mt-auto font-medium">{new Date(b.date).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' })}</span>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         )}

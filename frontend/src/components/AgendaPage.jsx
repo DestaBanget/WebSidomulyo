@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 
 const dummyAgenda = [
   {
@@ -95,17 +96,17 @@ export default function AgendaPage() {
             {filtered.length === 0 && (
               <div className="col-span-full text-center text-gray-400 text-lg py-20">Tidak ada agenda ditemukan.</div>
             )}
-            {filtered.map(b => (
-              <div key={b.id} className="bg-white rounded-3xl shadow-xl overflow-hidden flex flex-col group transition-all duration-500 hover:shadow-2xl hover:-translate-y-2 hover:scale-105 hover:ring-2 hover:ring-primary/20 relative">
+            {filtered.map(a => (
+              <Link to={`/publikasi/agenda/${a.id}`} key={a.id} className="bg-white rounded-3xl shadow-xl overflow-hidden flex flex-col group transition-all duration-500 hover:shadow-2xl hover:-translate-y-2 hover:scale-105 hover:ring-2 hover:ring-primary/20 relative">
                 <div className="relative h-52 overflow-hidden">
-                  <img src={b.img} alt={b.title} className="w-full h-full object-cover group-hover:scale-110 group-hover:brightness-95 transition-transform duration-700" />
+                  <img src={a.img} alt={a.title} className="w-full h-full object-cover group-hover:scale-110 group-hover:brightness-95 transition-transform duration-700" />
                 </div>
                 <div className="flex-1 flex flex-col p-7">
-                  <h3 className="font-bold text-xl md:text-2xl text-gray-800 mb-2 line-clamp-2 min-h-[2.6em] tracking-tight drop-shadow-sm">{b.title}</h3>
-                  <p className="text-gray-500 text-base mb-4 line-clamp-3 min-h-[4.2em]">{b.desc}</p>
-                  <span className="text-gray-400 text-sm mt-auto font-medium">{new Date(b.date).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' })}</span>
+                  <h3 className="font-bold text-xl md:text-2xl text-gray-800 mb-2 line-clamp-2 min-h-[2.6em] tracking-tight drop-shadow-sm">{a.title}</h3>
+                  <p className="text-gray-500 text-base mb-4 line-clamp-3 min-h-[4.2em]">{a.desc}</p>
+                  <span className="text-gray-400 text-sm mt-auto font-medium">{new Date(a.date).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' })}</span>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         )}
