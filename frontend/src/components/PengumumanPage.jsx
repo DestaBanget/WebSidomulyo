@@ -51,6 +51,7 @@ export default function PengumumanPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [search, setSearch] = useState('');
+  const heroImg = '/surat.jpg';
 
   useEffect(() => {
     fetch('/api/pengumuman')
@@ -68,11 +69,11 @@ export default function PengumumanPage() {
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
       {/* Hero Section */}
-      <div className="relative w-full h-[400px] md:h-[500px] flex items-center justify-center bg-primary/80" style={{
-        background: 'linear-gradient(90deg, #2563eb 0%, #60a5fa 100%)',
-        color: '#fff',
+      <div className="relative w-full h-[400px] md:h-[500px] flex items-center justify-center overflow-hidden" style={{
+        background: `url(${heroImg}) center/cover no-repeat`,
         borderRadius: '0 0 2.5rem 2.5rem',
       }}>
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-700/80 to-blue-400/80 z-0" />
         <div className="relative z-10 flex flex-col items-center justify-center w-full h-full">
           <h1 className="text-5xl md:text-6xl font-extrabold text-white mb-4 drop-shadow-lg">Pengumuman</h1>
           <p className="text-white text-lg md:text-xl font-medium mb-6 drop-shadow">Informasi penting dan pengumuman resmi dari pemerintah desa.</p>

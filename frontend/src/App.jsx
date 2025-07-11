@@ -16,7 +16,7 @@ import StrukturOrganisasi from './components/StrukturOrganisasi';
 import PengaduanMasyarakat from './components/PengaduanMasyarakat';
 import PanduanLayanan from './components/PanduanLayanan';
 import Kontak from './components/Kontak';
-import PariwisataPage from './components/PariwisataPage';
+import PariwisataPage, { initialPariwisata } from './components/PariwisataPage';
 import BPD from './components/BPD';
 import LPM from './components/LPM';
 import PKK from './components/PKK';
@@ -29,7 +29,8 @@ import BeritaDetail from './components/BeritaDetail';
 import PengumumanDetail from './components/PengumumanDetail';
 import AgendaDetail from './components/AgendaDetail';
 import PariwisataDetail from './components/PariwisataDetail';
-// TODO: import PengumumanDetail, AgendaDetail, PariwisataDetail jika sudah dibuat
+import BeritaDesaDefault, { defaultBerita } from './components/BeritaDesa';
+import { BeritaProvider } from './contexts/BeritaContext';
 
 function PlaceholderLogo({ label }) {
   return (
@@ -70,8 +71,15 @@ function DummyChart() {
 }
 
 function App() {
+  // Ambil data berita dari defaultBerita di BeritaDesa
+  const sortedBerita = [...defaultBerita].sort((a, b) => new Date(b.tanggal) - new Date(a.tanggal));
+  const latestBerita = sortedBerita.slice(0, 6);
+  // Ambil data pariwisata dari initialPariwisata di PariwisataPage
+  const sortedPariwisata = [...initialPariwisata].sort((a, b) => new Date(b.date) - new Date(a.date));
+  const latestPariwisata = sortedPariwisata.slice(0, 6);
+
   return (
-    <>
+    <BeritaProvider>
       <Header />
       <ScrollToTop />
       <Routes>
@@ -111,9 +119,9 @@ function App() {
               </div>
             </div>
             {/* End Statistik Ringkas */}
-            <BeritaDesa />
+            <BeritaDesa data={latestBerita} />
             <LayananUnggulan />
-            <Pariwisata />
+            <Pariwisata data={latestPariwisata} />
           </>
         } />
         <Route path="/profil/tentang" element={<Tentang />} />
@@ -136,12 +144,10 @@ function App() {
         <Route path="/publikasi/pengumuman/:id" element={<PengumumanDetail />} />
         <Route path="/publikasi/agenda/:id" element={<AgendaDetail />} />
         <Route path="/pariwisata/:id" element={<PariwisataDetail />} />
-        {/* TODO: Tambahkan route untuk PengumumanDetail, AgendaDetail, PariwisataDetail */}
       </Routes>
       <Footer />
       <FloatingButton />
-      {/* Komponen lain akan menyusul di sini */}
-    </>
+    </BeritaProvider>
   );
 }
 

@@ -1,76 +1,35 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
+import Pariwisata from './Pariwisata';
 
-const dummyPariwisata = [
-  {
-    nama: 'Pantai Selat Baru Pamesi',
-    img: '/contoh-pantai.jpg',
-  },
-  {
-    nama: 'Taman Andam Dewi Pamesi',
-    img: '/contoh-taman.jpg',
-  },
-  {
-    nama: 'Hutan Mangrove Sebauk Pamesi',
-    img: '/contoh-mangrove.jpg',
-  },
+export const initialPariwisata = [
+  { id: '8', nama: 'Taman Bunga Sidomulyo', date: '2024-06-09', img: '/surat2.jpeg' },
+  { id: '7', nama: 'Wisata Sawah Indah', date: '2024-06-09', img: '/surat.jpg' },
+  { id: '1', nama: 'Bukit Sidomulyo', date: '2024-06-01', img: '/surat.jpg' },
+  { id: '2', nama: 'Air Terjun Sumber Rejeki', date: '2024-05-28', img: '/surat2.jpeg' },
+  { id: '3', nama: 'Kebun Teh Sidomulyo', date: '2024-05-20', img: '/surat.jpg' },
+  { id: '4', nama: 'Embung Desa', date: '2024-05-15', img: '/surat2.jpeg' },
+  { id: '5', nama: 'Kampung Wisata Edukasi', date: '2024-05-10', img: '/surat.jpg' },
+  { id: '6', nama: 'Agrowisata Jeruk', date: '2024-05-05', img: '/surat2.jpeg' },
 ];
 
 export default function PariwisataPage() {
-  const [pariwisata, setPariwisata] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    fetch('/api/pariwisata')
-      .then(res => {
-        if (!res.ok) throw new Error('Gagal memuat data');
-        return res.json();
-      })
-      .then(data => setPariwisata(data))
-      .catch(() => setPariwisata(dummyPariwisata))
-      .finally(() => setLoading(false));
-  }, []);
-
+  const [pariwisata] = useState(initialPariwisata);
+  const sortedPariwisata = [...pariwisata].sort((a, b) => new Date(b.date) - new Date(a.date));
   return (
     <div className="min-h-screen bg-white pb-10">
       {/* Hero Section */}
-      <div className="w-full min-h-[400px] md:min-h-[500px] flex flex-col items-center justify-center text-center px-4" style={{
-        background: 'linear-gradient(90deg, #2563eb 0%, #60a5fa 100%)',
-        color: '#fff',
+      <div className="relative w-full min-h-[400px] md:min-h-[500px] flex flex-col items-center justify-center text-center px-4 overflow-hidden" style={{
+        background: `url('/surat.jpg') center/cover no-repeat`,
         borderRadius: '0 0 2.5rem 2.5rem',
       }}>
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-700/80 to-blue-400/80 z-0" />
         <div className="relative z-10 flex flex-col items-center justify-center w-full h-full py-20">
-          <h1 className="text-4xl md:text-5xl font-extrabold mb-2 drop-shadow-lg">Pariwisata</h1>
-          <p className="max-w-2xl mx-auto text-lg md:text-xl font-medium drop-shadow mb-2">Terpesona oleh pesona alam dan keunikan budaya. Temukan pengalaman tak terlupakan di destinasi pariwisata kami.</p>
+          <h1 className="text-4xl md:text-5xl font-extrabold mb-2 drop-shadow-lg text-white">Pariwisata</h1>
+          <p className="max-w-2xl mx-auto text-lg md:text-xl font-medium drop-shadow mb-2 text-white">Terpesona oleh pesona alam dan keunikan budaya. Temukan pengalaman tak terlupakan di destinasi pariwisata kami.</p>
         </div>
       </div>
       {/* Destinasi Wisata */}
-      <section className="max-w-5xl mx-auto px-4 py-10 mt-10">
-        {loading ? (
-          <div className="text-center text-gray-400 text-lg py-20">Memuat data...</div>
-        ) : error ? (
-          <div className="text-center text-red-500 text-lg py-20">{error}</div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {pariwisata.length === 0 && (
-              <div className="col-span-full text-center text-gray-400 text-lg py-20">Tidak ada destinasi ditemukan.</div>
-            )}
-            {pariwisata.map((d) => (
-              <div key={d.nama || d.id} className="rounded-2xl overflow-hidden shadow-lg bg-gray-100 group transition hover:scale-105 hover:shadow-2xl cursor-pointer">
-                <div className="h-48 w-full bg-gray-200 relative">
-                  <img src={d.img} alt={d.nama} className="object-cover w-full h-full group-hover:brightness-90 transition" />
-                  <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
-                    <span className="text-white text-lg md:text-xl font-bold text-center drop-shadow-lg">{d.nama}</span>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-        {!loading && pariwisata.length > 0 && (
-          <div className="text-center text-gray-500 mt-10">Hasil akhir dari pariwisata</div>
-        )}
-      </section>
+      <Pariwisata showAll data={sortedPariwisata} />
     </div>
   );
 } 

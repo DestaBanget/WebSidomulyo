@@ -15,12 +15,14 @@ const unit = [
   { nama: 'Unit Kegiatan 3', icon: '/dummy-unit.png' },
 ];
 export default function BPD() {
+  const heroImg = '/surat.jpg';
   return (
     <div className="min-h-screen bg-white pb-10">
-      <div className="relative w-full flex items-center justify-center text-white px-4 text-center min-h-[320px] md:min-h-[420px]" style={{background:'linear-gradient(180deg, rgba(30,64,175,0.85) 0%, rgba(30,64,175,0.0) 100%)'}}>
-        <div className="relative z-10 flex flex-col items-center justify-center w-full h-full py-20">
-          <h1 className="text-4xl md:text-5xl font-extrabold mb-2 drop-shadow-lg">BPD</h1>
-          <p className="max-w-2xl mx-auto text-lg md:text-xl font-medium drop-shadow mb-2">Badan Permusyawaratan Desa (BPD) adalah lembaga perwujudan demokrasi dalam penyelenggaraan pemerintahan desa.</p>
+      <div className="relative w-full min-h-[400px] md:min-h-[500px] flex flex-col items-center text-center px-4 pt-32 md:pt-40 pb-12 md:pb-20 overflow-hidden" style={{background: `url(${heroImg}) center/cover no-repeat`, borderRadius: '0 0 2.5rem 2.5rem'}}>
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-700/80 to-blue-400/80 z-0" />
+        <div className="relative z-10 w-full flex flex-col items-center">
+          <h1 className="text-4xl md:text-5xl font-extrabold mb-2 drop-shadow-lg text-white">BPD</h1>
+          <p className="max-w-2xl mx-auto text-lg md:text-xl font-medium drop-shadow mb-2 text-white">Badan Permusyawaratan Desa (BPD) adalah lembaga perwujudan demokrasi dalam penyelenggaraan pemerintahan desa.</p>
         </div>
       </div>
       <section className="max-w-4xl mx-auto px-4 py-10">

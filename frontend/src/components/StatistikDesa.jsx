@@ -83,17 +83,20 @@ function BarStat({ data, total }) {
 }
 
 export default function StatistikDesa() {
+  const heroImg = '/surat.jpg';
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
       {/* Hero Gradient Section - FULL WIDTH */}
-      <div id="statistik-hero" className="relative w-full min-h-[400px] md:min-h-[500px] flex flex-col items-center justify-center text-center px-4" style={{
-        background: 'linear-gradient(90deg, #2563eb 0%, #60a5fa 100%)',
-        color: '#fff',
+      <div id="statistik-hero" className="relative w-full min-h-[400px] md:min-h-[500px] flex flex-col items-center justify-center text-center px-4 overflow-hidden" style={{
+        background: `url(${heroImg}) center/cover no-repeat`,
         borderRadius: '0 0 2.5rem 2.5rem',
       }}>
-        <h1 className="text-4xl md:text-5xl font-extrabold drop-shadow-lg mb-3 tracking-tight">Statistik Desa Sidomulyo</h1>
-        <div className="max-w-2xl mx-auto text-lg md:text-xl font-medium mb-4">Gambaran data kependudukan, pendidikan, pekerjaan, dan kehidupan sosial masyarakat Desa Sidomulyo secara visual dan informatif.</div>
-        <div className="max-w-xl mx-auto text-base opacity-90">Statistik ini membantu pemerintah desa dan masyarakat untuk memahami perkembangan, kebutuhan, serta potensi desa secara lebih baik. Data di bawah ini merupakan data dummy yang akan diperbarui secara berkala.</div>
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-700/80 to-blue-400/80 z-0" />
+        <div className="relative z-10 w-full flex flex-col items-center">
+          <h1 className="text-4xl md:text-5xl font-extrabold drop-shadow-lg mb-3 tracking-tight text-white">Statistik Desa Sidomulyo</h1>
+          <div className="max-w-2xl mx-auto text-lg md:text-xl font-medium mb-4 text-white">Gambaran data kependudukan, pendidikan, pekerjaan, dan kehidupan sosial masyarakat Desa Sidomulyo secara visual dan informatif.</div>
+          <div className="max-w-xl mx-auto text-base opacity-90 text-white">Statistik ini membantu pemerintah desa dan masyarakat untuk memahami perkembangan, kebutuhan, serta potensi desa secara lebih baik. Data di bawah ini merupakan data dummy yang akan diperbarui secara berkala.</div>
+        </div>
       </div>
       {/* Statistik Cards & Bar Stats */}
       <div className="flex-1 w-full max-w-7xl mx-auto px-4 py-12 -mt-8">
