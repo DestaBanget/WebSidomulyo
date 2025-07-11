@@ -51,19 +51,12 @@ const pekerjaan = [
   { label: 'Lainnya', value: 200, color: 'bg-gray-400' },
 ];
 
-const agama = [
-  { label: 'Islam', value: 2100, color: 'bg-green-600' },
-  { label: 'Kristen', value: 120, color: 'bg-blue-600' },
-  { label: 'Katolik', value: 60, color: 'bg-red-600' },
-  { label: 'Hindu', value: 30, color: 'bg-yellow-600' },
-  { label: 'Buddha', value: 20, color: 'bg-purple-600' },
-  { label: 'Lainnya', value: 20, color: 'bg-gray-600' },
-];
-
 const dusun = [
-  { label: 'Dusun Krajan', value: 900, color: 'bg-blue-400' },
-  { label: 'Dusun Timur', value: 800, color: 'bg-green-400' },
-  { label: 'Dusun Barat', value: 650, color: 'bg-yellow-400' },
+  { label: 'Dusun Bareng', value: 900, color: 'bg-blue-400' },
+  { label: 'Dusun Tebelo', value: 800, color: 'bg-green-400' },
+  { label: 'Dusun Mangunrejo', value: 650, color: 'bg-yellow-400' },
+  { label: 'Dusun Sumberkrecek', value: 500, color: 'bg-purple-400' },
+  { label: 'Dusun [Nama Lain]', value: 400, color: 'bg-pink-400' }, // Ganti jika ada nama dusun kelima
 ];
 
 function BarStat({ data, total }) {
@@ -134,10 +127,6 @@ export default function StatistikDesa() {
           <div className="bg-white rounded-xl shadow p-6">
             <div className="font-bold text-primary mb-4 text-lg">Statistik Pekerjaan</div>
             <BarStat data={pekerjaan} total={pekerjaan.reduce((a, b) => a + b.value, 0)} />
-          </div>
-          <div className="bg-white rounded-xl shadow p-6">
-            <div className="font-bold text-primary mb-4 text-lg">Statistik Agama</div>
-            <BarStat data={agama} total={agama.reduce((a, b) => a + b.value, 0)} />
           </div>
           <div className="bg-white rounded-xl shadow p-6">
             <div className="font-bold text-primary mb-4 text-lg">Statistik Dusun</div>

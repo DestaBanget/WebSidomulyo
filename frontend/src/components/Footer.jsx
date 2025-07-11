@@ -73,7 +73,9 @@ export default function Footer() {
       </div>
       {/* Divider halus */}
       <div className="max-w-7xl mx-auto px-5 md:px-10 lg:px-20 mt-16 border-t border-white/20 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
-        <div className="text-white/80 text-base">&copy; 2024 Desa Sidomulyo. All rights reserved.</div>
+        <div className="text-white/80 text-base">&copy; 2025 Desa Sidomulyo. All rights reserved.<br/>
+          <span className="text-white/60 text-sm">Dibuat oleh MMD Fakultas Ilmu Komputer (FILKOM) Kelompok 31 Universitas Brawijaya</span>
+        </div>
         <div className="flex gap-5">
           {social.map((s, i) => (
             <a key={i} href={s.href} className="text-2xl hover:scale-110 transition-transform hover:text-white/80" target="_blank" rel="noopener noreferrer">{s.icon}</a>
