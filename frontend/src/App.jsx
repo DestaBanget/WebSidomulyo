@@ -31,6 +31,8 @@ import AgendaDetail from './components/AgendaDetail';
 import PariwisataDetail from './components/PariwisataDetail';
 import BeritaDesaDefault, { defaultBerita } from './components/BeritaDesa';
 import { BeritaProvider } from './contexts/BeritaContext';
+import { AuthProvider, useAuth } from './contexts/AuthContext';
+import LoginAdmin from './components/LoginAdmin';
 
 function PlaceholderLogo({ label }) {
   return (
@@ -80,73 +82,75 @@ function App() {
 
   return (
     <BeritaProvider>
-      <Header />
-      <ScrollToTop />
-      <Routes>
-        <Route path="/" element={
-          <>
-            <Hero />
-            <SelayangPandang />
-            {/* Statistik Ringkas di Dashboard */}
-            <div className="w-full bg-gray-50 py-12">
-              <div className="max-w-7xl mx-auto px-4">
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                  {/* 4 statistik utama, hardcode atau import dari StatistikDesa jika perlu */}
-                  <div className="bg-white rounded-xl shadow p-5 flex flex-col items-center text-center">
-                    <div className="text-3xl mb-2">👨‍👩‍👧‍👦</div>
-                    <div className="text-lg font-semibold text-gray-700 mb-1">Total Penduduk</div>
-                    <div className="text-2xl font-bold text-primary mb-2">2.350</div>
+      <AuthProvider>
+        <Header />
+        <ScrollToTop />
+        <Routes>
+          <Route path="/" element={
+            <>
+              <Hero />
+              <SelayangPandang />
+              {/* Statistik Ringkas di Dashboard */}
+              <div className="w-full bg-gray-50 py-12">
+                <div className="max-w-7xl mx-auto px-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                    {/* 4 statistik utama, hardcode atau import dari StatistikDesa jika perlu */}
+                    <div className="bg-white rounded-xl shadow p-5 flex flex-col items-center text-center">
+                      <div className="text-3xl mb-2">👨‍👩‍👧‍👦</div>
+                      <div className="text-lg font-semibold text-gray-700 mb-1">Total Penduduk</div>
+                      <div className="text-2xl font-bold text-primary mb-2">2.350</div>
+                    </div>
+                    <div className="bg-white rounded-xl shadow p-5 flex flex-col items-center text-center">
+                      <div className="text-3xl mb-2">🏠</div>
+                      <div className="text-lg font-semibold text-gray-700 mb-1">Jumlah Keluarga</div>
+                      <div className="text-2xl font-bold text-primary mb-2">670</div>
+                    </div>
+                    <div className="bg-white rounded-xl shadow p-5 flex flex-col items-center text-center">
+                      <div className="text-3xl mb-2">📄</div>
+                      <div className="text-lg font-semibold text-gray-700 mb-1">Surat Diproses Bulan Ini</div>
+                      <div className="text-2xl font-bold text-primary mb-2">48</div>
+                    </div>
+                    <div className="bg-white rounded-xl shadow p-5 flex flex-col items-center text-center">
+                      <div className="text-3xl mb-2">🎯</div>
+                      <div className="text-lg font-semibold text-gray-700 mb-1">Program Aktif</div>
+                      <div className="text-2xl font-bold text-primary mb-2">3</div>
+                    </div>
                   </div>
-                  <div className="bg-white rounded-xl shadow p-5 flex flex-col items-center text-center">
-                    <div className="text-3xl mb-2">🏠</div>
-                    <div className="text-lg font-semibold text-gray-700 mb-1">Jumlah Keluarga</div>
-                    <div className="text-2xl font-bold text-primary mb-2">670</div>
+                  <div className="flex justify-center">
+                    <Link to="/profil/statistik" className="inline-block px-6 py-2 bg-primary text-white rounded-full font-semibold shadow hover:bg-blue-700 transition">Lihat Statistik Lainnya</Link>
                   </div>
-                  <div className="bg-white rounded-xl shadow p-5 flex flex-col items-center text-center">
-                    <div className="text-3xl mb-2">📄</div>
-                    <div className="text-lg font-semibold text-gray-700 mb-1">Surat Diproses Bulan Ini</div>
-                    <div className="text-2xl font-bold text-primary mb-2">48</div>
-                  </div>
-                  <div className="bg-white rounded-xl shadow p-5 flex flex-col items-center text-center">
-                    <div className="text-3xl mb-2">🎯</div>
-                    <div className="text-lg font-semibold text-gray-700 mb-1">Program Aktif</div>
-                    <div className="text-2xl font-bold text-primary mb-2">3</div>
-                  </div>
-                </div>
-                <div className="flex justify-center">
-                  <Link to="/profil/statistik" className="inline-block px-6 py-2 bg-primary text-white rounded-full font-semibold shadow hover:bg-blue-700 transition">Lihat Statistik Lainnya</Link>
                 </div>
               </div>
-            </div>
-            {/* End Statistik Ringkas */}
-            <BeritaDesa data={latestBerita} />
-            <LayananUnggulan />
-            <Pariwisata data={latestPariwisata} />
-          </>
-        } />
-        <Route path="/profil/tentang" element={<Tentang />} />
-        <Route path="/profil/visi-misi" element={<VisiMisi />} />
-        <Route path="/profil/struktur-organisasi" element={<StrukturOrganisasi />} />
-        <Route path="/profil/statistik" element={<StatistikDesa />} />
-        <Route path="/layanan/surat-online" element={<SuratOnline />} />
-        <Route path="/layanan/pengaduan" element={<PengaduanMasyarakat />} />
-        <Route path="/layanan/panduan" element={<PanduanLayanan />} />
-        <Route path="/kontak" element={<Kontak />} />
-        <Route path="/pariwisata" element={<PariwisataPage />} />
-        <Route path="/lembaga/bpd" element={<BPD />} />
-        <Route path="/lembaga/lpm" element={<LPM />} />
-        <Route path="/lembaga/pkk" element={<PKK />} />
-        <Route path="/lembaga/karang-taruna" element={<KarangTaruna />} />
-        <Route path="/publikasi/berita" element={<BeritaPage />} />
-        <Route path="/publikasi/pengumuman" element={<PengumumanPage />} />
-        <Route path="/publikasi/agenda" element={<AgendaPage />} />
-        <Route path="/publikasi/berita/:id" element={<BeritaDetail />} />
-        <Route path="/publikasi/pengumuman/:id" element={<PengumumanDetail />} />
-        <Route path="/publikasi/agenda/:id" element={<AgendaDetail />} />
-        <Route path="/pariwisata/:id" element={<PariwisataDetail />} />
-      </Routes>
-      <Footer />
-      <FloatingButton />
+              {/* End Statistik Ringkas */}
+              <BeritaDesa data={latestBerita} />
+              <LayananUnggulan />
+              <Pariwisata data={latestPariwisata} />
+            </>
+          } />
+          <Route path="/profil/tentang" element={<Tentang />} />
+          <Route path="/profil/visi-misi" element={<VisiMisi />} />
+          <Route path="/profil/struktur-organisasi" element={<StrukturOrganisasi />} />
+          <Route path="/profil/statistik" element={<StatistikDesa />} />
+          <Route path="/layanan/surat-online" element={<SuratOnline />} />
+          <Route path="/layanan/pengaduan" element={<PengaduanMasyarakat />} />
+          <Route path="/layanan/panduan" element={<PanduanLayanan />} />
+          <Route path="/kontak" element={<Kontak />} />
+          <Route path="/pariwisata" element={<PariwisataPage />} />
+          <Route path="/lembaga/bpd" element={<BPD />} />
+          <Route path="/lembaga/lpm" element={<LPM />} />
+          <Route path="/lembaga/pkk" element={<PKK />} />
+          <Route path="/lembaga/karang-taruna" element={<KarangTaruna />} />
+          <Route path="/publikasi/berita" element={<BeritaPage />} />
+          <Route path="/publikasi/pengumuman" element={<PengumumanPage />} />
+          <Route path="/publikasi/agenda" element={<AgendaPage />} />
+          <Route path="/publikasi/berita/:id" element={<BeritaDetail />} />
+          <Route path="/publikasi/pengumuman/:id" element={<PengumumanDetail />} />
+          <Route path="/publikasi/agenda/:id" element={<AgendaDetail />} />
+          <Route path="/pariwisata/:id" element={<PariwisataDetail />} />
+        </Routes>
+        <Footer />
+        <FloatingButton />
+      </AuthProvider>
     </BeritaProvider>
   );
 }

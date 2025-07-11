@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { FiMenu, FiX } from 'react-icons/fi';
-import { FaChevronDown } from 'react-icons/fa';
+import { FaChevronDown, FaLock } from 'react-icons/fa';
 import { useLocation, Link } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
+import LoginAdmin from './LoginAdmin';
 
 const menu = [
   {
@@ -58,6 +60,8 @@ export default function Header() {
   const [scrolled, setScrolled] = useState(false);
   const [activeMenu, setActiveMenu] = useState(null);
   const location = useLocation();
+  const { isAdmin, logout, login } = useAuth ? useAuth() : { isAdmin: false };
+  const [showLogin, setShowLogin] = useState(false);
 
   // Selalu anggap semua halaman sebagai heroBg
   const isHeroBg = true;
@@ -80,18 +84,27 @@ export default function Header() {
   };
 
   // Animasi backdrop blur untuk mobile menu
+  useEffect(() => {
+    if (window.innerWidth < 1024 && !mobileOpen) setShowLogin(false);
+  }, [mobileOpen]);
+
+  const shouldShowLogin =
+    showLogin &&
+    !isAdmin &&
+    (window.innerWidth >= 1024 || mobileOpen);
+
   return (
     <header
       className={mobileOpen
         ? 'fixed top-0 left-0 w-full z-50 bg-white text-primary shadow transition-none'
         : `fixed top-0 left-0 w-full z-50 transition-all duration-300 ${isHeroBg && !scrolled ? 'bg-transparent text-white shadow-none' : 'backdrop-blur-lg bg-white/90 shadow text-primary'}`
       }
-      style={mobileOpen ? {backgroundColor: '#fff', color: '#1e40af', boxShadow: '0 2px 8px 0 rgba(30,64,175,0.08)'} : {}}
+      style={mobileOpen ? { backgroundColor: '#fff', color: '#1e40af', boxShadow: '0 2px 8px 0 rgba(30,64,175,0.08)' } : {}}
     >
-      <div className="max-w-7xl mx-auto flex items-center justify-between px-4 py-3 md:py-4">
+      <div className="max-w-7xl mx-auto flex flex-row items-center justify-between gap-4 px-4 py-3 md:py-4">
         <Logo scrolled={scrolled} />
         {/* Desktop Menu */}
-        <nav className="hidden lg:flex gap-2 xl:gap-4">
+        <nav className="hidden lg:flex flex-1 justify-center gap-2 xl:gap-4">
           {menu.map((item, idx) => (
             <div
               key={item.label}
@@ -113,7 +126,7 @@ export default function Header() {
                     className={`absolute top-full left-0 mt-2 w-56 bg-white/95 shadow-2xl rounded-2xl py-3 transition-all duration-300 z-30
                       ${dropdownOpen === idx ? 'opacity-100 translate-y-0 pointer-events-auto' : 'opacity-0 -translate-y-2 pointer-events-none'}
                     `}
-                    style={{transformOrigin: 'top'}}
+                    style={{ transformOrigin: 'top' }}
                   >
                     {item.dropdown.map((d) => (
                       <a
@@ -142,7 +155,22 @@ export default function Header() {
             </div>
           ))}
         </nav>
-        {/* Hamburger */}
+        {/* Tombol Login Admin/Logout di kanan */}
+        <div className="hidden lg:flex items-center ml-auto">
+          {!isAdmin && (
+            <button
+              onClick={() => setShowLogin(true)}
+              className="whitespace-nowrap flex items-center gap-2 px-6 py-2 bg-primary text-white rounded-full shadow font-semibold text-base transition-all duration-200 hover:bg-blue-800 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-primary/50"
+            >
+              <FaLock className="text-lg" />
+              Login Admin
+            </button>
+          )}
+          {isAdmin && (
+            <button onClick={logout} className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition">Logout</button>
+          )}
+        </div>
+        {/* Hamburger untuk mobile */}
         <button
           className="lg:hidden flex items-center justify-center w-10 h-10 rounded-full transition"
           onClick={() => setMobileOpen((v) => !v)}
@@ -158,7 +186,13 @@ export default function Header() {
       {/* Mobile Menu + Backdrop */}
       {mobileOpen && (
         <div className="fixed inset-0 z-40">
-          <div className="absolute inset-0 bg-black/30 backdrop-blur-sm animate-fadeIn" onClick={() => setMobileOpen(false)} />
+          <div
+            className="absolute inset-0 bg-black/30 backdrop-blur-sm animate-fadeIn"
+            onClick={() => {
+              setMobileOpen(false);
+              setShowLogin(false);
+            }}
+          />
           <nav className="absolute top-0 right-0 w-72 max-w-full h-full bg-white text-primary shadow-2xl px-6 py-8 animate-slideInLeft flex flex-col gap-6 border-l border-gray-200" style={{ backgroundColor: '#fff' }}>
             <Logo scrolled={true} />
             <div className="flex flex-col gap-2 mt-6">
@@ -166,7 +200,9 @@ export default function Header() {
                 <div key={item.label} className="mb-1">
                   {item.dropdown ? (
                     <details className="group">
-                      <summary className="font-semibold cursor-pointer py-2 flex items-center gap-2 hover:text-primary select-none">{item.label} <FaChevronDown className="text-xs group-open:rotate-180 transition-transform text-primary" /></summary>
+                      <summary className="font-semibold cursor-pointer py-2 flex items-center gap-2 hover:text-primary select-none">
+                        {item.label} <FaChevronDown className="text-xs group-open:rotate-180 transition-transform text-primary" />
+                      </summary>
                       <div className="pl-4 flex flex-col gap-1 mt-1">
                         {item.dropdown.map((d) => (
                           <a
@@ -184,10 +220,37 @@ export default function Header() {
                   )}
                 </div>
               ))}
+              {!isAdmin && (
+                <button
+                  onClick={() => { setShowLogin(true); }}
+                   className="whitespace-nowrap flex items-center gap-2 px-6 py-2 bg-primary text-white rounded-full shadow font-semibold text-base transition-all duration-200 hover:bg-blue-800 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-primary/50"
+                >
+                  <FaLock className="text-lg" />
+                  Login Admin
+                </button>
+              )}
+              {isAdmin && (
+                <button onClick={logout} className="mt-6 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition">Logout</button>
+              )}
             </div>
           </nav>
         </div>
       )}
+      {/* Modal login */}
+      {shouldShowLogin && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 px-2">
+          <div className="relative w-full max-w-sm mx-auto bg-white p-6 rounded-xl shadow-xl">
+            <button
+              onClick={() => setShowLogin(false)}
+              className="absolute top-3 right-3 w-10 h-10 rounded-full flex items-center justify-center text-gray-500 hover:text-black hover:bg-gray-100 transition text-3xl"
+              aria-label="Tutup"
+            >
+              &times;
+            </button>
+            <LoginAdmin onLogin={() => { login(); setShowLogin(false); }} onClose={() => setShowLogin(false)} />
+          </div>
+        </div>
+      )}
     </header>
   );
-} 
+}
