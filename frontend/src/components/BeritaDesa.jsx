@@ -59,7 +59,7 @@ export default function BeritaDesa() {
     <section className="max-w-7xl mx-auto px-5 md:px-10 lg:px-20 py-14">
       <h2 className="text-2xl md:text-3xl font-extrabold text-primary mb-10 text-center tracking-tight drop-shadow-lg">Berita Desa</h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-12">
-        {berita.slice(0, 4).map((b) => (
+        {berita.slice(0, 6).map((b) => (
           <div
             key={b.id}
             className="bg-white rounded-3xl shadow-xl overflow-hidden flex flex-col group transition-all duration-500 hover:shadow-2xl hover:-translate-y-2 hover:scale-105 hover:ring-2 hover:ring-primary/20 relative"

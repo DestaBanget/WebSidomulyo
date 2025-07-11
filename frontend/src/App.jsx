@@ -8,7 +8,7 @@ import BeritaDesa from './components/BeritaDesa';
 import Pariwisata from './components/Pariwisata';
 import Footer from './components/Footer';
 import FloatingButton from './components/FloatingButton';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Link } from 'react-router-dom';
 import SuratOnline from './components/SuratOnline';
 import Tentang from './components/Tentang';
 import VisiMisi from './components/VisiMisi';
@@ -24,6 +24,7 @@ import KarangTaruna from './components/KarangTaruna';
 import BeritaPage from './components/BeritaPage';
 import PengumumanPage from './components/PengumumanPage';
 import AgendaPage from './components/AgendaPage';
+import ScrollToTop from './components/ScrollToTop';
 
 function PlaceholderLogo({ label }) {
   return (
@@ -67,12 +68,44 @@ function App() {
   return (
     <>
       <Header />
+      <ScrollToTop />
       <Routes>
         <Route path="/" element={
           <>
             <Hero />
             <SelayangPandang />
-            <StatistikDesa />
+            {/* Statistik Ringkas di Dashboard */}
+            <div className="w-full bg-gray-50 py-12">
+              <div className="max-w-7xl mx-auto px-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                  {/* 4 statistik utama, hardcode atau import dari StatistikDesa jika perlu */}
+                  <div className="bg-white rounded-xl shadow p-5 flex flex-col items-center text-center">
+                    <div className="text-3xl mb-2">👨‍👩‍👧‍👦</div>
+                    <div className="text-lg font-semibold text-gray-700 mb-1">Total Penduduk</div>
+                    <div className="text-2xl font-bold text-primary mb-2">2.350</div>
+                  </div>
+                  <div className="bg-white rounded-xl shadow p-5 flex flex-col items-center text-center">
+                    <div className="text-3xl mb-2">🏠</div>
+                    <div className="text-lg font-semibold text-gray-700 mb-1">Jumlah Keluarga</div>
+                    <div className="text-2xl font-bold text-primary mb-2">670</div>
+                  </div>
+                  <div className="bg-white rounded-xl shadow p-5 flex flex-col items-center text-center">
+                    <div className="text-3xl mb-2">📄</div>
+                    <div className="text-lg font-semibold text-gray-700 mb-1">Surat Diproses Bulan Ini</div>
+                    <div className="text-2xl font-bold text-primary mb-2">48</div>
+                  </div>
+                  <div className="bg-white rounded-xl shadow p-5 flex flex-col items-center text-center">
+                    <div className="text-3xl mb-2">🎯</div>
+                    <div className="text-lg font-semibold text-gray-700 mb-1">Program Aktif</div>
+                    <div className="text-2xl font-bold text-primary mb-2">3</div>
+                  </div>
+                </div>
+                <div className="flex justify-center">
+                  <Link to="/profil/statistik" className="inline-block px-6 py-2 bg-primary text-white rounded-full font-semibold shadow hover:bg-blue-700 transition">Lihat Statistik Lainnya</Link>
+                </div>
+              </div>
+            </div>
+            {/* End Statistik Ringkas */}
             <BeritaDesa />
             <LayananUnggulan />
             <Pariwisata />

@@ -38,7 +38,7 @@ export default function Pariwisata() {
     <section className="max-w-7xl mx-auto px-5 md:px-10 lg:px-20 py-14">
       <h2 className="text-2xl md:text-3xl font-extrabold text-primary mb-10 text-center tracking-tight drop-shadow-lg">Pariwisata Desa</h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-12">
-        {wisata.slice(0, 4).map((w) => (
+        {wisata.slice(0, 6).map((w) => (
           <div
             key={w.id}
             className="relative rounded-3xl overflow-hidden shadow-xl group h-56 md:h-64 cursor-pointer transition-all duration-500 hover:shadow-2xl hover:-translate-y-2 hover:scale-105 hover:ring-2 hover:ring-primary/20"

@@ -9,25 +9,25 @@ const slides = [
     title: "Selamat Datang di Desa Sidomulyo",
     desc: "Website resmi layanan dan informasi digital Desa Sidomulyo. Mudahkan urusan surat-menyurat dan akses info desa secara online.",
     img: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&q=80",
-    cta: { label: "Jelajahi Website", href: "#" },
+    cta: { label: "Jelajahi Website", href: "/profil/tentang" },
   },
   {
     title: "Layanan Surat Online",
     desc: "Ajukan surat keterangan, domisili, SKTM, dan layanan lainnya secara online. Proses mudah, transparan, dan bisa dipantau.",
     img: "https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=1200&q=80",
-    cta: { label: "Ajukan Surat", href: "#" },
+    cta: { label: "Ajukan Surat", href: "/layanan/surat-online" },
   },
   {
     title: "Pengaduan Masyarakat",
     desc: "Sampaikan aspirasi dan pengaduan Anda langsung ke perangkat desa secara digital, mudah dan cepat.",
     img: "https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=1200&q=80",
-    cta: { label: "Laporkan Masalah", href: "#" },
+    cta: { label: "Laporkan Masalah", href: "/layanan/pengaduan" },
   },
   {
     title: "Pariwisata Desa",
     desc: "Jelajahi potensi wisata dan keindahan alam Desa Sidomulyo. Info destinasi, agenda, dan galeri foto.",
     img: "https://images.unsplash.com/photo-1503676382389-4809596d5290?auto=format&fit=crop&w=1200&q=80",
-    cta: { label: "Lihat Pariwisata", href: "#" },
+    cta: { label: "Lihat Pariwisata", href: "/pariwisata" },
   },
 ]
 
