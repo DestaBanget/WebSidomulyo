@@ -32,9 +32,9 @@ import PariwisataDetail from './components/PariwisataDetail';
 import BeritaDesaDefault, { defaultBerita } from './components/BeritaDesa';
 import { BeritaProvider } from './contexts/BeritaContext';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
-import LoginAdmin from './components/LoginAdmin';
 import FormSuratPage from './pages/FormSuratPage';
 import AddBeritaPage from './pages/AddBeritaPage';
+import ProfilePage from './pages/ProfilePage';
 
 function PlaceholderLogo({ label }) {
   return (
@@ -82,13 +82,10 @@ function App() {
   const sortedPariwisata = [...initialPariwisata].sort((a, b) => new Date(b.date) - new Date(a.date));
   const latestPariwisata = sortedPariwisata.slice(0, 6);
 
-  // State untuk modal login admin
-  const [showLogin, setShowLogin] = useState(false);
-
   return (
     <BeritaProvider>
       <AuthProvider>
-        <Header onShowLogin={() => setShowLogin(true)} />
+        <Header />
         <ScrollToTop />
         <Routes>
           <Route path="/" element={
@@ -158,12 +155,10 @@ function App() {
           <Route path="/publikasi/agenda/:id" element={<AgendaDetail />} />
           <Route path="/pariwisata/:id" element={<PariwisataDetail />} />
           <Route path="/admin/tambah-berita" element={<AddBeritaPage />} />
+          <Route path="/profil" element={<ProfilePage />} />
         </Routes>
         <Footer />
         <FloatingButton />
-        {showLogin && (
-          <LoginAdmin onLogin={() => setShowLogin(false)} onClose={() => setShowLogin(false)} />
-        )}
       </AuthProvider>
     </BeritaProvider>
   );

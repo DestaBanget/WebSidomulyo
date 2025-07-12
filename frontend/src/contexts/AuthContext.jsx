@@ -1,15 +1,61 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 
 const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
   const [isAdmin, setIsAdmin] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [user, setUser] = useState(null);
 
-  const login = () => setIsAdmin(true);
-  const logout = () => setIsAdmin(false);
+  // Cek localStorage saat mount
+  useEffect(() => {
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      const parsedUser = JSON.parse(storedUser);
+      setUser(parsedUser);
+      setIsLoggedIn(true);
+      setIsAdmin(parsedUser.type === 'admin');
+    }
+  }, []);
+
+  const login = (userType, userData = null) => {
+    let userObj;
+    if (userType === 'admin') {
+      userObj = { type: 'admin', ...userData };
+      setIsAdmin(true);
+      setIsLoggedIn(true);
+      setUser(userObj);
+    } else {
+      userObj = { type: 'user', ...userData };
+      setIsLoggedIn(true);
+      setUser(userObj);
+    }
+    localStorage.setItem('user', JSON.stringify(userObj));
+  };
+
+  const logout = () => {
+    setIsAdmin(false);
+    setIsLoggedIn(false);
+    setUser(null);
+    localStorage.removeItem('user');
+  };
+
+  const register = (userData) => {
+    const userObj = { type: 'user', ...userData };
+    setIsLoggedIn(true);
+    setUser(userObj);
+    localStorage.setItem('user', JSON.stringify(userObj));
+  };
 
   return (
-    <AuthContext.Provider value={{ isAdmin, login, logout }}>
+    <AuthContext.Provider value={{ 
+      isAdmin, 
+      isLoggedIn, 
+      user, 
+      login, 
+      logout, 
+      register 
+    }}>
       {children}
     </AuthContext.Provider>
   );

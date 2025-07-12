@@ -3,7 +3,7 @@ import { FiMenu, FiX } from 'react-icons/fi';
 import { FaChevronDown, FaLock } from 'react-icons/fa';
 import { useLocation, Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import LoginAdmin from './LoginAdmin';
+import UserAuth from './UserAuth';
 
 const menu = [
   {
@@ -59,8 +59,9 @@ export default function Header({ onShowLogin }) {
   const [dropdownTimeout, setDropdownTimeout] = useState(null);
   const [scrolled, setScrolled] = useState(false);
   const [activeMenu, setActiveMenu] = useState(null);
+  const [showUserAuth, setShowUserAuth] = useState(false);
   const location = useLocation();
-  const { isAdmin, logout } = useAuth ? useAuth() : { isAdmin: false };
+  const { isAdmin, isLoggedIn, user, logout } = useAuth ? useAuth() : { isAdmin: false, isLoggedIn: false, user: null };
 
   // Selalu anggap semua halaman sebagai heroBg
   const isHeroBg = true;
@@ -143,20 +144,26 @@ export default function Header({ onShowLogin }) {
               )}
             </div>
           ))}
+          {isLoggedIn && (
+            <Link
+              to="/profil"
+              className="font-semibold px-4 py-2 rounded-xl flex items-center h-16 hover:bg-primary/10 hover:text-primary focus:outline-none transition-all duration-200"
+              style={{ marginLeft: 8 }}
+            >
+              Profil
+            </Link>
+          )}
         </nav>
-        {/* Tombol Login Admin/Logout di kanan */}
+        {/* Tombol Login di kanan */}
         <div className="hidden lg:flex items-center ml-auto">
-          {!isAdmin && (
+          {!isLoggedIn && (
             <button
-              onClick={onShowLogin}
+              onClick={() => setShowUserAuth(true)}
               className="whitespace-nowrap flex items-center gap-2 px-6 py-2 bg-primary text-white rounded-full shadow font-semibold text-base transition-all duration-200 hover:bg-blue-800 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-primary/50"
             >
               <FaLock className="text-lg" />
               Masuk
             </button>
-          )}
-          {isAdmin && (
-            <button onClick={logout} className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition">Logout</button>
           )}
         </div>
         {/* Hamburger untuk mobile */}
@@ -208,21 +215,33 @@ export default function Header({ onShowLogin }) {
                   )}
                 </div>
               ))}
-              {!isAdmin && (
+              {isLoggedIn && (
+                <Link
+                  to="/profil"
+                  className="font-semibold block py-2 text-primary hover:underline"
+                >
+                  Profil
+                </Link>
+              )}
+              {!isLoggedIn && (
                 <button
-                  onClick={onShowLogin}
-                   className="whitespace-nowrap flex items-center gap-2 px-6 py-2 bg-primary text-white rounded-full shadow font-semibold text-base transition-all duration-200 hover:bg-blue-800 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-primary/50"
+                  onClick={() => setShowUserAuth(true)}
+                  className="whitespace-nowrap flex items-center gap-2 px-6 py-2 bg-primary text-white rounded-full shadow font-semibold text-base transition-all duration-200 hover:bg-blue-800 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-primary/50"
                 >
                   <FaLock className="text-lg" />
                   Masuk
                 </button>
               )}
-              {isAdmin && (
-                <button onClick={logout} className="mt-6 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition">Logout</button>
-              )}
             </div>
           </nav>
         </div>
+      )}
+
+      {/* User Authentication Modal */}
+      {showUserAuth && (
+        <UserAuth 
+          onClose={() => setShowUserAuth(false)}
+        />
       )}
     </header>
   );

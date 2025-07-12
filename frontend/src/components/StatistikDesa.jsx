@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useAuth } from '../contexts/AuthContext';
 
 const initialStats = [
   {
@@ -52,8 +53,7 @@ const initialDusun = [
   { label: 'Dusun Bareng', value: 900, color: 'bg-blue-400' },
   { label: 'Dusun Tebelo', value: 800, color: 'bg-green-400' },
   { label: 'Dusun Mangunrejo', value: 650, color: 'bg-yellow-400' },
-  { label: 'Dusun Sumberkrecek', value: 500, color: 'bg-purple-400' },
-  { label: 'Dusun [Nama Lain]', value: 400, color: 'bg-pink-400' },
+  { label: 'Dusun Sumberkreco', value: 500, color: 'bg-purple-400' },
 ];
 
 function BarStat({ data, total }) {
@@ -130,7 +130,7 @@ function BarStatEditable({ data, setData, isAdmin, title }) {
 
 export default function StatistikDesa() {
   const heroImg = '/surat.jpg';
-  const isAdmin = true; // ganti dengan context jika sudah ada
+  const { isAdmin } = useAuth();
   const [stats, setStats] = useState(initialStats);
   const [usia, setUsia] = useState(initialUsia);
   const [pendidikan, setPendidikan] = useState(initialPendidikan);
