@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useBerita } from '../contexts/BeritaContext';
 
 export default function BeritaPage() {
   const { berita, loading } = useBerita();
+  const isAdmin = true; // ganti dengan context jika sudah ada
   const [search, setSearch] = useState('');
   const heroImg = '/surat.jpg';
+  const navigate = useNavigate();
 
   if (loading) return <div className="text-center text-gray-400 text-lg py-20">Memuat data...</div>;
 
@@ -35,6 +37,12 @@ export default function BeritaPage() {
           />
         </div>
       </div>
+      {/* Tombol Tambah Berita untuk Admin */}
+      {isAdmin && (
+        <div className="flex justify-center mt-10">
+          <button className="px-6 py-2 bg-primary text-white rounded font-semibold shadow hover:bg-primary/90 transition" onClick={() => navigate('/admin/tambah-berita')}>Tambah Berita</button>
+        </div>
+      )}
       {/* Grid Cards */}
       <div className="flex-1 w-full max-w-7xl mx-auto px-4 md:px-8 py-12 mt-10">
         {filtered.length === 0 && (

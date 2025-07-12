@@ -34,6 +34,7 @@ import { BeritaProvider } from './contexts/BeritaContext';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import LoginAdmin from './components/LoginAdmin';
 import FormSuratPage from './pages/FormSuratPage';
+import AddBeritaPage from './pages/AddBeritaPage';
 
 function PlaceholderLogo({ label }) {
   return (
@@ -156,6 +157,7 @@ function App() {
           <Route path="/publikasi/pengumuman/:id" element={<PengumumanDetail />} />
           <Route path="/publikasi/agenda/:id" element={<AgendaDetail />} />
           <Route path="/pariwisata/:id" element={<PariwisataDetail />} />
+          <Route path="/admin/tambah-berita" element={<AddBeritaPage />} />
         </Routes>
         <Footer />
         <FloatingButton />

@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 
-const stats = [
+const initialStats = [
   {
     title: 'Total Penduduk',
     value: '2.350',
@@ -27,22 +27,20 @@ const stats = [
   },
 ];
 
-const usia = [
+const initialUsia = [
   { label: '0-5 th', value: 210, color: 'bg-blue-200' },
   { label: '6-17 th', value: 480, color: 'bg-blue-400' },
   { label: '18-59 th', value: 1400, color: 'bg-blue-600' },
   { label: '60+ th', value: 260, color: 'bg-blue-900' },
 ];
-
-const pendidikan = [
+const initialPendidikan = [
   { label: 'Tidak Sekolah', value: 120, color: 'bg-gray-300' },
   { label: 'SD', value: 700, color: 'bg-yellow-300' },
   { label: 'SMP', value: 600, color: 'bg-green-300' },
   { label: 'SMA', value: 650, color: 'bg-blue-300' },
   { label: 'Diploma/S1+', value: 280, color: 'bg-purple-300' },
 ];
-
-const pekerjaan = [
+const initialPekerjaan = [
   { label: 'Petani', value: 800, color: 'bg-green-500' },
   { label: 'Buruh', value: 400, color: 'bg-yellow-500' },
   { label: 'PNS', value: 120, color: 'bg-blue-500' },
@@ -50,13 +48,12 @@ const pekerjaan = [
   { label: 'Pelajar/Mahasiswa', value: 480, color: 'bg-indigo-400' },
   { label: 'Lainnya', value: 200, color: 'bg-gray-400' },
 ];
-
-const dusun = [
+const initialDusun = [
   { label: 'Dusun Bareng', value: 900, color: 'bg-blue-400' },
   { label: 'Dusun Tebelo', value: 800, color: 'bg-green-400' },
   { label: 'Dusun Mangunrejo', value: 650, color: 'bg-yellow-400' },
   { label: 'Dusun Sumberkrecek', value: 500, color: 'bg-purple-400' },
-  { label: 'Dusun [Nama Lain]', value: 400, color: 'bg-pink-400' }, // Ganti jika ada nama dusun kelima
+  { label: 'Dusun [Nama Lain]', value: 400, color: 'bg-pink-400' },
 ];
 
 function BarStat({ data, total }) {
@@ -75,8 +72,92 @@ function BarStat({ data, total }) {
   );
 }
 
+function BarStatEditable({ data, setData, isAdmin, title }) {
+  const [edit, setEdit] = useState(false);
+  const [editData, setEditData] = useState([]);
+  const total = (edit ? editData : data).reduce((a, b) => a + Number(b.value), 0);
+
+  const handleEdit = () => {
+    setEditData(data.map(d => ({ ...d })));
+    setEdit(true);
+  };
+  const handleChange = (idx, val) => {
+    const newData = [...editData];
+    newData[idx].value = val;
+    setEditData(newData);
+  };
+  const handleSave = () => {
+    setData(editData);
+    setEdit(false);
+  };
+  const handleCancel = () => setEdit(false);
+
+  return (
+    <div className="bg-white rounded-xl shadow p-6 relative">
+      <div className="font-bold text-primary mb-4 text-lg">{title}</div>
+      {isAdmin && !edit && (
+        <button className="absolute top-4 right-4 px-3 py-1 bg-primary text-white text-xs rounded shadow hover:bg-blue-800 transition" onClick={handleEdit}>Edit</button>
+      )}
+      <div className="space-y-2">
+        {(edit ? editData : data).map((d, idx) => (
+          <div key={d.label} className="flex items-center gap-3">
+            <span className="w-32 text-sm font-medium text-gray-700">{d.label}</span>
+            <div className="flex-1 h-4 rounded-full overflow-hidden bg-gray-100">
+              <div className={`${d.color} h-4`} style={{ width: `${(d.value / total) * 100}%` }} />
+            </div>
+            {edit ? (
+              <input
+                type="number"
+                className="w-16 border-b-2 border-primary outline-none text-right text-sm font-semibold text-gray-700"
+                value={d.value}
+                onChange={e => handleChange(idx, e.target.value)}
+              />
+            ) : (
+              <span className="w-12 text-right text-sm font-semibold text-gray-700">{d.value}</span>
+            )}
+          </div>
+        ))}
+      </div>
+      {isAdmin && edit && (
+        <div className="flex gap-2 mt-4 justify-end">
+          <button className="px-3 py-1 bg-primary text-white rounded font-semibold text-xs" onClick={handleSave}>Simpan</button>
+          <button className="px-3 py-1 bg-gray-300 text-gray-700 rounded font-semibold text-xs" onClick={handleCancel}>Batal</button>
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function StatistikDesa() {
   const heroImg = '/surat.jpg';
+  const isAdmin = true; // ganti dengan context jika sudah ada
+  const [stats, setStats] = useState(initialStats);
+  const [usia, setUsia] = useState(initialUsia);
+  const [pendidikan, setPendidikan] = useState(initialPendidikan);
+  const [pekerjaan, setPekerjaan] = useState(initialPekerjaan);
+  const [dusun, setDusun] = useState(initialDusun);
+  const [editIdx, setEditIdx] = useState(null);
+  const [editValue, setEditValue] = useState('');
+  const [editBreakdown, setEditBreakdown] = useState([]);
+
+  const handleEdit = (idx) => {
+    setEditIdx(idx);
+    setEditValue(stats[idx].value);
+    setEditBreakdown(stats[idx].breakdown ? [...stats[idx].breakdown] : []);
+  };
+  const handleSave = (idx) => {
+    const newStats = [...stats];
+    newStats[idx].value = editValue;
+    if (newStats[idx].breakdown) newStats[idx].breakdown = editBreakdown;
+    setStats(newStats);
+    setEditIdx(null);
+  };
+  const handleBreakdownChange = (bIdx, val) => {
+    const newBreakdown = [...editBreakdown];
+    newBreakdown[bIdx].value = val;
+    setEditBreakdown(newBreakdown);
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
       {/* Hero Gradient Section - FULL WIDTH */}
@@ -96,44 +177,67 @@ export default function StatistikDesa() {
         {/* Judul Statistik Utama Desa */}
         <h2 className="text-2xl md:text-3xl font-extrabold text-primary mb-8 text-center tracking-tight drop-shadow-lg">Statistik Utama Desa</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-10">
-          {stats.map((s) => (
+          {stats.map((s, idx) => (
             <div
               key={s.title}
-              className="bg-white rounded-xl shadow p-5 flex flex-col items-center text-center hover:shadow-lg transition"
+              className="bg-white rounded-xl shadow p-5 flex flex-col items-center text-center hover:shadow-lg transition relative"
             >
               <div className="text-3xl mb-2">{s.icon}</div>
               <div className="text-lg font-semibold text-gray-700 mb-1">{s.title}</div>
-              <div className="text-2xl font-bold text-primary mb-2">{s.value}</div>
-              {s.breakdown && (
-                <div className="flex flex-col gap-1 w-full">
-                  {s.breakdown.map((b) => (
-                    <div key={b.label} className="flex justify-between text-sm">
-                      <span className={b.color}>{b.label}</span>
-                      <span className={b.color}>{b.value}</span>
+              {editIdx === idx ? (
+                <>
+                  <input
+                    type="number"
+                    className="text-2xl font-bold text-primary mb-2 text-center border-b-2 border-primary outline-none w-20 mx-auto"
+                    value={editValue}
+                    onChange={e => setEditValue(e.target.value)}
+                  />
+                  {s.breakdown && (
+                    <div className="flex flex-col gap-1 w-full mt-2">
+                      {editBreakdown.map((b, bIdx) => (
+                        <div key={b.label} className="flex justify-between text-sm items-center gap-2">
+                          <span className={b.color}>{b.label}</span>
+                          <input
+                            type="number"
+                            className={`border-b-2 outline-none w-16 text-right ${b.color}`}
+                            value={b.value}
+                            onChange={e => handleBreakdownChange(bIdx, e.target.value)}
+                          />
+                        </div>
+                      ))}
                     </div>
-                  ))}
-                </div>
+                  )}
+                  <div className="flex gap-2 mt-3 justify-center">
+                    <button className="px-3 py-1 bg-primary text-white rounded font-semibold text-xs" onClick={() => handleSave(idx)}>Simpan</button>
+                    <button className="px-3 py-1 bg-gray-300 text-gray-700 rounded font-semibold text-xs" onClick={() => setEditIdx(null)}>Batal</button>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="text-2xl font-bold text-primary mb-2">{s.value}</div>
+                  {s.breakdown && (
+                    <div className="flex flex-col gap-1 w-full">
+                      {s.breakdown.map((b) => (
+                        <div key={b.label} className="flex justify-between text-sm">
+                          <span className={b.color}>{b.label}</span>
+                          <span className={b.color}>{b.value}</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  {isAdmin && (
+                    <button className="absolute top-2 right-2 px-2 py-1 bg-primary text-white text-xs rounded shadow hover:bg-blue-800 transition" onClick={() => handleEdit(idx)}>Edit</button>
+                  )}
+                </>
               )}
             </div>
           ))}
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-10 mb-10">
-          <div className="bg-white rounded-xl shadow p-6">
-            <div className="font-bold text-primary mb-4 text-lg">Statistik Usia</div>
-            <BarStat data={usia} total={usia.reduce((a, b) => a + b.value, 0)} />
-          </div>
-          <div className="bg-white rounded-xl shadow p-6">
-            <div className="font-bold text-primary mb-4 text-lg">Statistik Pendidikan</div>
-            <BarStat data={pendidikan} total={pendidikan.reduce((a, b) => a + b.value, 0)} />
-          </div>
-          <div className="bg-white rounded-xl shadow p-6">
-            <div className="font-bold text-primary mb-4 text-lg">Statistik Pekerjaan</div>
-            <BarStat data={pekerjaan} total={pekerjaan.reduce((a, b) => a + b.value, 0)} />
-          </div>
-          <div className="bg-white rounded-xl shadow p-6">
-            <div className="font-bold text-primary mb-4 text-lg">Statistik Dusun</div>
-            <BarStat data={dusun} total={dusun.reduce((a, b) => a + b.value, 0)} />
-          </div>
+          <BarStatEditable data={usia} setData={setUsia} isAdmin={isAdmin} title="Statistik Usia" />
+          <BarStatEditable data={pendidikan} setData={setPendidikan} isAdmin={isAdmin} title="Statistik Pendidikan" />
+          <BarStatEditable data={pekerjaan} setData={setPekerjaan} isAdmin={isAdmin} title="Statistik Pekerjaan" />
+          <BarStatEditable data={dusun} setData={setDusun} isAdmin={isAdmin} title="Statistik Dusun" />
         </div>
       </div>
     </div>
