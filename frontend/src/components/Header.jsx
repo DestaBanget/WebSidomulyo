@@ -40,7 +40,7 @@ const menu = [
       { label: 'Panduan', href: '/layanan/panduan' },
     ],
   },
-  { label: 'Pariwisata', href: '/pariwisata' },
+
   { label: 'Kontak', href: '/kontak' },
 ];
 
@@ -53,15 +53,14 @@ function Logo({ scrolled }) {
   );
 }
 
-export default function Header() {
+export default function Header({ onShowLogin }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(null);
   const [dropdownTimeout, setDropdownTimeout] = useState(null);
   const [scrolled, setScrolled] = useState(false);
   const [activeMenu, setActiveMenu] = useState(null);
   const location = useLocation();
-  const { isAdmin, logout, login } = useAuth ? useAuth() : { isAdmin: false };
-  const [showLogin, setShowLogin] = useState(false);
+  const { isAdmin, logout } = useAuth ? useAuth() : { isAdmin: false };
 
   // Selalu anggap semua halaman sebagai heroBg
   const isHeroBg = true;
@@ -82,16 +81,6 @@ export default function Header() {
   const handleDropdownLeave = () => {
     setDropdownTimeout(setTimeout(() => setDropdownOpen(null), 180));
   };
-
-  // Animasi backdrop blur untuk mobile menu
-  useEffect(() => {
-    if (window.innerWidth < 1024 && !mobileOpen) setShowLogin(false);
-  }, [mobileOpen]);
-
-  const shouldShowLogin =
-    showLogin &&
-    !isAdmin &&
-    (window.innerWidth >= 1024 || mobileOpen);
 
   return (
     <header
@@ -159,11 +148,11 @@ export default function Header() {
         <div className="hidden lg:flex items-center ml-auto">
           {!isAdmin && (
             <button
-              onClick={() => setShowLogin(true)}
+              onClick={onShowLogin}
               className="whitespace-nowrap flex items-center gap-2 px-6 py-2 bg-primary text-white rounded-full shadow font-semibold text-base transition-all duration-200 hover:bg-blue-800 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-primary/50"
             >
               <FaLock className="text-lg" />
-              Login Admin
+              Masuk
             </button>
           )}
           {isAdmin && (
@@ -190,7 +179,6 @@ export default function Header() {
             className="absolute inset-0 bg-black/30 backdrop-blur-sm animate-fadeIn"
             onClick={() => {
               setMobileOpen(false);
-              setShowLogin(false);
             }}
           />
           <nav className="absolute top-0 right-0 w-72 max-w-full h-full bg-white text-primary shadow-2xl px-6 py-8 animate-slideInLeft flex flex-col gap-6 border-l border-gray-200" style={{ backgroundColor: '#fff' }}>
@@ -222,11 +210,11 @@ export default function Header() {
               ))}
               {!isAdmin && (
                 <button
-                  onClick={() => { setShowLogin(true); }}
+                  onClick={onShowLogin}
                    className="whitespace-nowrap flex items-center gap-2 px-6 py-2 bg-primary text-white rounded-full shadow font-semibold text-base transition-all duration-200 hover:bg-blue-800 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-primary/50"
                 >
                   <FaLock className="text-lg" />
-                  Login Admin
+                  Masuk
                 </button>
               )}
               {isAdmin && (
@@ -234,21 +222,6 @@ export default function Header() {
               )}
             </div>
           </nav>
-        </div>
-      )}
-      {/* Modal login */}
-      {shouldShowLogin && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 px-2">
-          <div className="relative w-full max-w-sm mx-auto bg-white p-6 rounded-xl shadow-xl">
-            <button
-              onClick={() => setShowLogin(false)}
-              className="absolute top-3 right-3 w-10 h-10 rounded-full flex items-center justify-center text-gray-500 hover:text-black hover:bg-gray-100 transition text-3xl"
-              aria-label="Tutup"
-            >
-              &times;
-            </button>
-            <LoginAdmin onLogin={() => { login(); setShowLogin(false); }} onClose={() => setShowLogin(false)} />
-          </div>
         </div>
       )}
     </header>

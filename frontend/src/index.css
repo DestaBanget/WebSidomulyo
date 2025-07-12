@@ -5,3 +5,34 @@
 html, body {
   font-family: 'Inter', 'Poppins', sans-serif;
 }
+
+/* Modal styles */
+body.modal-open {
+  overflow: hidden;
+}
+
+/* Ensure modal inputs are clickable */
+.modal input,
+.modal select,
+.modal textarea {
+  pointer-events: auto;
+}
+
+/* Prevent modal from moving when scrolling */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 9999;
+}
+
+/* Sembunyikan tombol mata pada input password yang ditambahkan browser/ekstensi */
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear,
+input[type="password"]::-webkit-credentials-auto-fill-button,
+input[type="password"]::-webkit-input-decoration,
+input[type="password"]::-webkit-input-clear-button {
+  display: none !important;
+}

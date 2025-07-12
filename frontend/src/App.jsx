@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Header from './components/Header';
 import Hero from './components/Hero';
 import StatistikDesa from './components/StatistikDesa';
@@ -80,19 +80,25 @@ function App() {
   const sortedPariwisata = [...initialPariwisata].sort((a, b) => new Date(b.date) - new Date(a.date));
   const latestPariwisata = sortedPariwisata.slice(0, 6);
 
+  // State untuk modal login admin
+  const [showLogin, setShowLogin] = useState(false);
+
   return (
     <BeritaProvider>
       <AuthProvider>
-        <Header />
+        <Header onShowLogin={() => setShowLogin(true)} />
         <ScrollToTop />
         <Routes>
           <Route path="/" element={
             <>
               <Hero />
-              <SelayangPandang />
+      
               {/* Statistik Ringkas di Dashboard */}
               <div className="w-full bg-gray-50 py-12">
                 <div className="max-w-7xl mx-auto px-4">
+                    <h2 className="text-2xl md:text-3xl font-extrabold text-primary mb-8 text-center tracking-tight drop-shadow-lg">
+                      Statistik Ringkas Desa
+                    </h2>
                   <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-6">
                     {/* 4 statistik utama, hardcode atau import dari StatistikDesa jika perlu */}
                     <div className="bg-white rounded-xl shadow p-5 flex flex-col items-center text-center">
@@ -122,9 +128,10 @@ function App() {
                 </div>
               </div>
               {/* End Statistik Ringkas */}
-              <BeritaDesa data={latestBerita} />
               <LayananUnggulan />
-              <Pariwisata data={latestPariwisata} />
+              <BeritaDesa data={latestBerita} />
+          
+        
             </>
           } />
           <Route path="/profil/tentang" element={<Tentang />} />
@@ -150,6 +157,9 @@ function App() {
         </Routes>
         <Footer />
         <FloatingButton />
+        {showLogin && (
+          <LoginAdmin onLogin={() => setShowLogin(false)} onClose={() => setShowLogin(false)} />
+        )}
       </AuthProvider>
     </BeritaProvider>
   );

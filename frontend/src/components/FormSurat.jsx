@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 const initialData = {
   nama: '',
@@ -18,6 +18,14 @@ export default function FormSurat({ jenisSurat, persyaratan, onClose }) {
   const [data, setData] = useState(initialData);
   const [uploads, setUploads] = useState({});
 
+  // Mencegah scroll pada body saat modal terbuka
+  useEffect(() => {
+    document.body.classList.add('modal-open');
+    return () => {
+      document.body.classList.remove('modal-open');
+    };
+  }, []);
+
   const handleChange = (e) => {
     setData({ ...data, [e.target.name]: e.target.value });
   };
@@ -33,10 +41,25 @@ export default function FormSurat({ jenisSurat, persyaratan, onClose }) {
     if (onClose) onClose();
   };
 
+  const handleBackdropClick = (e) => {
+    if (e.target === e.currentTarget) {
+      onClose();
+    }
+  };
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-      <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow-xl max-w-lg w-full p-8 relative overflow-y-auto max-h-[90vh]">
-        <button type="button" onClick={onClose} className="absolute top-4 right-4 text-gray-400 hover:text-red-500 text-2xl">×</button>
+    <div 
+      className="modal fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+      onClick={handleBackdropClick}
+    >
+      <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow-xl max-w-lg w-full p-8 relative overflow-y-auto max-h-[90vh] mx-4">
+        <button 
+          type="button" 
+          onClick={onClose} 
+          className="absolute top-4 right-4 text-gray-400 hover:text-red-500 text-2xl z-10"
+        >
+          ×
+        </button>
         <h2 className="text-2xl font-bold text-primary mb-2 text-center">Permohonan {jenisSurat}</h2>
         <p className="text-gray-500 text-center mb-6 text-sm">Lengkapi form di bawah ini untuk mengajukan permohonan surat. Pastikan data benar dan lengkap.</p>
         <div className="mb-4">
@@ -90,4 +113,4 @@ export default function FormSurat({ jenisSurat, persyaratan, onClose }) {
       </form>
     </div>
   );
-} 
+}
