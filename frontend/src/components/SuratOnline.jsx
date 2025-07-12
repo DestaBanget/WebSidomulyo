@@ -1,5 +1,6 @@
 import React from 'react';
 import { FaArrowRight, FaCheckCircle, FaFileAlt, FaDownload, FaClipboardList, FaSearch, FaRegSmile } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
 import FormSurat from './FormSurat';
 
 const mekanisme = [
@@ -215,8 +216,8 @@ const persyaratanMap = {
 };
 
 export default function SuratOnline() {
-  const [modalSurat, setModalSurat] = React.useState(null);
   const [search, setSearch] = React.useState('');
+  const navigate = useNavigate();
   const filteredSurat = daftarSurat.filter(s =>
     s.title.toLowerCase().includes(search.toLowerCase()) ||
     s.desc.toLowerCase().includes(search.toLowerCase())
@@ -279,20 +280,13 @@ export default function SuratOnline() {
               <div className="text-gray-600 text-sm mb-4">{s.desc}</div>
               <button
                 className="mt-auto w-full border border-primary text-primary font-semibold py-2 rounded-lg flex items-center justify-center gap-2 transition group-hover:bg-primary group-hover:text-white group-hover:shadow-lg"
-                onClick={() => setModalSurat(s.title)}
+                onClick={() => navigate(`/layanan/form-surat?jenis=${encodeURIComponent(s.title)}`)}
               >
                 Ajukan Sekarang <span className="text-base">→</span>
               </button>
             </div>
           ))}
         </div>
-        {modalSurat && (
-          <FormSurat
-            jenisSurat={modalSurat}
-            persyaratan={persyaratanMap[modalSurat] || []}
-            onClose={() => setModalSurat(null)}
-          />
-        )}
       </section>
     </div>
   );

@@ -33,6 +33,7 @@ import BeritaDesaDefault, { defaultBerita } from './components/BeritaDesa';
 import { BeritaProvider } from './contexts/BeritaContext';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import LoginAdmin from './components/LoginAdmin';
+import FormSuratPage from './pages/FormSuratPage';
 
 function PlaceholderLogo({ label }) {
   return (
@@ -141,6 +142,7 @@ function App() {
           <Route path="/layanan/surat-online" element={<SuratOnline />} />
           <Route path="/layanan/pengaduan" element={<PengaduanMasyarakat />} />
           <Route path="/layanan/panduan" element={<PanduanLayanan />} />
+          <Route path="/layanan/form-surat" element={<FormSuratPage />} />
           <Route path="/kontak" element={<Kontak />} />
           <Route path="/pariwisata" element={<PariwisataPage />} />
           <Route path="/lembaga/bpd" element={<BPD />} />
