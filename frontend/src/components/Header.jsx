@@ -47,19 +47,21 @@ const menu = [
 function Logo({ scrolled }) {
   return (
     <Link to="/" className="flex items-center gap-3 select-none">
-<<<<<<< Updated upstream
-      <img src="/Logo Only.svg" alt="Logo Desa" className="w-8 h-8 lg:w-10 lg:h-10 object-contain drop-shadow-lg" />
-      <span className="hidden lg:inline text-2xl font-extrabold tracking-widest uppercase" style={{ fontFamily: 'inherit' }}>Desa Sidomulyo</span>
-=======
-      <img src="https://upload.wikimedia.org/wikipedia/id/7/7a/Manchester_United_FC_crest.svg" alt="Logo MU" className="w-10 h-10 object-contain drop-shadow-lg" />
-      <span className="hidden md:block text-2xl font-extrabold tracking-widest uppercase" style={{ fontFamily: 'inherit' }}>Desa Sidomulyo</span>
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
+      <img
+        src="/Logo Only.svg"
+        alt="Logo Desa"
+        className="w-8 h-8 lg:w-10 lg:h-10 object-contain drop-shadow-lg"
+      />
+      <span
+        className="hidden lg:inline text-2xl font-extrabold tracking-widest uppercase"
+        style={{ fontFamily: 'inherit' }}
+      >
+        Desa Sidomulyo
+      </span>
     </Link>
   );
 }
+
 
 export default function Header({ onShowLogin }) {
   const [mobileOpen, setMobileOpen] = useState(false);
