@@ -53,6 +53,9 @@ function Logo({ scrolled }) {
 =======
       <img src="https://upload.wikimedia.org/wikipedia/id/7/7a/Manchester_United_FC_crest.svg" alt="Logo MU" className="w-10 h-10 object-contain drop-shadow-lg" />
       <span className="hidden md:block text-2xl font-extrabold tracking-widest uppercase" style={{ fontFamily: 'inherit' }}>Desa Sidomulyo</span>
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
     </Link>
   );
