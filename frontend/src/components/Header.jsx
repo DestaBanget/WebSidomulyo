@@ -155,13 +155,14 @@ export default function Header({ onShowLogin }) {
             </Link>
           )}
           {isLoggedIn && (
-            <Link
-              to="/profil"
-              className="font-semibold px-4 py-2 rounded-xl flex items-center h-16 hover:bg-primary/10 hover:text-primary focus:outline-none transition-all duration-200"
-              style={{ marginLeft: 8 }}
-            >
-              Profil
-            </Link>
+            <div className="flex items-center h-16">
+              <button
+                className="font-semibold px-4 py-2 rounded-xl flex items-center h-16 hover:bg-primary/10 hover:text-primary focus:outline-none transition-all duration-200"
+                onClick={() => window.location.href = '/profil'}
+              >
+                Profil
+              </button>
+            </div>
           )}
         </nav>
         {/* Tombol Login di kanan */}

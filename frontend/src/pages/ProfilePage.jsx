@@ -59,7 +59,6 @@ export default function ProfilePage() {
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           color: '#fff',
-          borderRadius: '0 0 2.5rem 2.5rem',
         }}
       >
         <div className="relative z-10 flex flex-col items-center justify-center w-full h-full py-10 md:py-20">
