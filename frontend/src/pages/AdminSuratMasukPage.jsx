@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const dummySuratMasuk = [
   { id: 1, nama: 'Budi Santoso', nik: '3501010101010001', jenis: 'Surat Keterangan Domisili', tanggal: '2024-06-10', status: 'Menunggu', noHp: '081234567890', alamat: 'Jl. Melati No. 1', lampiran: null },
@@ -10,6 +11,9 @@ export default function AdminSuratMasukPage() {
   const [surat, setSurat] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
+  const [showStatusModal, setShowStatusModal] = useState(false);
+  const [selectedSurat, setSelectedSurat] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     setLoading(true);
@@ -86,8 +90,18 @@ export default function AdminSuratMasukPage() {
                     <span className={`px-2 py-1 rounded text-xs font-bold ${s.status === 'Selesai' ? 'bg-green-100 text-green-700' : s.status === 'Diproses' ? 'bg-yellow-100 text-yellow-700' : 'bg-gray-200 text-gray-700'}`}>{s.status}</span>
                   </td>
                   <td className="px-4 py-2 text-center flex flex-col gap-2 md:flex-row md:gap-2">
-                    <button className="px-3 py-1 rounded bg-primary text-white text-xs font-bold hover:bg-blue-800 transition">Lihat Detail</button>
-                    <button className="px-3 py-1 rounded bg-green-600 text-white text-xs font-bold hover:bg-green-700 transition">Ubah Status</button>
+                    <button
+                      className="px-3 py-1 rounded bg-primary text-white text-xs font-bold hover:bg-blue-800 transition"
+                      onClick={() => navigate(`/admin/surat-masuk/${s.id}`)}
+                    >
+                      Lihat Detail
+                    </button>
+                    <button
+                      className="px-3 py-1 rounded bg-green-600 text-white text-xs font-bold hover:bg-green-700 transition"
+                      onClick={() => { setSelectedSurat(s); setShowStatusModal(true); }}
+                    >
+                      Ubah Status
+                    </button>
                   </td>
                 </tr>
               ))}
@@ -95,6 +109,41 @@ export default function AdminSuratMasukPage() {
           </table>
         </div>
       </div>
+      {/* Modal Ubah Status */}
+      {showStatusModal && selectedSurat && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black/40 z-50">
+          <div className="bg-white rounded-xl shadow-lg p-8 max-w-sm w-full text-center">
+            <h3 className="text-xl font-bold mb-4">Ubah Status Surat</h3>
+            <div className="mb-4">Pilih status baru untuk surat dari <span className="font-semibold">{selectedSurat.nama}</span>:</div>
+            <select
+              className="w-full border border-gray-300 rounded px-3 py-2 mb-6"
+              value={selectedSurat.status}
+              onChange={e => setSelectedSurat({ ...selectedSurat, status: e.target.value })}
+            >
+              <option value="Menunggu">Menunggu</option>
+              <option value="Diproses">Diproses</option>
+              <option value="Selesai">Selesai</option>
+            </select>
+            <div className="flex gap-4 justify-center">
+              <button
+                onClick={() => {
+                  setSurat(surat.map(s => s.id === selectedSurat.id ? { ...s, status: selectedSurat.status } : s));
+                  setShowStatusModal(false);
+                }}
+                className="px-6 py-2 bg-green-600 text-white rounded font-semibold hover:bg-green-700 transition"
+              >
+                Simpan
+              </button>
+              <button
+                onClick={() => setShowStatusModal(false)}
+                className="px-6 py-2 bg-gray-400 text-white rounded font-semibold hover:bg-gray-500 transition"
+              >
+                Batal
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 } 

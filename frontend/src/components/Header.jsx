@@ -40,7 +40,6 @@ const menu = [
       { label: 'Panduan', href: '/layanan/panduan' },
     ],
   },
-
   { label: 'Kontak', href: '/kontak' },
 ];
 
@@ -154,9 +153,8 @@ export default function Header({ onShowLogin }) {
               )}
             </div>
           ))}
-          {/* Menu khusus admin */}
           {isAdmin && (
-            <div className="flex items-center h-16">
+            <div className="relative group flex items-center h-16">
               <button
                 className="font-semibold px-4 py-2 rounded-xl flex items-center h-16 hover:bg-primary/10 hover:text-primary focus:outline-none transition-all duration-200"
                 onClick={() => window.location.href = '/admin/surat-masuk'}
@@ -166,7 +164,7 @@ export default function Header({ onShowLogin }) {
             </div>
           )}
           {isLoggedIn && (
-            <div className="flex items-center h-16">
+            <div className="relative group flex items-center h-16">
               <button
                 className="font-semibold px-4 py-2 rounded-xl flex items-center h-16 hover:bg-primary/10 hover:text-primary focus:outline-none transition-all duration-200"
                 onClick={() => window.location.href = '/profil'}
@@ -237,12 +235,11 @@ export default function Header({ onShowLogin }) {
                   )}
                 </div>
               ))}
-              {/* Menu admin di mobile */}
               {isAdmin && (
                 <a
                   href="/admin/surat-masuk"
-                  className="block font-semibold px-4 py-2 rounded-xl hover:bg-primary/10 hover:text-primary transition-all duration-200"
-                  style={{ marginTop: 8 }}
+                  className="font-semibold block py-2 text-primary hover:underline"
+                  style={{ marginTop: 0 }}
                 >
                   Surat Masuk
                 </a>
@@ -250,8 +247,8 @@ export default function Header({ onShowLogin }) {
               {isLoggedIn && (
                 <a
                   href="/profil"
-                  className="block font-semibold px-4 py-2 rounded-xl hover:bg-primary/10 hover:text-primary transition-all duration-200"
-                  style={{ marginTop: 8 }}
+                  className="font-semibold block py-2 text-primary hover:underline"
+                  style={{ marginTop: 0 }}
                 >
                   Profil
                 </a>

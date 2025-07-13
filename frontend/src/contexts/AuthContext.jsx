@@ -47,6 +47,11 @@ export function AuthProvider({ children }) {
     localStorage.setItem('user', JSON.stringify(userObj));
   };
 
+  const updateUser = (updatedUserData) => {
+    setUser(updatedUserData);
+    localStorage.setItem('user', JSON.stringify(updatedUserData));
+  };
+
   return (
     <AuthContext.Provider value={{ 
       isAdmin, 
@@ -54,7 +59,8 @@ export function AuthProvider({ children }) {
       user, 
       login, 
       logout, 
-      register 
+      register,
+      updateUser
     }}>
       {children}
     </AuthContext.Provider>
