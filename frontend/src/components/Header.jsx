@@ -146,13 +146,14 @@ export default function Header({ onShowLogin }) {
           ))}
           {/* Menu khusus admin */}
           {isAdmin && (
-            <Link
-              to="/admin/surat-masuk"
-              className="font-semibold px-4 py-2 rounded-xl flex items-center h-16 hover:bg-primary/10 hover:text-primary focus:outline-none transition-all duration-200"
-              style={{ marginLeft: 8 }}
-            >
-              Surat Masuk
-            </Link>
+            <div className="flex items-center h-16">
+              <button
+                className="font-semibold px-4 py-2 rounded-xl flex items-center h-16 hover:bg-primary/10 hover:text-primary focus:outline-none transition-all duration-200"
+                onClick={() => window.location.href = '/admin/surat-masuk'}
+              >
+                Surat Masuk
+              </button>
+            </div>
           )}
           {isLoggedIn && (
             <div className="flex items-center h-16">
@@ -228,22 +229,22 @@ export default function Header({ onShowLogin }) {
               ))}
               {/* Menu admin di mobile */}
               {isAdmin && (
-                <Link
-                  to="/admin/surat-masuk"
+                <a
+                  href="/admin/surat-masuk"
                   className="block font-semibold px-4 py-2 rounded-xl hover:bg-primary/10 hover:text-primary transition-all duration-200"
                   style={{ marginTop: 8 }}
                 >
                   Surat Masuk
-                </Link>
+                </a>
               )}
               {isLoggedIn && (
-                <Link
-                  to="/profil"
+                <a
+                  href="/profil"
                   className="block font-semibold px-4 py-2 rounded-xl hover:bg-primary/10 hover:text-primary transition-all duration-200"
                   style={{ marginTop: 8 }}
                 >
                   Profil
-                </Link>
+                </a>
               )}
               {!isLoggedIn && (
                 <button
