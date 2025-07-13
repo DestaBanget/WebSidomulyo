@@ -15,6 +15,7 @@ export default function ProfilePage() {
   const [success, setSuccess] = useState('');
   const [error, setError] = useState('');
   const [showDelete, setShowDelete] = useState(false);
+  const [showLogout, setShowLogout] = useState(false);
 
   if (!user) {
     return <div className="p-8 text-center">Anda belum login.</div>;
@@ -120,7 +121,7 @@ export default function ProfilePage() {
                 Hapus Akun
               </button>
               <button
-                onClick={handleLogout}
+                onClick={() => setShowLogout(true)}
                 className="px-6 py-2 bg-gray-400 text-white rounded font-semibold hover:bg-gray-500 transition"
               >
                 Logout
@@ -237,6 +238,31 @@ export default function ProfilePage() {
                 </button>
                 <button
                   onClick={() => setShowDelete(false)}
+                  className="px-6 py-2 bg-gray-400 text-white rounded font-semibold hover:bg-gray-500 transition"
+                >
+                  Batal
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+        {/* Modal konfirmasi logout */}
+        {showLogout && (
+          <div className="fixed inset-0 flex items-center justify-center bg-black/40 z-50">
+            <div className="bg-white rounded-xl shadow-lg p-8 max-w-sm w-full text-center">
+              <h3 className="text-xl font-bold mb-4">Konfirmasi Logout</h3>
+              <p className="mb-6">
+                Apakah Anda yakin ingin logout?
+              </p>
+              <div className="flex gap-4 justify-center">
+                <button
+                  onClick={handleLogout}
+                  className="px-6 py-2 bg-red-500 text-white rounded font-semibold hover:bg-red-600 transition"
+                >
+                  Ya, Logout
+                </button>
+                <button
+                  onClick={() => setShowLogout(false)}
                   className="px-6 py-2 bg-gray-400 text-white rounded font-semibold hover:bg-gray-500 transition"
                 >
                   Batal
