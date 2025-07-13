@@ -144,6 +144,16 @@ export default function Header({ onShowLogin }) {
               )}
             </div>
           ))}
+          {/* Menu khusus admin */}
+          {isAdmin && (
+            <Link
+              to="/admin/surat-masuk"
+              className="font-semibold px-4 py-2 rounded-xl flex items-center h-16 hover:bg-primary/10 hover:text-primary focus:outline-none transition-all duration-200"
+              style={{ marginLeft: 8 }}
+            >
+              Surat Masuk
+            </Link>
+          )}
           {isLoggedIn && (
             <Link
               to="/profil"
@@ -215,10 +225,21 @@ export default function Header({ onShowLogin }) {
                   )}
                 </div>
               ))}
+              {/* Menu admin di mobile */}
+              {isAdmin && (
+                <Link
+                  to="/admin/surat-masuk"
+                  className="block font-semibold px-4 py-2 rounded-xl hover:bg-primary/10 hover:text-primary transition-all duration-200"
+                  style={{ marginTop: 8 }}
+                >
+                  Surat Masuk
+                </Link>
+              )}
               {isLoggedIn && (
                 <Link
                   to="/profil"
-                  className="font-semibold block py-2 text-primary hover:underline"
+                  className="block font-semibold px-4 py-2 rounded-xl hover:bg-primary/10 hover:text-primary transition-all duration-200"
+                  style={{ marginTop: 8 }}
                 >
                   Profil
                 </Link>

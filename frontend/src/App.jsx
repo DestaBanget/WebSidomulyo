@@ -35,6 +35,7 @@ import { AuthProvider, useAuth } from './contexts/AuthContext';
 import FormSuratPage from './pages/FormSuratPage';
 import AddBeritaPage from './pages/AddBeritaPage';
 import ProfilePage from './pages/ProfilePage';
+import AdminSuratMasukPage from './pages/AdminSuratMasukPage';
 
 function PlaceholderLogo({ label }) {
   return (
@@ -156,6 +157,7 @@ function App() {
           <Route path="/pariwisata/:id" element={<PariwisataDetail />} />
           <Route path="/admin/tambah-berita" element={<AddBeritaPage />} />
           <Route path="/profil" element={<ProfilePage />} />
+          <Route path="/admin/surat-masuk" element={<AdminSuratMasukPage />} />
         </Routes>
         <Footer />
         <FloatingButton />
