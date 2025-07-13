@@ -36,6 +36,7 @@ import FormSuratPage from './pages/FormSuratPage';
 import AddBeritaPage from './pages/AddBeritaPage';
 import ProfilePage from './pages/ProfilePage';
 import AdminSuratMasukPage from './pages/AdminSuratMasukPage';
+import SuratDetail from './components/SuratDetail';
 
 function PlaceholderLogo({ label }) {
   return (
@@ -158,6 +159,7 @@ function App() {
           <Route path="/admin/tambah-berita" element={<AddBeritaPage />} />
           <Route path="/profil" element={<ProfilePage />} />
           <Route path="/admin/surat-masuk" element={<AdminSuratMasukPage />} />
+          <Route path="/admin/surat-masuk/:id" element={<SuratDetail />} />
         </Routes>
         <Footer />
         <FloatingButton />
