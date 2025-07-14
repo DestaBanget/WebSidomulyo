@@ -103,7 +103,7 @@ export default function Header({ onShowLogin }) {
       <div className="max-w-7xl mx-auto flex flex-row items-center justify-between gap-4 px-4 py-3 md:py-4">
         <Logo scrolled={scrolled} />
         {/* Desktop Menu */}
-        <nav className="hidden lg:flex flex-1 justify-center gap-2 xl:gap-4">
+        <nav className="hidden lg:flex flex-1 justify-center gap-1 xl:gap-2 2xl:gap-4">
           {menu.map((item, idx) => (
             <div
               key={item.label}
@@ -114,7 +114,7 @@ export default function Header({ onShowLogin }) {
               {item.dropdown ? (
                 <>
                   <button
-                    className={`font-semibold px-4 py-2 rounded-xl flex items-center gap-1 hover:bg-primary/10 focus:outline-none transition-all duration-200 ${activeMenu === idx ? 'text-primary bg-primary/10' : ''}`}
+                    className={`font-semibold px-3 py-2 rounded-xl flex items-center gap-1 hover:bg-primary/10 focus:outline-none transition-all duration-200 whitespace-nowrap ${activeMenu === idx ? 'text-primary bg-primary/10' : ''}`}
                     onFocus={() => setActiveMenu(idx)}
                     onBlur={() => setActiveMenu(null)}
                   >
@@ -140,7 +140,7 @@ export default function Header({ onShowLogin }) {
                 </>
               ) : (
                 <button
-                  className={`font-semibold px-4 py-2 rounded-xl flex items-center h-16 hover:bg-primary/10 hover:text-primary focus:outline-none transition-all duration-200 ${activeMenu === idx ? 'text-primary bg-primary/10' : ''}`}
+                  className={`font-semibold px-3 py-2 rounded-xl flex items-center h-16 hover:bg-primary/10 hover:text-primary focus:outline-none transition-all duration-200 whitespace-nowrap ${activeMenu === idx ? 'text-primary bg-primary/10' : ''}`}
                   onMouseEnter={() => handleDropdownEnter(idx)}
                   onMouseLeave={handleDropdownLeave}
                   onFocus={() => setActiveMenu(idx)}
@@ -156,7 +156,7 @@ export default function Header({ onShowLogin }) {
           {isAdmin && (
             <div className="relative group flex items-center h-16">
               <button
-                className="font-semibold px-4 py-2 rounded-xl flex items-center h-16 hover:bg-primary/10 hover:text-primary focus:outline-none transition-all duration-200"
+                className="font-semibold px-3 py-2 rounded-xl flex items-center h-16 hover:bg-primary/10 hover:text-primary focus:outline-none transition-all duration-200 whitespace-nowrap"
                 onClick={() => window.location.href = '/admin/surat-masuk'}
               >
                 Surat Masuk
@@ -166,7 +166,7 @@ export default function Header({ onShowLogin }) {
           {isLoggedIn && (
             <div className="relative group flex items-center h-16">
               <button
-                className="font-semibold px-4 py-2 rounded-xl flex items-center h-16 hover:bg-primary/10 hover:text-primary focus:outline-none transition-all duration-200"
+                className="font-semibold px-3 py-2 rounded-xl flex items-center h-16 hover:bg-primary/10 hover:text-primary focus:outline-none transition-all duration-200 whitespace-nowrap"
                 onClick={() => window.location.href = '/profil'}
               >
                 Profil
