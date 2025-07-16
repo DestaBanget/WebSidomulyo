@@ -1,4 +1,5 @@
 import React, { useState, useRef } from 'react';
+import { useAuth } from '../contexts/AuthContext';
 
 const initialData = {
   nama: '',
@@ -18,6 +19,7 @@ export default function FormSurat({ jenisSurat, persyaratan }) {
   const [data, setData] = useState(initialData);
   const [uploads, setUploads] = useState({});
   const fileRefs = useRef({});
+  const { user, updateUser } = useAuth();
 
   const handleChange = (e) => {
     setData({ ...data, [e.target.name]: e.target.value });
@@ -33,7 +35,23 @@ export default function FormSurat({ jenisSurat, persyaratan }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // TODO: submit logic
+    // Simpan ke riwayat surat user jika login
+    if (user && updateUser) {
+      const newSurat = {
+        jenisSurat,
+        tanggal: new Date().toISOString().slice(0, 10),
+        status: 'Menunggu',
+        nama: data.nama,
+        nik: data.nik,
+      };
+      const updatedUser = {
+        ...user,
+        suratHistory: Array.isArray(user.suratHistory)
+          ? [...user.suratHistory, newSurat]
+          : [newSurat],
+      };
+      updateUser(updatedUser);
+    }
     alert('Form terkirim!');
   };
 

@@ -160,6 +160,7 @@ function App() {
           <Route path="/profil" element={<ProfilePage />} />
           <Route path="/admin/surat-masuk" element={<AdminSuratMasukPage />} />
           <Route path="/admin/surat-masuk/:id" element={<SuratDetail />} />
+          <Route path="/surat/:id" element={<SuratDetail />} />
         </Routes>
         <Footer />
         <FloatingButton />
