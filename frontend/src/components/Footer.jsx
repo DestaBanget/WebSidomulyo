@@ -8,7 +8,19 @@ const menuFooter = [
   },
   {
     title: 'Lembaga',
-    links: ['BPD', 'LPM', 'PKK', 'Karang Taruna'],
+    links: [
+      'BPD',
+      'LPM',
+      'PKK',
+      'KARANG TARUNA',
+      'LINMAS',
+      'BHABINKAMTIBMAS',
+      'BABINSA',
+      'KOPERASI WANITA',
+      'DHARMA WANITA',
+      'POSKESDES',
+      'KELOMPOK TANI',
+    ],
   },
   {
     title: 'Publikasi',

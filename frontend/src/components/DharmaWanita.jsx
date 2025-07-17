@@ -17,17 +17,17 @@ const unitDefault = [
   { nama: 'Unit Kegiatan 3', icon: '/dummy-unit.png' },
 ];
 
-export default function PKK() {
+export default function DharmaWanita() {
   const heroImg = '/surat.jpg';
   const { isAdmin } = useAuth();
 
   // State utama
-  const [tentang, setTentang] = useState('PKK adalah organisasi pemberdayaan kesejahteraan keluarga untuk meningkatkan kesejahteraan masyarakat desa.');
-  const [visi, setVisi] = useState('Menjadi pelopor pemberdayaan keluarga dan masyarakat desa.');
+  const [tentang, setTentang] = useState('Dharma Wanita adalah organisasi istri aparatur sipil negara yang berperan aktif dalam kegiatan sosial, pendidikan, dan pemberdayaan keluarga di desa.');
+  const [visi, setVisi] = useState('Menjadi organisasi perempuan yang berdaya, peduli, dan berkontribusi untuk kemajuan desa.');
   const [misi, setMisi] = useState([
-    'Meningkatkan peran serta keluarga dalam pembangunan desa.',
-    'Mendorong kemandirian dan kesejahteraan keluarga.',
-    'Mengembangkan program-program PKK yang inovatif.'
+    'Meningkatkan peran perempuan dalam pembangunan desa.',
+    'Mendorong kegiatan sosial dan pendidikan keluarga.',
+    'Membangun solidaritas dan kepedulian antar anggota.'
   ]);
   const [pengurus, setPengurus] = useState(pengurusDefault);
   const [unit, setUnit] = useState(unitDefault);
@@ -105,8 +105,8 @@ export default function PKK() {
       <div className="relative w-full min-h-[400px] md:min-h-[500px] flex flex-col items-center text-center px-4 pt-32 md:pt-40 pb-12 md:pb-20 overflow-hidden" style={{background: `url(${heroImg}) center/cover no-repeat`, borderRadius: '0 0 2.5rem 2.5rem'}}>
         <div className="absolute inset-0 bg-gradient-to-r from-blue-700/80 to-blue-400/80 z-0" />
         <div className="relative z-10 w-full flex flex-col items-center">
-          <h1 className="text-4xl md:text-5xl font-extrabold mb-2 drop-shadow-lg text-white">PKK</h1>
-          <p className="max-w-2xl mx-auto text-lg md:text-xl font-medium drop-shadow mb-2 text-white">PKK adalah organisasi pemberdayaan kesejahteraan keluarga untuk meningkatkan kesejahteraan masyarakat desa.</p>
+          <h1 className="text-4xl md:text-5xl font-extrabold mb-2 drop-shadow-lg text-white">Dharma Wanita</h1>
+          <p className="max-w-2xl mx-auto text-lg md:text-xl font-medium drop-shadow mb-2 text-white">Dharma Wanita adalah organisasi istri ASN yang aktif dalam kegiatan sosial dan pendidikan di desa.</p>
         </div>
       </div>
       <section className="max-w-4xl mx-auto px-4 py-10 relative">
@@ -121,7 +121,7 @@ export default function PKK() {
         {editMode ? (
           <div className="space-y-8 pt-8">
             <div>
-              <div className="font-bold text-primary mb-2">TENTANG PKK</div>
+              <div className="font-bold text-primary mb-2">TENTANG DHARMA WANITA</div>
               <textarea
                 value={tentangEdit}
                 onChange={e => setTentangEdit(e.target.value)}
@@ -215,35 +215,35 @@ export default function PKK() {
           </div>
         ) : (
           <>
-            <div className="font-bold text-primary mb-2">TENTANG PKK</div>
+        <div className="font-bold text-primary mb-2">TENTANG DHARMA WANITA</div>
             <div className="text-gray-700 mb-6">{tentang}</div>
-            <div className="font-bold text-primary mb-2">VISI</div>
+        <div className="font-bold text-primary mb-2">VISI</div>
             <div className="text-gray-700 mb-6">{visi}</div>
-            <div className="font-bold text-primary mb-2">MISI</div>
-            <ol className="list-decimal ml-6 text-gray-700 mb-6">
+        <div className="font-bold text-primary mb-2">MISI</div>
+        <ol className="list-decimal ml-6 text-gray-700 mb-6">
               {misi.map((item, idx) => (
                 <li key={idx}>{item}</li>
               ))}
-            </ol>
-            <div className="font-bold text-primary mb-2">PENGURUS</div>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
-              {pengurus.map((p, i) => (
-                <div key={i} className="flex flex-col items-center">
-                  <img src={p.img} alt={p.nama} className="w-24 h-24 rounded-lg object-cover bg-gray-200 mb-2" />
-                  <div className="font-bold text-gray-800 text-sm text-center">{p.nama}</div>
-                  <div className="text-xs text-gray-500 text-center">{p.jabatan}</div>
-                </div>
-              ))}
+        </ol>
+        <div className="font-bold text-primary mb-2">PENGURUS</div>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
+          {pengurus.map((p, i) => (
+            <div key={i} className="flex flex-col items-center">
+              <img src={p.img} alt={p.nama} className="w-24 h-24 rounded-lg object-cover bg-gray-200 mb-2" />
+              <div className="font-bold text-gray-800 text-sm text-center">{p.nama}</div>
+              <div className="text-xs text-gray-500 text-center">{p.jabatan}</div>
             </div>
-            <div className="font-bold text-primary mb-2">UNIT KEGIATAN</div>
-            <div className="flex gap-6 flex-wrap">
-              {unit.map((u, i) => (
-                <div key={i} className="flex flex-col items-center">
-                  <img src={u.icon} alt={u.nama} className="w-12 h-12 object-contain mb-1" />
-                  <div className="text-sm text-gray-700">{u.nama}</div>
-                </div>
-              ))}
+          ))}
+        </div>
+        <div className="font-bold text-primary mb-2">UNIT KEGIATAN</div>
+        <div className="flex gap-6 flex-wrap">
+          {unit.map((u, i) => (
+            <div key={i} className="flex flex-col items-center">
+              <img src={u.icon} alt={u.nama} className="w-12 h-12 object-contain mb-1" />
+              <div className="text-sm text-gray-700">{u.nama}</div>
             </div>
+          ))}
+        </div>
           </>
         )}
       </section>

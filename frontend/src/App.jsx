@@ -37,6 +37,13 @@ import AddBeritaPage from './pages/AddBeritaPage';
 import ProfilePage from './pages/ProfilePage';
 import AdminSuratMasukPage from './pages/AdminSuratMasukPage';
 import SuratDetail from './components/SuratDetail';
+import LINMAS from './components/LINMAS';
+import Bhabinkamtibmas from './components/Bhabinkamtibmas';
+import Babinsa from './components/Babinsa';
+import KoperasiWanita from './components/KoperasiWanita';
+import DharmaWanita from './components/DharmaWanita';
+import Poskesdes from './components/Poskesdes';
+import KelompokTani from './components/KelompokTani';
 
 function PlaceholderLogo({ label }) {
   return (
@@ -149,6 +156,13 @@ function App() {
           <Route path="/lembaga/lpm" element={<LPM />} />
           <Route path="/lembaga/pkk" element={<PKK />} />
           <Route path="/lembaga/karang-taruna" element={<KarangTaruna />} />
+          <Route path="/lembaga/linmas" element={<LINMAS />} />
+          <Route path="/lembaga/bhabinkamtibmas" element={<Bhabinkamtibmas />} />
+          <Route path="/lembaga/babinsa" element={<Babinsa />} />
+          <Route path="/lembaga/koperasi-wanita" element={<KoperasiWanita />} />
+          <Route path="/lembaga/dharma-wanita" element={<DharmaWanita />} />
+          <Route path="/lembaga/poskesdes" element={<Poskesdes />} />
+          <Route path="/lembaga/kelompok-tani" element={<KelompokTani />} />
           <Route path="/publikasi/berita" element={<BeritaPage />} />
           <Route path="/publikasi/pengumuman" element={<PengumumanPage />} />
           <Route path="/publikasi/agenda" element={<AgendaPage />} />

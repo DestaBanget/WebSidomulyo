@@ -22,7 +22,7 @@ export default function LPM() {
   const { isAdmin } = useAuth();
 
   // State utama
-  const [tentang, setTentang] = useState('LPM bertugas membantu pemerintah desa dalam merencanakan, melaksanakan, dan mengawasi pembangunan desa.');
+  const [tentang, setTentang] = useState('LPM adalah Lembaga Pemberdayaan Masyarakat yang berperan dalam perencanaan dan pelaksanaan pembangunan desa.');
   const [visi, setVisi] = useState('Menjadi mitra strategis pemerintah desa dalam pembangunan yang partisipatif dan berkelanjutan.');
   const [misi, setMisi] = useState([
     'Mendorong partisipasi masyarakat dalam pembangunan desa.',
@@ -106,7 +106,7 @@ export default function LPM() {
         <div className="absolute inset-0 bg-gradient-to-r from-blue-700/80 to-blue-400/80 z-0" />
         <div className="relative z-10 w-full flex flex-col items-center">
           <h1 className="text-4xl md:text-5xl font-extrabold mb-2 drop-shadow-lg text-white">LPM</h1>
-          <p className="max-w-2xl mx-auto text-lg md:text-xl font-medium drop-shadow mb-2 text-white">Lembaga Pemberdayaan Masyarakat (LPM) adalah lembaga yang berperan dalam perencanaan dan pelaksanaan pembangunan desa.</p>
+          <p className="max-w-2xl mx-auto text-lg md:text-xl font-medium drop-shadow mb-2 text-white">LPM adalah Lembaga Pemberdayaan Masyarakat yang berperan dalam perencanaan dan pelaksanaan pembangunan desa.</p>
         </div>
       </div>
       <section className="max-w-4xl mx-auto px-4 py-10 relative">

@@ -22,7 +22,7 @@ export default function BPD() {
   const { isAdmin } = useAuth();
 
   // State utama
-  const [tentang, setTentang] = useState('BPD adalah lembaga desa yang berfungsi menampung dan menyalurkan aspirasi masyarakat desa serta melakukan pengawasan terhadap penyelenggaraan pemerintahan desa.');
+  const [tentang, setTentang] = useState('BPD adalah Badan Permusyawaratan Desa yang merupakan lembaga perwujudan demokrasi dalam penyelenggaraan pemerintahan desa.');
   const [visi, setVisi] = useState('Menjadi lembaga yang profesional, transparan, dan akuntabel dalam mewujudkan tata kelola pemerintahan desa yang baik.');
   const [misi, setMisi] = useState([
     'Meningkatkan partisipasi masyarakat dalam pembangunan desa.',
@@ -106,7 +106,7 @@ export default function BPD() {
         <div className="absolute inset-0 bg-gradient-to-r from-blue-700/80 to-blue-400/80 z-0" />
         <div className="relative z-10 w-full flex flex-col items-center">
           <h1 className="text-4xl md:text-5xl font-extrabold mb-2 drop-shadow-lg text-white">BPD</h1>
-          <p className="max-w-2xl mx-auto text-lg md:text-xl font-medium drop-shadow mb-2 text-white">Badan Permusyawaratan Desa (BPD) adalah lembaga perwujudan demokrasi dalam penyelenggaraan pemerintahan desa.</p>
+          <p className="max-w-2xl mx-auto text-lg md:text-xl font-medium drop-shadow mb-2 text-white">BPD adalah Badan Permusyawaratan Desa yang merupakan lembaga perwujudan demokrasi dalam penyelenggaraan pemerintahan desa.</p>
         </div>
       </div>
       <section className="max-w-4xl mx-auto px-4 py-10 relative">
