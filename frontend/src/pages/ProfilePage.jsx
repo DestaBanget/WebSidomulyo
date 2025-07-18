@@ -236,7 +236,7 @@ export default function ProfilePage() {
           </p>
           <div className="mt-6 flex items-center space-x-2 text-white/80">
             <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-            <span className="text-sm">Status: Aktif</span>
+            <span className="text-sm">Status: {user.role === 'admin' ? 'Administrator' : 'Pengguna'}</span>
           </div>
         </div>
       </div>
@@ -250,7 +250,7 @@ export default function ProfilePage() {
             <p className="text-gray-600">@{user.username || 'username'}</p>
             <div className="mt-4 inline-flex items-center px-4 py-2 bg-blue-50 text-blue-700 rounded-full text-sm font-medium">
               <span className="w-2 h-2 bg-blue-500 rounded-full mr-2"></span>
-              {user.type === 'admin' ? 'Administrator' : 'Pengguna'}
+              {user.role === 'admin' ? 'Administrator' : 'Pengguna'}
             </div>
           </div>
 

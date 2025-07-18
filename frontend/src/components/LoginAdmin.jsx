@@ -70,7 +70,7 @@ function LoginAdmin({ onLogin, onClose }) {
               type="text"
               value={username}
               onChange={e => setUsername(e.target.value)}
-              className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+              className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-gray-900"
               placeholder="Masukkan username"
               autoComplete="username"
               required
@@ -85,7 +85,7 @@ function LoginAdmin({ onLogin, onClose }) {
                 type={showPassword ? 'text' : 'password'}
                 value={password}
                 onChange={e => setPassword(e.target.value)}
-                className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary pr-12"
+                className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary pr-12 text-gray-900"
                 placeholder="Masukkan password"
                 autoComplete="current-password"
                 required
