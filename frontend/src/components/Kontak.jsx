@@ -1,12 +1,58 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FaInstagram, FaFacebook, FaWhatsapp, FaEnvelope } from 'react-icons/fa';
 import { apiCall } from '../config/api';
+
+function TooltipIcon({ href, icon, tooltip, disabled }) {
+  const [show, setShow] = useState(false);
+  return (
+    <span className="relative inline-block">
+      <a
+        href={disabled ? '#' : href}
+        className={`text-primary text-2xl hover:text-primary/80 ${disabled ? 'opacity-50 pointer-events-none' : ''}`}
+        target="_blank"
+        rel="noopener noreferrer"
+        onMouseEnter={() => setShow(true)}
+        onMouseLeave={() => setShow(false)}
+        onFocus={() => setShow(true)}
+        onBlur={() => setShow(false)}
+        tabIndex={0}
+        aria-disabled={disabled}
+      >
+        {icon}
+      </a>
+      {show && tooltip && (
+        <span className="absolute left-1/2 -translate-x-1/2 -top-9 bg-gray-900 text-white text-xs rounded px-3 py-1 shadow-lg z-20 whitespace-nowrap">
+          {tooltip}
+        </span>
+      )}
+    </span>
+  );
+}
 
 export default function Kontak() {
   const [data, setData] = useState({ nama: '', email: '', noHp: '', pesan: '' });
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState('');
   const [error, setError] = useState('');
+  const [kontak, setKontak] = useState(null);
+  const [kontakLoading, setKontakLoading] = useState(true);
+  const [kontakError, setKontakError] = useState('');
+
+  useEffect(() => {
+    const fetchKontak = async () => {
+      setKontakLoading(true);
+      setKontakError('');
+      try {
+        const res = await apiCall('/pesan-kontak/kontak-desa');
+        setKontak(res.kontak);
+      } catch (err) {
+        setKontakError('Gagal memuat info kontak');
+      } finally {
+        setKontakLoading(false);
+      }
+    };
+    fetchKontak();
+  }, []);
 
   const handleChange = (e) => setData({ ...data, [e.target.name]: e.target.value });
 
@@ -59,10 +105,30 @@ export default function Kontak() {
           <div className="font-bold text-primary mb-2">ALAMAT DAN KONTAK</div>
           <div className="mb-2 text-gray-700">Desa Sidomulyo, Kec. Jabung, Kabupaten Malang, Jawa Timur</div>
           <div className="flex gap-3 mt-4">
-            <a href="#" className="text-primary text-2xl hover:text-primary/80"><FaInstagram /></a>
-            <a href="#" className="text-primary text-2xl hover:text-primary/80"><FaFacebook /></a>
-            <a href="#" className="text-primary text-2xl hover:text-primary/80"><FaWhatsapp /></a>
-            <a href="#" className="text-primary text-2xl hover:text-primary/80"><FaEnvelope /></a>
+            <TooltipIcon
+              href={kontak?.instagram ? `https://instagram.com/${kontak.instagram.replace('@','')}` : '#'}
+              icon={<FaInstagram />}
+              tooltip={kontak?.instagram ? `Instagram: ${kontak.instagram}` : undefined}
+              disabled={!kontak?.instagram}
+            />
+            <TooltipIcon
+              href={kontak?.facebook ? `https://facebook.com/${encodeURIComponent(kontak.facebook)}` : '#'}
+              icon={<FaFacebook />}
+              tooltip={kontak?.facebook ? `Facebook: ${kontak.facebook}` : undefined}
+              disabled={!kontak?.facebook}
+            />
+            <TooltipIcon
+              href={kontak?.whatsapp ? `https://wa.me/${kontak.whatsapp.replace(/[^0-9]/g, '')}` : '#'}
+              icon={<FaWhatsapp />}
+              tooltip={kontak?.whatsapp ? `WhatsApp: ${kontak.whatsapp}` : undefined}
+              disabled={!kontak?.whatsapp}
+            />
+            <TooltipIcon
+              href={kontak?.email ? `mailto:${kontak.email}` : '#'}
+              icon={<FaEnvelope />}
+              tooltip={kontak?.email ? `Email: ${kontak.email}` : undefined}
+              disabled={!kontak?.email}
+            />
           </div>
         </div>
         <div>

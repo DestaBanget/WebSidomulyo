@@ -117,82 +117,86 @@ export default function AdminSuratMasukPage() {
       </div>
       
       {/* Search & Table */}
-      <div className="max-w-6xl mx-auto bg-white rounded-2xl shadow-lg p-6 md:p-10 mt-[-60px] relative z-20">
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
-          <div className="text-xl font-bold text-primary">Daftar Surat Masuk</div>
-          <input
-            type="text"
-            value={search}
-            onChange={e => setSearch(e.target.value)}
-            placeholder="Cari nama/NIK/jenis surat..."
-            className="w-full md:w-72 px-4 py-2 rounded-full border-2 border-primary/30 focus:border-primary outline-none text-base bg-white placeholder-gray-400 shadow"
-          />
-        </div>
-
-        {error && (
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
-            {error}
+      <div className="w-full flex justify-center pb-16">
+        <div className="w-full max-w-5xl bg-white rounded-2xl shadow-lg p-8 mx-auto">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-3">
+            <h3 className="text-xl md:text-2xl font-bold text-primary">Daftar Surat Masuk</h3>
+            <div className="w-full md:w-auto flex justify-end">
+              <input
+                type="text"
+                className="border border-gray-300 rounded-lg px-4 py-2 w-full md:w-80 focus:outline-none focus:ring-2 focus:ring-blue-200"
+                placeholder="Cari nama/NIK/jenis surat..."
+                value={search}
+                onChange={e => setSearch(e.target.value)}
+              />
+            </div>
           </div>
-        )}
 
-        <div className="overflow-x-auto rounded-xl">
-          <table className="min-w-full border text-sm md:text-base">
-            <thead className="bg-primary text-white">
-              <tr>
-                <th className="px-4 py-2">ID</th>
-                <th className="px-4 py-2">Nama Pemohon</th>
-                <th className="px-4 py-2">NIK</th>
-                <th className="px-4 py-2">Jenis Surat</th>
-                <th className="px-4 py-2">Tanggal</th>
-                <th className="px-4 py-2">No. HP</th>
-                <th className="px-4 py-2">Alamat</th>
-                <th className="px-4 py-2">Status</th>
-                <th className="px-4 py-2">Aksi</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filtered.length === 0 ? (
-                <tr><td colSpan={9} className="text-center py-8 text-gray-400">
-                  {search ? 'Tidak ada surat ditemukan untuk pencarian ini.' : 'Belum ada surat masuk.'}
-                </td></tr>
-              ) : filtered.map((s) => (
-                <tr key={s.id} className="border-b hover:bg-gray-50">
-                  <td className="px-4 py-2 text-center">{s.id}</td>
-                  <td className="px-4 py-2 font-semibold">{s.nama}</td>
-                  <td className="px-4 py-2 text-center">{s.nik}</td>
-                  <td className="px-4 py-2">{s.jenis_surat}</td>
-                  <td className="px-4 py-2 text-center">
-                    {new Date(s.tanggal_pengajuan).toLocaleDateString('id-ID')}
-                  </td>
-                  <td className="px-4 py-2 text-center">{s.no_hp}</td>
-                  <td className="px-4 py-2">{s.alamat_ktp}</td>
-                  <td className="px-4 py-2 text-center">
-                    <span className={`px-2 py-1 rounded text-xs font-bold ${
-                      s.status === 'Selesai' ? 'bg-green-100 text-green-700' : 
-                      s.status === 'Diproses' ? 'bg-yellow-100 text-yellow-700' : 
-                      'bg-gray-200 text-gray-700'
-                    }`}>
-                      {s.status}
-                    </span>
-                  </td>
-                  <td className="px-4 py-2 text-center flex flex-col gap-2 md:flex-row md:gap-2">
-                    <button
-                      className="px-3 py-1 rounded bg-primary text-white text-xs font-bold hover:bg-blue-800 transition"
-                      onClick={() => navigate(`/admin/surat-masuk/${s.id}`)}
-                    >
-                      Lihat Detail
-                    </button>
-                    <button
-                      className="px-3 py-1 rounded bg-green-600 text-white text-xs font-bold hover:bg-green-700 transition"
-                      onClick={() => { setSelectedSurat(s); setShowStatusModal(true); }}
-                    >
-                      Ubah Status
-                    </button>
-                  </td>
+          {error && (
+            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
+              {error}
+            </div>
+          )}
+
+          <div className="overflow-x-auto">
+            <table className="min-w-full border-separate border-spacing-y-2 text-sm md:text-base">
+              <thead className="bg-primary text-white">
+                <tr>
+                  <th className="px-4 py-2">ID</th>
+                  <th className="px-4 py-2">Nama Pemohon</th>
+                  <th className="px-4 py-2">NIK</th>
+                  <th className="px-4 py-2">Jenis Surat</th>
+                  <th className="px-4 py-2">Tanggal</th>
+                  <th className="px-4 py-2">No. HP</th>
+                  <th className="px-4 py-2">Alamat</th>
+                  <th className="px-4 py-2">Status</th>
+                  <th className="px-4 py-2">Aksi</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {filtered.length === 0 ? (
+                  <tr><td colSpan={9} className="text-center py-8 text-gray-400">
+                    {search ? 'Tidak ada surat ditemukan untuk pencarian ini.' : 'Belum ada surat masuk.'}
+                  </td></tr>
+                ) : filtered.map((s) => (
+                  <tr key={s.id} className="border-b hover:bg-gray-50">
+                    <td className="px-4 py-2 text-center">{s.id}</td>
+                    <td className="px-4 py-2 font-semibold">{s.nama}</td>
+                    <td className="px-4 py-2 text-center">{s.nik}</td>
+                    <td className="px-4 py-2">{s.jenis_surat}</td>
+                    <td className="px-4 py-2 text-center">
+                      {new Date(s.tanggal_pengajuan).toLocaleDateString('id-ID')}
+                    </td>
+                    <td className="px-4 py-2 text-center">{s.no_hp}</td>
+                    <td className="px-4 py-2">{s.alamat_ktp}</td>
+                    <td className="px-4 py-2 text-center">
+                      <span className={`px-2 py-1 rounded text-xs font-bold ${
+                        s.status === 'Selesai' ? 'bg-green-100 text-green-700' : 
+                        s.status === 'Diproses' ? 'bg-yellow-100 text-yellow-700' : 
+                        'bg-gray-200 text-gray-700'
+                      }`}>
+                        {s.status}
+                      </span>
+                    </td>
+                    <td className="px-4 py-2 text-center flex flex-col gap-2 md:flex-row md:gap-2">
+                      <button
+                        className="px-3 py-1 rounded bg-primary text-white text-xs font-bold hover:bg-blue-800 transition"
+                        onClick={() => navigate(`/admin/surat-masuk/${s.id}`)}
+                      >
+                        Lihat Detail
+                      </button>
+                      <button
+                        className="px-3 py-1 rounded bg-green-600 text-white text-xs font-bold hover:bg-green-700 transition"
+                        onClick={() => { setSelectedSurat(s); setShowStatusModal(true); }}
+                      >
+                        Ubah Status
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
       

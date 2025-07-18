@@ -1,11 +1,29 @@
 import React, { useState, useEffect } from "react";
 import { apiCall } from '../config/api';
 
+function PesanDetailModal({ pesan, onClose }) {
+  if (!pesan) return null;
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+      <div className="bg-white rounded-xl shadow-xl p-8 max-w-md w-full relative">
+        <button onClick={onClose} className="absolute top-3 right-3 text-gray-500 hover:text-red-600 text-2xl font-bold">×</button>
+        <h2 className="text-xl font-bold mb-4 text-primary">Detail Pesan Masuk</h2>
+        <div className="mb-2"><span className="font-semibold">Nama:</span> {pesan.nama}</div>
+        <div className="mb-2"><span className="font-semibold">Email:</span> {pesan.email}</div>
+        <div className="mb-2"><span className="font-semibold">No. HP:</span> {pesan.no_hp}</div>
+        <div className="mb-2"><span className="font-semibold">Tanggal:</span> {pesan.created_at ? new Date(pesan.created_at).toLocaleString('id-ID') : '-'}</div>
+        <div className="mb-2"><span className="font-semibold">Pesan:</span><br /><span className="whitespace-pre-line text-gray-700">{pesan.pesan}</span></div>
+      </div>
+    </div>
+  );
+}
+
 export default function AdminPesanMasuk() {
   const [pesanList, setPesanList] = useState([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [detailPesan, setDetailPesan] = useState(null);
 
   useEffect(() => {
     const fetchPesan = async () => {
@@ -50,17 +68,19 @@ export default function AdminPesanMasuk() {
       {/* End Hero Section */}
 
       {/* Box Daftar Pesan Masuk */}
-      <div className="w-full flex justify-center -mt-24 md:-mt-32 pb-16">
-        <div className="w-full max-w-5xl bg-white rounded-2xl shadow-lg p-8">
-          <h2 className="text-2xl font-bold mb-2 text-[#2b4c7e]">Daftar Pesan Masuk</h2>
-          <div className="flex justify-end mb-4">
-            <input
-              type="text"
-              className="border border-gray-300 rounded-lg px-4 py-2 w-80 focus:outline-none focus:ring-2 focus:ring-blue-200"
-              placeholder="Cari nama/email/no hp/pesan..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
+      <div className="w-full flex justify-center pb-16">
+        <div className="w-full max-w-5xl bg-white rounded-2xl shadow-lg p-8 mx-auto">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-3">
+            <h3 className="text-xl md:text-2xl font-bold text-primary">Daftar Pesan Masuk</h3>
+            <div className="w-full md:w-auto flex justify-end">
+              <input
+                type="text"
+                className="border border-gray-300 rounded-lg px-4 py-2 w-full md:w-80 focus:outline-none focus:ring-2 focus:ring-blue-200"
+                placeholder="Cari nama/email/no hp/pesan..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
+            </div>
           </div>
           {error && <div className="text-red-600 mb-4 text-center font-semibold">{error}</div>}
           <div className="overflow-x-auto">
@@ -96,7 +116,12 @@ export default function AdminPesanMasuk() {
                       <td className="py-2 px-4">{pesan.created_at ? new Date(pesan.created_at).toLocaleString('id-ID') : '-'}</td>
                       <td className="py-2 px-4 flex gap-2">
                         {/* Aksi bisa ditambah di sini jika perlu */}
-                        <button className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm font-semibold">Lihat Detail</button>
+                        <button
+                          className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm font-semibold"
+                          onClick={() => setDetailPesan(pesan)}
+                        >
+                          Lihat Detail
+                        </button>
                       </td>
                     </tr>
                   ))
@@ -106,6 +131,7 @@ export default function AdminPesanMasuk() {
           </div>
         </div>
       </div>
+      <PesanDetailModal pesan={detailPesan} onClose={() => setDetailPesan(null)} />
     </div>
   );
 } 
