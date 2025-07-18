@@ -74,7 +74,9 @@ router.post('/', uploadImage, [
   body('no_hp').notEmpty().withMessage('Nomor HP wajib diisi'),
   body('alamat').notEmpty().withMessage('Alamat wajib diisi'),
   body('judul').notEmpty().withMessage('Judul pengaduan wajib diisi'),
-  body('uraian').notEmpty().withMessage('Uraian pengaduan wajib diisi')
+  body('uraian').notEmpty().withMessage('Uraian pengaduan wajib diisi'),
+  body('nik').isLength({ min: 16, max: 16 }).withMessage('NIK harus 16 digit').notEmpty().withMessage('NIK wajib diisi'),
+  body('tanggal_pengaduan').isISO8601().withMessage('Tanggal pengaduan wajib diisi dan harus format tanggal')
 ], async (req, res) => {
   try {
     const errors = validationResult(req);
@@ -82,12 +84,12 @@ router.post('/', uploadImage, [
       return res.status(400).json({ errors: errors.array() });
     }
 
-    const { nama, email, no_hp, alamat, judul, uraian } = req.body;
+    const { nama, email, no_hp, alamat, judul, uraian, nik, tanggal_pengaduan } = req.body;
     const lampiran = req.file ? `/uploads/${req.file.filename}` : null;
 
     const [result] = await promisePool.query(
-      'INSERT INTO pengaduan (nama, email, no_hp, alamat, judul, uraian, lampiran) VALUES (?, ?, ?, ?, ?, ?, ?)',
-      [nama, email, no_hp, alamat, judul, uraian, lampiran]
+      'INSERT INTO pengaduan (nama, email, no_hp, alamat, judul, uraian, lampiran, nik, tanggal_pengaduan) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
+      [nama, email, no_hp, alamat, judul, uraian, lampiran, nik, tanggal_pengaduan]
     );
 
     const [newPengaduan] = await promisePool.query(
@@ -188,6 +190,39 @@ router.get('/stats/overview', adminAuth, async (req, res) => {
     });
   } catch (error) {
     console.error('Get pengaduan stats error:', error);
+    res.status(500).json({ error: 'Terjadi kesalahan server' });
+  }
+});
+
+// Get pengaduan milik user login
+router.get('/my-pengaduan', auth, async (req, res) => {
+  try {
+    const userEmail = req.user.email;
+    // Jika ingin filter lebih spesifik, bisa gunakan NIK jika tersedia di req.user
+    const { page = 1, limit = 10 } = req.query;
+    const offset = (page - 1) * limit;
+
+    const [pengaduan] = await promisePool.query(
+      'SELECT * FROM pengaduan WHERE email = ? ORDER BY tanggal_pengaduan DESC LIMIT ? OFFSET ?',
+      [userEmail, parseInt(limit), offset]
+    );
+
+    const [countResult] = await promisePool.query(
+      'SELECT COUNT(*) as total FROM pengaduan WHERE email = ?',
+      [userEmail]
+    );
+
+    res.json({
+      pengaduan,
+      pagination: {
+        current_page: parseInt(page),
+        total_pages: Math.ceil(countResult[0].total / limit),
+        total_items: countResult[0].total,
+        items_per_page: parseInt(limit)
+      }
+    });
+  } catch (error) {
+    console.error('Get my pengaduan error:', error);
     res.status(500).json({ error: 'Terjadi kesalahan server' });
   }
 });

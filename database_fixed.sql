@@ -83,6 +83,8 @@ CREATE TABLE IF NOT EXISTS pengaduan (
   judul VARCHAR(255) NOT NULL,
   uraian TEXT NOT NULL,
   lampiran VARCHAR(255),
+  nik VARCHAR(16) NOT NULL, -- kolom baru
+  tanggal_pengaduan DATE NOT NULL, -- kolom baru
   status ENUM('Baru', 'Diproses', 'Selesai') DEFAULT 'Baru',
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

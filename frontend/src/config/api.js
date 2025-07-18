@@ -1,5 +1,6 @@
 // Konfigurasi API
 export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
+console.log('API_BASE_URL:', API_BASE_URL);
 
 // Helper functions untuk API calls
 export const apiCall = async (endpoint, options = {}) => {
@@ -15,6 +16,8 @@ export const apiCall = async (endpoint, options = {}) => {
 
   const response = await fetch(`${API_BASE_URL}${endpoint}`, config);
   const data = await response.json();
+
+  console.log('API_BASE_URL:', API_BASE_URL);
 
   if (!response.ok) {
     throw new Error(data.error || 'Request gagal');
@@ -35,6 +38,8 @@ export const uploadFile = async (endpoint, formData) => {
   });
 
   const data = await response.json();
+
+  console.log('API_BASE_URL:', API_BASE_URL);
 
   if (!response.ok) {
     throw new Error(data.error || 'Upload gagal');

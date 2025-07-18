@@ -7,55 +7,70 @@ const { auth } = require('../middleware/auth');
 
 const router = express.Router();
 
-// Register
-router.post('/register', [
-  body('username').isLength({ min: 3 }).withMessage('Username minimal 3 karakter'),
-  body('password').isLength({ min: 6 }).withMessage('Password minimal 6 karakter'),
-  body('nama').notEmpty().withMessage('Nama wajib diisi'),
-  body('email').isEmail().withMessage('Email tidak valid'),
-  body('no_hp').optional().isMobilePhone('id-ID').withMessage('Nomor HP tidak valid')
-], async (req, res) => {
+// Register (dibangun ulang)
+router.post('/register', async (req, res) => {
   try {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
-
     const { username, password, nama, email, no_hp } = req.body;
 
-    // Check if username already exists
-    const [existingUsers] = await promisePool.query(
-      'SELECT id FROM users WHERE username = ?',
-      [username]
-    );
+    // Validasi manual
+    if (!username || username.length < 3) {
+      return res.status(400).json({ error: 'Username minimal 3 karakter' });
+    }
+    if (!password || password.length < 6) {
+      return res.status(400).json({ error: 'Password minimal 6 karakter' });
+    }
+    if (!nama) {
+      return res.status(400).json({ error: 'Nama lengkap wajib diisi' });
+    }
+    if (!email || !/^\S+@\S+\.\S+$/.test(email)) {
+      return res.status(400).json({ error: 'Email tidak valid' });
+    }
+    if (no_hp && !/^\d{9,15}$/.test(no_hp)) {
+      return res.status(400).json({ error: 'Nomor HP tidak valid' });
+    }
 
-    if (existingUsers.length > 0) {
+    // Cek username/email sudah ada
+    const [userByUsername] = await promisePool.query('SELECT id FROM users WHERE username = ?', [username]);
+    if (userByUsername.length > 0) {
       return res.status(400).json({ error: 'Username sudah digunakan' });
+    }
+    const [userByEmail] = await promisePool.query('SELECT id FROM users WHERE email = ?', [email]);
+    if (userByEmail.length > 0) {
+      return res.status(400).json({ error: 'Email sudah digunakan' });
     }
 
     // Hash password
-    const saltRounds = 10;
-    const password_hash = await bcrypt.hash(password, saltRounds);
+    const password_hash = await bcrypt.hash(password, 10);
 
-    // Insert new user
+    // Simpan user baru
     const [result] = await promisePool.query(
       'INSERT INTO users (username, password_hash, nama, email, no_hp, role) VALUES (?, ?, ?, ?, ?, ?)',
-      [username, password_hash, nama, email, no_hp, 'warga']
+      [username, password_hash, nama, email, no_hp || null, 'warga']
+    );
+
+    // Ambil data user yang baru
+    const userId = result.insertId;
+    const [userRows] = await promisePool.query(
+      'SELECT id, username, nama, email, no_hp, role FROM users WHERE id = ?',
+      [userId]
+    );
+    const user = userRows[0];
+
+    // Generate JWT token
+    const token = jwt.sign(
+      { userId: user.id, username: user.username, role: user.role },
+      process.env.JWT_SECRET,
+      { expiresIn: '24h' }
     );
 
     res.status(201).json({
-      message: 'Registrasi berhasil',
-      user: {
-        id: result.insertId,
-        username,
-        nama,
-        email,
-        role: 'warga'
-      }
+      message: 'Registrasi & login berhasil',
+      token,
+      user
     });
   } catch (error) {
     console.error('Register error:', error);
-    res.status(500).json({ error: 'Terjadi kesalahan server' });
+    res.status(500).json({ error: 'Terjadi kesalahan server', details: error.message });
   }
 });
 

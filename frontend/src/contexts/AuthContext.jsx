@@ -129,6 +129,14 @@ export function AuthProvider({ children }) {
       const data = await response.json();
       console.log('Registration successful:', data);
 
+      // Simpan token dan user data
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('user', JSON.stringify(data.user));
+
+      setUser(data.user);
+      setIsLoggedIn(true);
+      setIsAdmin(data.user.role === 'admin');
+
       return { success: true, user: data.user };
     } catch (error) {
       console.error('Registration error:', error);

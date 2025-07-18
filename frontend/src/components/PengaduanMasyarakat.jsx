@@ -7,6 +7,8 @@ export default function PengaduanMasyarakat() {
     email: '',
     noHp: '',
     alamat: '',
+    nik: '', // tambah NIK
+    tanggal_pengaduan: '', // ubah dari tanggal ke tanggal_pengaduan
     judul: '',
     uraian: '',
     lampiran: null,
@@ -37,6 +39,8 @@ export default function PengaduanMasyarakat() {
       formData.append('alamat', data.alamat);
       formData.append('judul', data.judul);
       formData.append('uraian', data.uraian);
+      formData.append('nik', data.nik); // kirim NIK
+      formData.append('tanggal_pengaduan', data.tanggal_pengaduan); // kirim tanggal_pengaduan
       
       if (data.lampiran) {
         formData.append('lampiran', data.lampiran);
@@ -50,6 +54,8 @@ export default function PengaduanMasyarakat() {
         email: '',
         noHp: '',
         alamat: '',
+        nik: '', // reset NIK
+        tanggal_pengaduan: '', // reset tanggal_pengaduan
         judul: '',
         uraian: '',
         lampiran: null,
@@ -157,6 +163,26 @@ export default function PengaduanMasyarakat() {
               value={data.alamat} 
               onChange={handleChange} 
               className="w-full px-4 py-2 border-2 border-gray-300 bg-gray-50 rounded-lg shadow-sm focus:outline-none focus:border-blue-600 mb-3" 
+              disabled={loading}
+            />
+            <label className="block mb-1 text-sm font-semibold">NIK <span className="text-red-500">*</span></label>
+            <input 
+              name="nik" 
+              value={data.nik} 
+              onChange={handleChange} 
+              className="w-full px-4 py-2 border-2 border-gray-300 bg-gray-50 rounded-lg shadow-sm focus:outline-none focus:border-blue-600 mb-3" 
+              required 
+              disabled={loading}
+              maxLength={20}
+            />
+            <label className="block mb-1 text-sm font-semibold">Tanggal Pengaduan <span className="text-red-500">*</span></label>
+            <input 
+              name="tanggal_pengaduan" 
+              type="date"
+              value={data.tanggal_pengaduan} 
+              onChange={handleChange} 
+              className="w-full px-4 py-2 border-2 border-gray-300 bg-gray-50 rounded-lg shadow-sm focus:outline-none focus:border-blue-600 mb-3" 
+              required 
               disabled={loading}
             />
             <div className="text-xs text-gray-500 mt-2">Data diri pelapor dijamin kerahasiaannya oleh pemerintah desa.</div>
