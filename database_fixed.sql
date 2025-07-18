@@ -128,6 +128,19 @@ CREATE TABLE IF NOT EXISTS lembaga (
 );
 
 -- =====================================================
+-- Tabel Kontak Desa
+-- =====================================================
+CREATE TABLE IF NOT EXISTS kontak_desa (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  alamat VARCHAR(255) NOT NULL,
+  email VARCHAR(100) NOT NULL,
+  whatsapp VARCHAR(30),
+  instagram VARCHAR(100),
+  facebook VARCHAR(100),
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+-- =====================================================
 -- Insert Data Default - VERSI AMAN
 -- =====================================================
 
@@ -158,6 +171,10 @@ INSERT IGNORE INTO lembaga (nama, deskripsi, ketua, no_hp) VALUES
 ('BPD', 'Badan Permusyawaratan Desa', 'Budi Santoso', '081234567890'),
 ('PKK', 'Pemberdayaan Kesejahteraan Keluarga', 'Siti Aminah', '081234567891'),
 ('Karang Taruna', 'Organisasi pemuda desa', 'Joko Widodo', '081234567892');
+
+-- Insert default kontak desa (hanya jika belum ada)
+INSERT IGNORE INTO kontak_desa (id, alamat, email, whatsapp, instagram, facebook) VALUES
+(1, 'Desa Sidomulyo, Kec. Jabung, Kabupaten Malang, Jawa Timur', 'sidomulyo@desa.id', '081234567890', '@sidomulyo.desa', 'Desa Sidomulyo');
 
 -- =====================================================
 -- Indexes untuk optimasi performa

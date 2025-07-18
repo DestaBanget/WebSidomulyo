@@ -45,6 +45,8 @@ import DharmaWanita from './components/DharmaWanita';
 import Poskesdes from './components/Poskesdes';
 import KelompokTani from './components/KelompokTani';
 import AdminPengaduanMasukPage from './pages/AdminPengaduanMasukPage';
+import AdminPesanMasukPage from './pages/AdminPesanMasukPage';
+import AdminKontakPage from './pages/AdminKontakPage';
 
 function PlaceholderLogo({ label }) {
   return (
@@ -177,6 +179,8 @@ function App() {
           <Route path="/admin/surat-masuk/:id" element={<SuratDetail />} />
           <Route path="/surat/:id" element={<SuratDetail />} />
           <Route path="/admin/pengaduan-masuk" element={<AdminPengaduanMasukPage />} />
+          <Route path="/admin/pesan-masuk" element={<AdminPesanMasukPage />} />
+          <Route path="/admin/kontak" element={<AdminKontakPage />} />
         </Routes>
         <Footer />
         <FloatingButton />

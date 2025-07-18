@@ -14,6 +14,7 @@ const statistikRoutes = require('./routes/statistik');
 const pariwisataRoutes = require('./routes/pariwisata');
 const lembagaRoutes = require('./routes/lembaga');
 const strukturRoutes = require('./routes/struktur');
+const pesanKontakRoutes = require('./routes/pesan_kontak');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -92,6 +93,7 @@ app.use('/api/statistik', statistikRoutes);
 app.use('/api/pariwisata', pariwisataRoutes);
 app.use('/api/lembaga', lembagaRoutes);
 app.use('/api/struktur', strukturRoutes);
+app.use('/api/pesan-kontak', pesanKontakRoutes);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {

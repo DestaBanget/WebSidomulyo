@@ -1,10 +1,38 @@
 import React, { useState } from 'react';
 import { FaInstagram, FaFacebook, FaWhatsapp, FaEnvelope } from 'react-icons/fa';
+import { apiCall } from '../config/api';
 
 export default function Kontak() {
   const [data, setData] = useState({ nama: '', email: '', noHp: '', pesan: '' });
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState('');
+  const [error, setError] = useState('');
+
   const handleChange = (e) => setData({ ...data, [e.target.name]: e.target.value });
-  const handleSubmit = (e) => { e.preventDefault(); alert('Pesan terkirim!'); };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setSuccess('');
+    setError('');
+    try {
+      await apiCall('/pesan-kontak', {
+        method: 'POST',
+        body: JSON.stringify({
+          nama: data.nama,
+          email: data.email,
+          no_hp: data.noHp,
+          pesan: data.pesan
+        })
+      });
+      setSuccess('Pesan berhasil dikirim!');
+      setData({ nama: '', email: '', noHp: '', pesan: '' });
+    } catch (err) {
+      setError(err.message || 'Gagal mengirim pesan');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-white pb-10">
@@ -55,6 +83,8 @@ export default function Kontak() {
       <section className="max-w-2xl mx-auto px-4 py-10">
         <div className="text-center font-bold text-primary mb-2">PESAN ATAU MASUKAN</div>
         <div className="text-center text-gray-700 mb-6">Sampaikan pesan ataupun masukan anda pada formulir di bawah ini. Alamat email dan kontak anda tidak akan dipublikasikan.</div>
+        {success && <div className="text-green-600 text-center mb-2 font-semibold">{success}</div>}
+        {error && <div className="text-red-600 text-center mb-2 font-semibold">{error}</div>}
         <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow-xl p-8 flex flex-col gap-4">
           <div>
             <label className="block mb-1 text-sm font-semibold">Nama lengkap <span className="text-red-500">*</span></label>
@@ -72,7 +102,7 @@ export default function Kontak() {
             <label className="block mb-1 text-sm font-semibold">Pesan atau masukan</label>
             <textarea name="pesan" value={data.pesan} onChange={handleChange} className="w-full px-4 py-2 border-2 border-primary bg-gray-50 rounded-lg shadow-sm focus:outline-none focus:border-blue-600 mb-2" />
           </div>
-          <button type="submit" className="w-full bg-primary text-white font-bold py-2 rounded-lg hover:bg-primary/90 transition">Kirim</button>
+          <button type="submit" className="w-full bg-primary text-white font-bold py-2 rounded-lg hover:bg-primary/90 transition" disabled={loading}>{loading ? 'Mengirim...' : 'Kirim'}</button>
         </form>
       </section>
     </div>

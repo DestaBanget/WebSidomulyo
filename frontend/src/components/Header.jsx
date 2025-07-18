@@ -55,6 +55,11 @@ const adminLayananDropdown = [
   { label: 'Pengaduan Masuk', href: '/admin/pengaduan-masuk' },
 ];
 
+const adminKontakDropdown = [
+  { label: 'Pesan Masuk', href: '/admin/pesan-masuk' },
+  { label: 'Kontak Desa', href: '/admin/kontak' },
+];
+
 function Logo({ scrolled }) {
   return (
     <Link to="/" className="flex items-center gap-3 select-none">
@@ -150,65 +155,131 @@ export default function Header({ onShowLogin }) {
                       ))}
                     </div>
                   </div>
-                ) : (
+                ) : item.label === 'Kontak' ? (
                   <div
                     key={item.label}
                     className={`relative group flex items-center h-16`}
-                    onMouseEnter={() => item.dropdown ? handleDropdownEnter(idx) : null}
-                    onMouseLeave={() => item.dropdown ? handleDropdownLeave() : null}
+                    onMouseEnter={() => handleDropdownEnter(idx)}
+                    onMouseLeave={handleDropdownLeave}
                   >
-                    {item.dropdown ? (
-                      <>
-                        <button
-                          className={`font-semibold px-3 py-2 rounded-xl flex items-center gap-1 hover:bg-primary/10 focus:outline-none transition-all duration-200 whitespace-nowrap ${activeMenu === idx ? 'text-primary bg-primary/10' : ''}`}
-                          onFocus={() => setActiveMenu(idx)}
-                          onBlur={() => setActiveMenu(null)}
+                    <button
+                      className={`font-semibold px-3 py-2 rounded-xl flex items-center gap-1 hover:bg-primary/10 focus:outline-none transition-all duration-200 whitespace-nowrap ${activeMenu === idx ? 'text-primary bg-primary/10' : ''}`}
+                      onFocus={() => setActiveMenu(idx)}
+                      onBlur={() => setActiveMenu(null)}
+                    >
+                      {item.label}
+                      <FaChevronDown className="ml-1 text-xs" />
+                    </button>
+                    <div
+                      className={`absolute top-full left-0 mt-2 w-56 bg-white/95 shadow-2xl rounded-2xl py-3 transition-all duration-300 z-30
+                        ${dropdownOpen === idx ? 'opacity-100 translate-y-0 pointer-events-auto' : 'opacity-0 -translate-y-2 pointer-events-none'}
+                      `}
+                      style={{ transformOrigin: 'top' }}
+                    >
+                      {adminKontakDropdown.map((d) => (
+                        <a
+                          key={d.label}
+                          href={d.href}
+                          className="block px-6 py-2 text-base text-gray-700 hover:bg-primary/10 hover:text-primary transition rounded-xl"
                         >
-                          {item.label}
-                          <FaChevronDown className="ml-1 text-xs" />
-                        </button>
-                        <div
-                          className={`absolute top-full left-0 mt-2 w-56 bg-white/95 shadow-2xl rounded-2xl py-3 transition-all duration-300 z-30
-                            ${dropdownOpen === idx ? 'opacity-100 translate-y-0 pointer-events-auto' : 'opacity-0 -translate-y-2 pointer-events-none'}
-                          `}
-                          style={{ transformOrigin: 'top' }}
-                        >
-                          {item.dropdown.map((d) => (
-                            <a
-                              key={d.label}
-                              href={d.href}
-                              className="block px-6 py-2 text-base text-gray-700 hover:bg-primary/10 hover:text-primary transition rounded-xl"
-                            >
-                              {d.label}
-                            </a>
-                          ))}
-                        </div>
-                      </>
-                    ) : (
-                      <button
-                        className={`font-semibold px-3 py-2 rounded-xl flex items-center h-16 hover:bg-primary/10 hover:text-primary focus:outline-none transition-all duration-200 whitespace-nowrap ${activeMenu === idx ? 'text-primary bg-primary/10' : ''}`}
-                        onMouseEnter={() => handleDropdownEnter(idx)}
-                        onMouseLeave={handleDropdownLeave}
-                        onFocus={() => setActiveMenu(idx)}
-                        onBlur={() => setActiveMenu(null)}
-                        tabIndex={0}
-                        onClick={() => window.location.href = item.href}
-                      >
-                        {item.label}
-                      </button>
-                    )}
+                          {d.label}
+                        </a>
+                      ))}
+                    </div>
                   </div>
+                ) : (
+            <div
+              key={item.label}
+              className={`relative group flex items-center h-16`}
+              onMouseEnter={() => item.dropdown ? handleDropdownEnter(idx) : null}
+              onMouseLeave={() => item.dropdown ? handleDropdownLeave() : null}
+            >
+              {item.dropdown ? (
+                <>
+                  <button
+                    className={`font-semibold px-3 py-2 rounded-xl flex items-center gap-1 hover:bg-primary/10 focus:outline-none transition-all duration-200 whitespace-nowrap ${activeMenu === idx ? 'text-primary bg-primary/10' : ''}`}
+                    onFocus={() => setActiveMenu(idx)}
+                    onBlur={() => setActiveMenu(null)}
+                  >
+                    {item.label}
+                    <FaChevronDown className="ml-1 text-xs" />
+                  </button>
+                  <div
+                    className={`absolute top-full left-0 mt-2 w-56 bg-white/95 shadow-2xl rounded-2xl py-3 transition-all duration-300 z-30
+                      ${dropdownOpen === idx ? 'opacity-100 translate-y-0 pointer-events-auto' : 'opacity-0 -translate-y-2 pointer-events-none'}
+                    `}
+                    style={{ transformOrigin: 'top' }}
+                  >
+                    {item.dropdown.map((d) => (
+                      <a
+                        key={d.label}
+                        href={d.href}
+                        className="block px-6 py-2 text-base text-gray-700 hover:bg-primary/10 hover:text-primary transition rounded-xl"
+                      >
+                        {d.label}
+                      </a>
+                    ))}
+                  </div>
+                </>
+              ) : (
+                <button
+                  className={`font-semibold px-3 py-2 rounded-xl flex items-center h-16 hover:bg-primary/10 hover:text-primary focus:outline-none transition-all duration-200 whitespace-nowrap ${activeMenu === idx ? 'text-primary bg-primary/10' : ''}`}
+                  onMouseEnter={() => handleDropdownEnter(idx)}
+                  onMouseLeave={handleDropdownLeave}
+                  onFocus={() => setActiveMenu(idx)}
+                  onBlur={() => setActiveMenu(null)}
+                  tabIndex={0}
+                  onClick={() => window.location.href = item.href}
+                >
+                  {item.label}
+                </button>
+              )}
+            </div>
                 )
               )
-            : menu.map((item, idx) => (
-                <div
-                  key={item.label}
-                  className={`relative group flex items-center h-16`}
-                  onMouseEnter={() => item.dropdown ? handleDropdownEnter(idx) : null}
-                  onMouseLeave={() => item.dropdown ? handleDropdownLeave() : null}
-                >
-                  {item.dropdown ? (
-                    <>
+            : menu.map((item, idx) => {
+                if (isAdmin && item.label === 'Kontak') {
+                  return (
+                    <div
+                      key={item.label}
+                      className={`relative group flex items-center h-16`}
+                      onMouseEnter={() => handleDropdownEnter(idx)}
+                      onMouseLeave={handleDropdownLeave}
+                    >
+                      <button
+                        className={`font-semibold px-3 py-2 rounded-xl flex items-center gap-1 hover:bg-primary/10 focus:outline-none transition-all duration-200 whitespace-nowrap ${activeMenu === idx ? 'text-primary bg-primary/10' : ''}`}
+                        onFocus={() => setActiveMenu(idx)}
+                        onBlur={() => setActiveMenu(null)}
+                      >
+                        {item.label}
+                        <FaChevronDown className="ml-1 text-xs" />
+                      </button>
+                      <div
+                        className={`absolute top-full left-0 mt-2 w-56 bg-white/95 shadow-2xl rounded-2xl py-3 transition-all duration-300 z-30
+                          ${dropdownOpen === idx ? 'opacity-100 translate-y-0 pointer-events-auto' : 'opacity-0 -translate-y-2 pointer-events-none'}
+                        `}
+                        style={{ transformOrigin: 'top' }}
+                      >
+                        {adminKontakDropdown.map((d) => (
+                          <a
+                            key={d.label}
+                            href={d.href}
+                            className="block px-6 py-2 text-base text-gray-700 hover:bg-primary/10 hover:text-primary transition rounded-xl"
+                          >
+                            {d.label}
+                          </a>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                } else if (item.dropdown) {
+                  return (
+                    <div
+                      key={item.label}
+                      className={`relative group flex items-center h-16`}
+                      onMouseEnter={() => handleDropdownEnter(idx)}
+                      onMouseLeave={handleDropdownLeave}
+                    >
                       <button
                         className={`font-semibold px-3 py-2 rounded-xl flex items-center gap-1 hover:bg-primary/10 focus:outline-none transition-all duration-200 whitespace-nowrap ${activeMenu === idx ? 'text-primary bg-primary/10' : ''}`}
                         onFocus={() => setActiveMenu(idx)}
@@ -233,9 +304,12 @@ export default function Header({ onShowLogin }) {
                           </a>
                         ))}
                       </div>
-                    </>
-                  ) : (
+                    </div>
+                  );
+                } else {
+                  return (
                     <button
+                      key={item.label}
                       className={`font-semibold px-3 py-2 rounded-xl flex items-center h-16 hover:bg-primary/10 hover:text-primary focus:outline-none transition-all duration-200 whitespace-nowrap ${activeMenu === idx ? 'text-primary bg-primary/10' : ''}`}
                       onMouseEnter={() => handleDropdownEnter(idx)}
                       onMouseLeave={handleDropdownLeave}
@@ -246,9 +320,9 @@ export default function Header({ onShowLogin }) {
                     >
                       {item.label}
                     </button>
-                  )}
-                </div>
-              ))
+                  );
+                }
+              })
           )}
           {/* Hapus tombol Surat Masuk di luar dropdown */}
           {isLoggedIn && (
@@ -319,13 +393,13 @@ export default function Header({ onShowLogin }) {
                         </div>
                       </details>
                     ) : (
-                      item.dropdown ? (
+                      item.label === 'Kontak' ? (
                         <details className="group" key={item.label}>
                           <summary className="font-semibold cursor-pointer py-2 flex items-center gap-2 hover:text-primary select-none">
                             {item.label} <FaChevronDown className="text-xs group-open:rotate-180 transition-transform text-primary" />
                           </summary>
                           <div className="pl-4 flex flex-col gap-1 mt-1">
-                            {item.dropdown.map((d) => (
+                            {adminKontakDropdown.map((d) => (
                               <a
                                 key={d.label}
                                 href={d.href}
@@ -337,7 +411,26 @@ export default function Header({ onShowLogin }) {
                           </div>
                         </details>
                       ) : (
-                        <a href={item.href} className="font-semibold block py-2 text-primary hover:underline" key={item.label}>{item.label}</a>
+                        item.dropdown ? (
+                          <details className="group" key={item.label}>
+                            <summary className="font-semibold cursor-pointer py-2 flex items-center gap-2 hover:text-primary select-none">
+                              {item.label} <FaChevronDown className="text-xs group-open:rotate-180 transition-transform text-primary" />
+                            </summary>
+                            <div className="pl-4 flex flex-col gap-1 mt-1">
+                              {item.dropdown.map((d) => (
+                                <a
+                                  key={d.label}
+                                  href={d.href}
+                                  className="block py-1 text-base text-primary hover:underline"
+                                >
+                                  {d.label}
+                                </a>
+                              ))}
+                            </div>
+                          </details>
+                        ) : (
+                          <a href={item.href} className="font-semibold block py-2 text-primary hover:underline" key={item.label}>{item.label}</a>
+                        )
                       )
                     )
                   )
@@ -375,6 +468,18 @@ export default function Header({ onShowLogin }) {
                 </a>
               )}
             </div>
+            {/* Tombol Login di mobile */}
+              {!isLoggedIn && (
+                <button
+                onClick={() => {
+                  setShowUserAuth(true);
+                  setMobileOpen(false);
+                }}
+                className="w-full bg-primary text-white py-2 rounded font-semibold mt-4 hover:bg-blue-800 transition"
+              >
+                <FaLock className="inline mr-2" /> Masuk
+                </button>
+              )}
           </nav>
         </div>
       )}
