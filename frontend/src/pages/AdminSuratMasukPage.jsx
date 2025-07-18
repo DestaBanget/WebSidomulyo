@@ -1,34 +1,104 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-
-const dummySuratMasuk = [
-  { id: 1, nama: 'Budi Santoso', nik: '3501010101010001', jenis: 'Surat Keterangan Domisili', tanggal: '2024-06-10', status: 'Menunggu', noHp: '081234567890', alamat: 'Jl. Melati No. 1', lampiran: null },
-  { id: 2, nama: 'Siti Aminah', nik: '3501010101010002', jenis: 'Surat Keterangan Usaha', tanggal: '2024-06-09', status: 'Diproses', noHp: '081234567891', alamat: 'Jl. Kenanga No. 2', lampiran: null },
-  { id: 3, nama: 'Joko Widodo', nik: '3501010101010003', jenis: 'Surat Keterangan Tidak Mampu', tanggal: '2024-06-08', status: 'Selesai', noHp: '081234567892', alamat: 'Jl. Mawar No. 3', lampiran: null },
-];
+import { useAuth } from '../contexts/AuthContext';
+import { API_BASE_URL } from '../config/api';
 
 export default function AdminSuratMasukPage() {
   const [surat, setSurat] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
   const [search, setSearch] = useState('');
   const [showStatusModal, setShowStatusModal] = useState(false);
   const [selectedSurat, setSelectedSurat] = useState(null);
+  const [updatingStatus, setUpdatingStatus] = useState(false);
   const navigate = useNavigate();
+  const { apiCall } = useAuth();
 
   useEffect(() => {
-    setLoading(true);
-    fetch('/api/surat-masuk')
-      .then(res => res.ok ? res.json() : Promise.reject())
-      .then(setSurat)
-      .catch(() => setSurat(dummySuratMasuk))
-      .finally(() => setLoading(false));
+    fetchSurat();
   }, []);
 
+  const fetchSurat = async () => {
+    try {
+      setLoading(true);
+      setError('');
+      
+      const token = localStorage.getItem('token');
+      if (!token) {
+        throw new Error('Token tidak ditemukan');
+      }
+
+      const response = await fetch(`${API_BASE_URL}/surat`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error('Gagal mengambil data surat');
+      }
+
+      const data = await response.json();
+      setSurat(data.surat || []);
+    } catch (error) {
+      console.error('Error fetching surat:', error);
+      setError(error.message);
+      setSurat([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const updateSuratStatus = async (suratId, newStatus) => {
+    try {
+      setUpdatingStatus(true);
+      
+      const token = localStorage.getItem('token');
+      if (!token) {
+        throw new Error('Token tidak ditemukan');
+      }
+
+      const response = await fetch(`${API_BASE_URL}/surat/${suratId}/status`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ status: newStatus })
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Gagal mengupdate status surat');
+      }
+
+      // Update local state
+      setSurat(surat.map(s => s.id === suratId ? { ...s, status: newStatus } : s));
+      setShowStatusModal(false);
+      setSelectedSurat(null);
+    } catch (error) {
+      setError(error.message);
+    } finally {
+      setUpdatingStatus(false);
+    }
+  };
+
   const filtered = surat.filter(s =>
-    s.nama.toLowerCase().includes(search.toLowerCase()) ||
-    s.nik.toLowerCase().includes(search.toLowerCase()) ||
-    s.jenis.toLowerCase().includes(search.toLowerCase())
+    s.nama?.toLowerCase().includes(search.toLowerCase()) ||
+    s.nik?.toLowerCase().includes(search.toLowerCase()) ||
+    s.jenis_surat?.toLowerCase().includes(search.toLowerCase())
   );
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-gray-600">Memuat data surat...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 pb-10">
@@ -45,6 +115,7 @@ export default function AdminSuratMasukPage() {
           <p className="max-w-2xl mx-auto text-lg md:text-xl font-medium drop-shadow mb-2">Daftar pengajuan surat dari warga yang masuk ke sistem. Admin dapat memantau, memproses, dan mengubah status surat di sini.</p>
         </div>
       </div>
+      
       {/* Search & Table */}
       <div className="max-w-6xl mx-auto bg-white rounded-2xl shadow-lg p-6 md:p-10 mt-[-60px] relative z-20">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
@@ -57,6 +128,13 @@ export default function AdminSuratMasukPage() {
             className="w-full md:w-72 px-4 py-2 rounded-full border-2 border-primary/30 focus:border-primary outline-none text-base bg-white placeholder-gray-400 shadow"
           />
         </div>
+
+        {error && (
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
+            {error}
+          </div>
+        )}
+
         <div className="overflow-x-auto rounded-xl">
           <table className="min-w-full border text-sm md:text-base">
             <thead className="bg-primary text-white">
@@ -73,21 +151,29 @@ export default function AdminSuratMasukPage() {
               </tr>
             </thead>
             <tbody>
-              {loading ? (
-                <tr><td colSpan={9} className="text-center py-8 text-gray-400">Memuat data...</td></tr>
-              ) : filtered.length === 0 ? (
-                <tr><td colSpan={9} className="text-center py-8 text-gray-400">Tidak ada surat ditemukan.</td></tr>
+              {filtered.length === 0 ? (
+                <tr><td colSpan={9} className="text-center py-8 text-gray-400">
+                  {search ? 'Tidak ada surat ditemukan untuk pencarian ini.' : 'Belum ada surat masuk.'}
+                </td></tr>
               ) : filtered.map((s) => (
                 <tr key={s.id} className="border-b hover:bg-gray-50">
                   <td className="px-4 py-2 text-center">{s.id}</td>
                   <td className="px-4 py-2 font-semibold">{s.nama}</td>
                   <td className="px-4 py-2 text-center">{s.nik}</td>
-                  <td className="px-4 py-2">{s.jenis}</td>
-                  <td className="px-4 py-2 text-center">{s.tanggal}</td>
-                  <td className="px-4 py-2 text-center">{s.noHp}</td>
-                  <td className="px-4 py-2">{s.alamat}</td>
+                  <td className="px-4 py-2">{s.jenis_surat}</td>
                   <td className="px-4 py-2 text-center">
-                    <span className={`px-2 py-1 rounded text-xs font-bold ${s.status === 'Selesai' ? 'bg-green-100 text-green-700' : s.status === 'Diproses' ? 'bg-yellow-100 text-yellow-700' : 'bg-gray-200 text-gray-700'}`}>{s.status}</span>
+                    {new Date(s.tanggal_pengajuan).toLocaleDateString('id-ID')}
+                  </td>
+                  <td className="px-4 py-2 text-center">{s.no_hp}</td>
+                  <td className="px-4 py-2">{s.alamat_ktp}</td>
+                  <td className="px-4 py-2 text-center">
+                    <span className={`px-2 py-1 rounded text-xs font-bold ${
+                      s.status === 'Selesai' ? 'bg-green-100 text-green-700' : 
+                      s.status === 'Diproses' ? 'bg-yellow-100 text-yellow-700' : 
+                      'bg-gray-200 text-gray-700'
+                    }`}>
+                      {s.status}
+                    </span>
                   </td>
                   <td className="px-4 py-2 text-center flex flex-col gap-2 md:flex-row md:gap-2">
                     <button
@@ -109,6 +195,7 @@ export default function AdminSuratMasukPage() {
           </table>
         </div>
       </div>
+      
       {/* Modal Ubah Status */}
       {showStatusModal && selectedSurat && (
         <div className="fixed inset-0 flex items-center justify-center bg-black/40 z-50">
@@ -119,6 +206,7 @@ export default function AdminSuratMasukPage() {
               className="w-full border border-gray-300 rounded px-3 py-2 mb-6"
               value={selectedSurat.status}
               onChange={e => setSelectedSurat({ ...selectedSurat, status: e.target.value })}
+              disabled={updatingStatus}
             >
               <option value="Menunggu">Menunggu</option>
               <option value="Diproses">Diproses</option>
@@ -126,17 +214,16 @@ export default function AdminSuratMasukPage() {
             </select>
             <div className="flex gap-4 justify-center">
               <button
-                onClick={() => {
-                  setSurat(surat.map(s => s.id === selectedSurat.id ? { ...s, status: selectedSurat.status } : s));
-                  setShowStatusModal(false);
-                }}
-                className="px-6 py-2 bg-green-600 text-white rounded font-semibold hover:bg-green-700 transition"
+                onClick={() => updateSuratStatus(selectedSurat.id, selectedSurat.status)}
+                className="px-6 py-2 bg-green-600 text-white rounded font-semibold hover:bg-green-700 transition disabled:opacity-50"
+                disabled={updatingStatus}
               >
-                Simpan
+                {updatingStatus ? 'Menyimpan...' : 'Simpan'}
               </button>
               <button
                 onClick={() => setShowStatusModal(false)}
                 className="px-6 py-2 bg-gray-400 text-white rounded font-semibold hover:bg-gray-500 transition"
+                disabled={updatingStatus}
               >
                 Batal
               </button>

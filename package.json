@@ -1,10 +1,38 @@
 {
   "devDependencies": {
     "autoprefixer": "^10.4.21",
+    "concurrently": "^8.2.2",
     "postcss": "^8.5.6",
     "tailwindcss": "^4.1.11"
   },
   "dependencies": {
+    "express": "^5.1.0",
+    "mysql2": "^3.14.2",
     "react-icons": "^5.5.0"
-  }
+  },
+  "name": "websidomulyo",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev:backend": "cd backend && npm run dev",
+    "dev:frontend": "cd frontend && npm run dev",
+    "install:all": "npm install && cd backend && npm install && cd ../frontend && npm install",
+    "start": "concurrently \"npm run start:backend\" \"npm run start:frontend\"",
+    "start:backend": "cd backend && npm start",
+    "start:frontend": "cd frontend && npm run build && npm run preview"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DestaBanget/WebSidomulyo.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/DestaBanget/WebSidomulyo/issues"
+  },
+  "homepage": "https://github.com/DestaBanget/WebSidomulyo#readme",
+  "description": ""
 }

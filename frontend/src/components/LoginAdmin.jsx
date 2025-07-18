@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
+import { useAuth } from '../contexts/AuthContext';
 
 function LoginAdmin({ onLogin, onClose }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const { login } = useAuth();
 
   // Mencegah scroll pada body saat modal terbuka
   useEffect(() => {
@@ -15,19 +18,23 @@ function LoginAdmin({ onLogin, onClose }) {
     };
   }, []);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setError('');
+    setLoading(true);
 
-    if (username === 'admin' && password === 'admin123') {
-      // Login sebagai admin
-      setError('');
-      onLogin('admin');
-    } else if (password === 'warga123') {
-      // Login sebagai warga (apapun usernamenya selain 'admin')
-      setError('');
-      onLogin('warga');
-    } else {
-      setError('Username atau password salah!');
+    try {
+      const result = await login(username, password);
+      
+      if (result.success) {
+        onLogin(result.user.role);
+      } else {
+        setError(result.error);
+      }
+    } catch (error) {
+      setError('Terjadi kesalahan pada server');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -67,6 +74,7 @@ function LoginAdmin({ onLogin, onClose }) {
               placeholder="Masukkan username"
               autoComplete="username"
               required
+              disabled={loading}
             />
           </div>
           <div>
@@ -81,12 +89,14 @@ function LoginAdmin({ onLogin, onClose }) {
                 placeholder="Masukkan password"
                 autoComplete="current-password"
                 required
+                disabled={loading}
               />
               <button
                 type="button"
                 className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-primary focus:outline-none focus:text-primary transition-colors duration-200"
                 onClick={() => setShowPassword((v) => !v)}
                 aria-label={showPassword ? 'Sembunyikan password' : 'Lihat password'}
+                disabled={loading}
               >
                 {showPassword ? <FaEyeSlash size={16} /> : <FaEye size={16} />}
               </button>
@@ -95,9 +105,10 @@ function LoginAdmin({ onLogin, onClose }) {
           {error && <div className="text-red-500 text-sm text-center">{error}</div>}
           <button
             type="submit"
-            className="w-full bg-primary text-white py-2 rounded font-semibold hover:bg-blue-700 transition shadow"
+            className="w-full bg-primary text-white py-2 rounded font-semibold hover:bg-blue-700 transition shadow disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled={loading}
           >
-            Masuk
+            {loading ? 'Memproses...' : 'Masuk'}
           </button>
         </form>
       </div>

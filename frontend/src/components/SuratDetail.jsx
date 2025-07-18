@@ -1,96 +1,60 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-
-// Data dummy surat masuk dengan data diri lengkap dan lampiran persyaratan
-const dummySuratMasuk = [
-  {
-    id: 1,
-    nama: 'Budi Santoso',
-    nik: '3501010101010001',
-    jenisKelamin: 'Laki-laki',
-    tempatLahir: 'Malang',
-    tanggalLahir: '1990-01-01',
-    pekerjaan: 'Karyawan Swasta',
-    kewarganegaraan: 'Indonesia',
-    agama: 'Islam',
-    noHp: '081234567890',
-    alamatKtp: 'Jl. Melati No. 1',
-    alamatSekarang: 'Jl. Melati No. 1',
-    jenis: 'Surat Keterangan Domisili',
-    tanggal: '2024-06-10',
-    status: 'Menunggu',
-    lampiran: {
-      'Foto copy KK dan KTP': '/dummy-kk-ktp.pdf',
-      'Identitas Asli': '/dummy-identitas.jpg',
-    },
-  },
-  {
-    id: 2,
-    nama: 'Siti Aminah',
-    nik: '3501010101010002',
-    jenisKelamin: 'Perempuan',
-    tempatLahir: 'Blitar',
-    tanggalLahir: '1985-05-12',
-    pekerjaan: 'Wiraswasta',
-    kewarganegaraan: 'Indonesia',
-    agama: 'Islam',
-    noHp: '081234567891',
-    alamatKtp: 'Jl. Kenanga No. 2',
-    alamatSekarang: 'Jl. Kenanga No. 2',
-    jenis: 'Surat Keterangan Usaha',
-    tanggal: '2024-06-09',
-    status: 'Diproses',
-    lampiran: {
-      'Foto copy KK / KTP': '/dummy-kk-ktp.pdf',
-      'Foto kegiatan usaha': '/dummy-usaha.jpg',
-    },
-  },
-  {
-    id: 3,
-    nama: 'Joko Widodo',
-    nik: '3501010101010003',
-    jenisKelamin: 'Laki-laki',
-    tempatLahir: 'Surabaya',
-    tanggalLahir: '1970-08-17',
-    pekerjaan: 'Petani',
-    kewarganegaraan: 'Indonesia',
-    agama: 'Islam',
-    noHp: '081234567892',
-    alamatKtp: 'Jl. Mawar No. 3',
-    alamatSekarang: 'Jl. Mawar No. 3',
-    jenis: 'Surat Keterangan Tidak Mampu',
-    tanggal: '2024-06-08',
-    status: 'Selesai',
-    lampiran: {
-      'Foto copy KK dan KTP': '/dummy-kk-ktp.pdf',
-      'Surat rekom RT/RW': '/dummy-rekom.pdf',
-    },
-  },
-];
-
-// Persyaratan surat (bisa diimpor dari mapping jika ingin dinamis)
-const persyaratanMap = {
-  'Surat Keterangan Domisili': [
-    'Foto copy KK dan KTP',
-    'Identitas Asli',
-  ],
-  'Surat Keterangan Usaha': [
-    'Foto copy KK / KTP',
-    'Foto kegiatan usaha',
-  ],
-  'Surat Keterangan Tidak Mampu': [
-    'Foto copy KK dan KTP',
-    'Surat rekom RT/RW',
-  ],
-};
+import { API_BASE_URL } from '../config/api';
 
 export default function SuratDetail() {
   const { id } = useParams();
-  const surat = dummySuratMasuk.find(s => String(s.id) === String(id));
-  const persyaratan = surat ? (persyaratanMap[surat.jenis] || Object.keys(surat.lampiran || {})) : [];
+  const [surat, setSurat] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
+  useEffect(() => {
+    const fetchSurat = async () => {
+      try {
+        setLoading(true);
+        setError('');
+        const token = localStorage.getItem('token');
+        const response = await fetch(`${API_BASE_URL}/surat/${id}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        if (!response.ok) {
+          throw new Error('Gagal mengambil detail surat');
+        }
+        const data = await response.json();
+        setSurat(data.surat);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchSurat();
+  }, [id]);
+
+  if (loading) {
+    return <div className="min-h-screen flex items-center justify-center text-gray-400 text-lg">Memuat detail surat...</div>;
+  }
+  if (error) {
+    return <div className="min-h-screen flex items-center justify-center text-red-500 text-lg">{error}</div>;
+  }
   if (!surat) {
     return <div className="min-h-screen flex items-center justify-center text-gray-400 text-lg">Surat tidak ditemukan.</div>;
+  }
+
+  // Lampiran: array of { nama_file, url_file, jenis_persyaratan }
+  const lampiranMap = {};
+  if (Array.isArray(surat.lampiran)) {
+    surat.lampiran.forEach(l => {
+      lampiranMap[l.jenis_persyaratan || l.nama_file] = l.url_file;
+    });
+  }
+
+  function formatTanggalIndo(dateStr) {
+    if (!dateStr) return '';
+    const date = new Date(dateStr);
+    return date.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
   }
 
   return (
@@ -110,38 +74,54 @@ export default function SuratDetail() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div><span className="font-bold">Nama Lengkap:</span> {surat.nama}</div>
             <div><span className="font-bold">NIK:</span> {surat.nik}</div>
-            <div><span className="font-bold">Jenis Kelamin:</span> {surat.jenisKelamin}</div>
-            <div><span className="font-bold">Tempat, Tanggal Lahir:</span> {surat.tempatLahir}, {surat.tanggalLahir}</div>
+            <div><span className="font-bold">Jenis Kelamin:</span> {surat.jenis_kelamin}</div>
+            <div><span className="font-bold">Tempat, Tanggal Lahir:</span> {surat.tempat_lahir}, {formatTanggalIndo(surat.tanggal_lahir)}</div>
             <div><span className="font-bold">Pekerjaan:</span> {surat.pekerjaan}</div>
             <div><span className="font-bold">Kewarganegaraan:</span> {surat.kewarganegaraan}</div>
             <div><span className="font-bold">Agama:</span> {surat.agama}</div>
-            <div><span className="font-bold">No. HP:</span> {surat.noHp}</div>
-            <div className="md:col-span-2"><span className="font-bold">Alamat KTP:</span> {surat.alamatKtp}</div>
-            <div className="md:col-span-2"><span className="font-bold">Alamat Sekarang:</span> {surat.alamatSekarang}</div>
+            <div><span className="font-bold">No. HP:</span> {surat.no_hp}</div>
+            <div className="md:col-span-2"><span className="font-bold">Alamat KTP:</span> {surat.alamat_ktp}</div>
+            <div className="md:col-span-2"><span className="font-bold">Alamat Sekarang:</span> {surat.alamat_sekarang}</div>
           </div>
         </div>
         <div className="mb-6">
           <div className="font-bold text-primary text-lg mb-2">B. INFORMASI SURAT</div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div><span className="font-bold">Jenis Surat:</span> {surat.jenis}</div>
-            <div><span className="font-bold">Tanggal Pengajuan:</span> {surat.tanggal}</div>
+            <div><span className="font-bold">Jenis Surat:</span> {surat.jenis_surat}</div>
+            <div><span className="font-bold">Tanggal Pengajuan:</span> {new Date(surat.tanggal_pengajuan).toLocaleDateString('id-ID')}</div>
             <div><span className="font-bold">Status:</span> <span className={`px-2 py-1 rounded text-xs font-bold ${surat.status === 'Selesai' ? 'bg-green-100 text-green-700' : surat.status === 'Diproses' ? 'bg-yellow-100 text-yellow-700' : 'bg-gray-200 text-gray-700'}`}>{surat.status}</span></div>
           </div>
         </div>
         <div>
           <div className="font-bold text-primary text-lg mb-2">C. LAMPIRAN PERSYARATAN</div>
           <div className="grid grid-cols-1 gap-3">
-            {persyaratan.length === 0 && <div className="text-gray-500">Tidak ada lampiran persyaratan.</div>}
-            {persyaratan.map((p) => (
-              <div key={p} className="flex items-center gap-2">
-                <span className="font-semibold">{p}:</span>
-                {surat.lampiran && surat.lampiran[p] ? (
-                  <a href={surat.lampiran[p]} className="text-blue-600 underline" target="_blank" rel="noopener noreferrer">Lihat File</a>
-                ) : (
-                  <span className="text-gray-400">Tidak ada file</span>
-                )}
-              </div>
-            ))}
+            {Object.keys(lampiranMap).length === 0 && <div className="text-gray-500">Tidak ada lampiran persyaratan.</div>}
+            {Object.entries(lampiranMap).map(([p, url]) => {
+              const isImage = url && /\.(jpg|jpeg|png|gif)$/i.test(url);
+              const isPDF = url && /\.pdf$/i.test(url);
+              return (
+                <div key={p} className="flex flex-col md:flex-row md:items-center gap-2 border-b pb-2">
+                  <span className="font-semibold min-w-[180px]">{p}:</span>
+                  {url ? (
+                    <>
+                      {isImage ? (
+                        <a href={url} target="_blank" rel="noopener noreferrer" className="group inline-block">
+                          <img src={url} alt={p} className="h-24 w-auto rounded shadow border border-gray-200 group-hover:scale-105 transition" style={{maxWidth: 180}} />
+                          <div className="text-blue-600 underline text-xs mt-1 text-center">Lihat Gambar</div>
+                        </a>
+                      ) : (
+                        <a href={url} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline font-medium">
+                          {isPDF ? 'Lihat PDF' : 'Lihat File'}
+                        </a>
+                      )}
+                      <div className="text-xs text-gray-400 break-all">{url.split('/').pop()}</div>
+                    </>
+                  ) : (
+                    <span className="text-gray-400">Tidak ada file</span>
+                  )}
+                </div>
+              );
+            })}
           </div>
         </div>
       </section>

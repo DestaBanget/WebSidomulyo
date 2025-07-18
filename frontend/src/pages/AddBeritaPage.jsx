@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaCalendarAlt, FaHeading, FaAlignLeft, FaNewspaper } from 'react-icons/fa';
+import { useBerita } from '../contexts/BeritaContext';
 import logokamera from '/logokamera.svg';
 
 const kategoriList = [
@@ -9,23 +10,40 @@ const kategoriList = [
 
 export default function AddBeritaPage() {
   const navigate = useNavigate();
+  const { addBerita } = useBerita();
   const [addData, setAddData] = useState({
     title: '',
     kategori: kategoriList[0],
     tanggal: '',
-    img: '',
+    img: null,
     desc: '',
     content: '',
   });
-  const [success, setSuccess] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
   const [imgPreview, setImgPreview] = useState(null);
   const heroImg = '/surat.jpg';
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Simulasi submit, bisa dihubungkan ke backend nanti
-    setSuccess(true);
-    setTimeout(() => navigate('/publikasi/berita'), 1200);
+    if (loading) return; // Cegah submit ganda
+    setLoading(true);
+    setError('');
+
+    try {
+      const result = await addBerita(addData);
+      
+      if (result.success) {
+        // Redirect ke halaman berita setelah berhasil
+        setTimeout(() => navigate('/publikasi/berita'), 1200);
+      } else {
+        setError(result.error);
+      }
+    } catch (error) {
+      setError('Terjadi kesalahan pada server');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleImageChange = (e) => {
@@ -56,26 +74,53 @@ export default function AddBeritaPage() {
           <p className="text-gray-500 text-base md:text-lg max-w-xl mx-auto">Silakan lengkapi data berikut untuk menambah berita desa. Pastikan semua data yang diinput sudah benar sebelum disimpan.</p>
         </div>
         <div className="max-w-2xl w-full bg-white/95 rounded-3xl shadow-2xl border border-blue-100 p-8 md:p-12 mx-auto mt-8 md:mt-12 animate-slide-up transition-all duration-500">
+          {error && (
+            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
+              {error}
+            </div>
+          )}
+          
           <form onSubmit={handleSubmit} className="space-y-8">
             <div>
-              <label className="block font-semibold text-gray-700 mb-1">Judul Berita</label>
+              <label className="block font-semibold text-gray-700 mb-1">Judul Berita <span className="text-red-500">*</span></label>
               <div className="relative">
                 <span className="absolute left-3 top-1/2 -translate-y-1/2 text-primary/70"><FaHeading size={18} /></span>
-                <input type="text" className="w-full border-2 border-primary/20 rounded-lg px-10 py-2 focus:outline-none focus:border-primary focus:shadow-lg transition placeholder:text-gray-400 text-lg" placeholder="Masukkan judul berita..." value={addData.title} onChange={e => setAddData({ ...addData, title: e.target.value })} required />
+                <input 
+                  type="text" 
+                  className="w-full border-2 border-primary/20 rounded-lg px-10 py-2 focus:outline-none focus:border-primary focus:shadow-lg transition placeholder:text-gray-400 text-lg" 
+                  placeholder="Masukkan judul berita..." 
+                  value={addData.title} 
+                  onChange={e => setAddData({ ...addData, title: e.target.value })} 
+                  required 
+                  disabled={loading}
+                />
               </div>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="block font-semibold text-gray-700 mb-1">Kategori</label>
-                <select className="w-full border-2 border-primary/20 rounded-lg px-4 py-2 focus:outline-none focus:border-primary focus:shadow-lg transition text-lg" value={addData.kategori} onChange={e => setAddData({ ...addData, kategori: e.target.value })}>
+                <label className="block font-semibold text-gray-700 mb-1">Kategori <span className="text-red-500">*</span></label>
+                <select 
+                  className="w-full border-2 border-primary/20 rounded-lg px-4 py-2 focus:outline-none focus:border-primary focus:shadow-lg transition text-lg" 
+                  value={addData.kategori} 
+                  onChange={e => setAddData({ ...addData, kategori: e.target.value })}
+                  disabled={loading}
+                >
                   {kategoriList.map(k => <option key={k} value={k}>{k}</option>)}
                 </select>
               </div>
               <div>
-                <label className="block font-semibold text-gray-700 mb-1">Tanggal</label>
+                <label className="block font-semibold text-gray-700 mb-1">Tanggal <span className="text-red-500">*</span></label>
                 <div className="relative">
                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-primary/70"><FaCalendarAlt size={16} /></span>
-                  <input type="date" className="w-full border-2 border-primary/20 rounded-lg px-10 py-2 focus:outline-none focus:border-primary focus:shadow-lg transition text-lg" placeholder="dd/mm/yyyy" value={addData.tanggal} onChange={e => setAddData({ ...addData, tanggal: e.target.value })} required />
+                  <input 
+                    type="date" 
+                    className="w-full border-2 border-primary/20 rounded-lg px-10 py-2 focus:outline-none focus:border-primary focus:shadow-lg transition text-lg" 
+                    placeholder="dd/mm/yyyy" 
+                    value={addData.tanggal} 
+                    onChange={e => setAddData({ ...addData, tanggal: e.target.value })} 
+                    required 
+                    disabled={loading}
+                  />
                 </div>
               </div>
             </div>
@@ -89,7 +134,14 @@ export default function AddBeritaPage() {
                   {imgPreview && (
                     <img src={imgPreview} alt="Preview" className="absolute inset-0 w-full h-full object-cover rounded-2xl" />
                   )}
-                  <input id="img-upload" type="file" accept="image/*" className="hidden" onChange={handleImageChange} />
+                  <input 
+                    id="img-upload" 
+                    type="file" 
+                    accept="image/*" 
+                    className="hidden" 
+                    onChange={handleImageChange} 
+                    disabled={loading}
+                  />
                 </label>
                 {!imgPreview && <span className="text-gray-400 text-sm">Pilih gambar berita (jpg/png)</span>}
               </div>
@@ -98,20 +150,38 @@ export default function AddBeritaPage() {
               <label className="block font-semibold text-gray-700 mb-1">Deskripsi Singkat</label>
               <div className="relative">
                 <span className="absolute left-3 top-3 text-primary/70"><FaAlignLeft size={16} /></span>
-                <textarea className="w-full border-2 border-primary/20 rounded-lg px-10 py-2 focus:outline-none focus:border-primary focus:shadow-lg transition placeholder:text-gray-400 text-lg" rows={2} placeholder="Deskripsi singkat berita..." value={addData.desc || ''} onChange={e => setAddData({ ...addData, desc: e.target.value })} required />
+                <textarea 
+                  className="w-full border-2 border-primary/20 rounded-lg px-10 py-2 focus:outline-none focus:border-primary focus:shadow-lg transition placeholder:text-gray-400 text-lg" 
+                  rows={2} 
+                  placeholder="Deskripsi singkat berita..." 
+                  value={addData.desc || ''} 
+                  onChange={e => setAddData({ ...addData, desc: e.target.value })} 
+                  disabled={loading}
+                />
               </div>
             </div>
             <div>
-              <label className="block font-semibold text-gray-700 mb-1">Isi Berita</label>
+              <label className="block font-semibold text-gray-700 mb-1">Isi Berita <span className="text-red-500">*</span></label>
               <div className="relative">
                 <span className="absolute left-3 top-3 text-primary/70"><FaNewspaper size={16} /></span>
-                <textarea className="w-full border-2 border-primary/20 rounded-lg px-10 py-2 focus:outline-none focus:border-primary focus:shadow-lg transition placeholder:text-gray-400 text-lg" rows={5} placeholder="Tulis isi lengkap berita di sini..." value={addData.content || ''} onChange={e => setAddData({ ...addData, content: e.target.value })} required />
+                <textarea 
+                  className="w-full border-2 border-primary/20 rounded-lg px-10 py-2 focus:outline-none focus:border-primary focus:shadow-lg transition placeholder:text-gray-400 text-lg" 
+                  rows={5} 
+                  placeholder="Tulis isi lengkap berita di sini..." 
+                  value={addData.content || ''} 
+                  onChange={e => setAddData({ ...addData, content: e.target.value })} 
+                  required 
+                  disabled={loading}
+                />
               </div>
             </div>
-            <button type="submit" className="w-full bg-gradient-to-r from-blue-600 to-primary text-white font-bold py-3 rounded-xl shadow-lg hover:from-blue-700 hover:to-blue-500 hover:scale-[1.02] transition text-lg tracking-wide mt-4 flex items-center justify-center gap-2">
-              <FaNewspaper size={20} /> Simpan Berita
+            <button 
+              type="submit" 
+              className="w-full bg-gradient-to-r from-blue-600 to-primary text-white font-bold py-3 rounded-xl shadow-lg hover:from-blue-700 hover:to-blue-500 hover:scale-[1.02] transition text-lg tracking-wide mt-4 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              disabled={loading}
+            >
+              <FaNewspaper size={20} /> {loading ? 'Menyimpan...' : 'Simpan Berita'}
             </button>
-            {success && <div className="text-green-600 text-center font-semibold mt-2 animate-fade-in">Berita berhasil ditambahkan!</div>}
           </form>
         </div>
       </div>
