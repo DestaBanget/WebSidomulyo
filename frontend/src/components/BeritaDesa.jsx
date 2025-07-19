@@ -123,7 +123,7 @@ export default function BeritaDesa({ data }) {
         ))}
       </div>
       <div className="flex justify-center mt-10">
-        <a href="/publikasi/berita" className="inline-block px-7 py-3 rounded-full bg-primary text-white font-semibold shadow hover:bg-primary/90 transition text-lg">Lihat Berita</a>
+        <a href="/publikasi/berita" className="inline-block px-7 py-3 rounded-full bg-primary text-white font-semibold shadow hover:bg-primary/90 transition text-lg animate-bounce">Lihat Berita</a>
       </div>
     </section>
   );

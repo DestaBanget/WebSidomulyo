@@ -47,6 +47,7 @@ import KelompokTani from './components/KelompokTani';
 import AdminPengaduanMasukPage from './pages/AdminPengaduanMasukPage';
 import AdminPesanMasukPage from './pages/AdminPesanMasukPage';
 import AdminKontakPage from './pages/AdminKontakPage';
+import PengaduanDetail from './components/PengaduanDetail';
 
 function PlaceholderLogo({ label }) {
   return (
@@ -134,7 +135,7 @@ function App() {
                     </div>
                   </div>
                   <div className="flex justify-center">
-                    <Link to="/profil/statistik" className="inline-block px-6 py-2 bg-primary text-white rounded-full font-semibold shadow hover:bg-blue-700 transition">Lihat Statistik Lainnya</Link>
+                    <Link to="/profil/statistik" className="inline-block px-6 py-2 bg-primary text-white rounded-full font-semibold shadow hover:bg-blue-700 transition animate-bounce">Lihat Statistik Lainnya</Link>
                   </div>
                 </div>
               </div>
@@ -179,6 +180,7 @@ function App() {
           <Route path="/admin/surat-masuk/:id" element={<SuratDetail />} />
           <Route path="/surat/:id" element={<SuratDetail />} />
           <Route path="/admin/pengaduan-masuk" element={<AdminPengaduanMasukPage />} />
+          <Route path="/admin/pengaduan-masuk/:id" element={<PengaduanDetail />} />
           <Route path="/admin/pesan-masuk" element={<AdminPesanMasukPage />} />
           <Route path="/admin/kontak" element={<AdminKontakPage />} />
         </Routes>

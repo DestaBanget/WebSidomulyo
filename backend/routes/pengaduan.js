@@ -2,7 +2,7 @@ const express = require('express');
 const { body, validationResult } = require('express-validator');
 const { promisePool } = require('../config');
 const { auth, adminAuth } = require('../middleware/auth');
-const { uploadImage } = require('../middleware/upload');
+const { uploadFlexible, handleMulterError } = require('../middleware/upload');
 
 const router = express.Router();
 
@@ -46,6 +46,38 @@ router.get('/', adminAuth, async (req, res) => {
   }
 });
 
+// Get pengaduan milik user login
+router.get('/my-pengaduan', auth, async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { page = 1, limit = 10 } = req.query;
+    const offset = (page - 1) * limit;
+
+    const [pengaduan] = await promisePool.query(
+      'SELECT * FROM pengaduan WHERE user_id = ? ORDER BY tanggal_pengaduan DESC LIMIT ? OFFSET ?',
+      [userId, parseInt(limit), offset]
+    );
+
+    const [countResult] = await promisePool.query(
+      'SELECT COUNT(*) as total FROM pengaduan WHERE user_id = ?',
+      [userId]
+    );
+
+    res.json({
+      pengaduan,
+      pagination: {
+        current_page: parseInt(page),
+        total_pages: Math.ceil(countResult[0].total / limit),
+        total_items: countResult[0].total,
+        items_per_page: parseInt(limit)
+      }
+    });
+  } catch (error) {
+    console.error('Get my pengaduan error:', error);
+    res.status(500).json({ error: 'Terjadi kesalahan server' });
+  }
+});
+
 // Get pengaduan by ID (admin only)
 router.get('/:id', adminAuth, async (req, res) => {
   try {
@@ -67,44 +99,89 @@ router.get('/:id', adminAuth, async (req, res) => {
   }
 });
 
-// Create pengaduan (public)
-router.post('/', uploadImage, [
-  body('nama').notEmpty().withMessage('Nama wajib diisi'),
-  body('email').isEmail().withMessage('Email tidak valid'),
-  body('no_hp').notEmpty().withMessage('Nomor HP wajib diisi'),
-  body('alamat').notEmpty().withMessage('Alamat wajib diisi'),
-  body('judul').notEmpty().withMessage('Judul pengaduan wajib diisi'),
-  body('uraian').notEmpty().withMessage('Uraian pengaduan wajib diisi'),
-  body('nik').isLength({ min: 16, max: 16 }).withMessage('NIK harus 16 digit').notEmpty().withMessage('NIK wajib diisi'),
-  body('tanggal_pengaduan').isISO8601().withMessage('Tanggal pengaduan wajib diisi dan harus format tanggal')
-], async (req, res) => {
-  try {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
-
-    const { nama, email, no_hp, alamat, judul, uraian, nik, tanggal_pengaduan } = req.body;
-    const lampiran = req.file ? `/uploads/${req.file.filename}` : null;
-
-    const [result] = await promisePool.query(
-      'INSERT INTO pengaduan (nama, email, no_hp, alamat, judul, uraian, lampiran, nik, tanggal_pengaduan) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
-      [nama, email, no_hp, alamat, judul, uraian, lampiran, nik, tanggal_pengaduan]
-    );
-
-    const [newPengaduan] = await promisePool.query(
-      'SELECT * FROM pengaduan WHERE id = ?',
-      [result.insertId]
-    );
-
-    res.status(201).json({
-      message: 'Pengaduan berhasil dikirim',
-      pengaduan: newPengaduan[0]
-    });
-  } catch (error) {
-    console.error('Create pengaduan error:', error);
-    res.status(500).json({ error: 'Terjadi kesalahan server' });
+// Create pengaduan (public) - DIBANGUN ULANG
+router.post('/', auth, (req, res, next) => {
+  const multer = require('multer');
+  const path = require('path');
+  const fs = require('fs');
+  const uploadDir = path.join(__dirname, '../uploads');
+  if (!fs.existsSync(uploadDir)) {
+    fs.mkdirSync(uploadDir, { recursive: true });
   }
+  const storage = multer.diskStorage({
+    destination: (req, file, cb) => cb(null, uploadDir),
+    filename: (req, file, cb) => {
+      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+      cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
+    }
+  });
+  const fileFilter = (req, file, cb) => {
+    const allowedTypes = /jpeg|jpg|png/;
+    const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
+    const mimetype = allowedTypes.test(file.mimetype);
+    if (mimetype && extname) {
+      return cb(null, true);
+    } else {
+      cb(new Error('Hanya file gambar JPG, JPEG, atau PNG yang diperbolehkan!'));
+    }
+  };
+  const upload = multer({
+    storage,
+    limits: { fileSize: 5 * 1024 * 1024 },
+    fileFilter
+  }).single('img');
+  upload(req, res, async function (err) {
+    if (err instanceof multer.MulterError) {
+      if (err.code === 'LIMIT_FILE_SIZE') {
+        return res.status(400).json({ error: 'File terlalu besar. Maksimal 5MB.' });
+      }
+      return res.status(400).json({ error: err.message });
+    } else if (err) {
+      return res.status(400).json({ error: err.message });
+    }
+    // Validasi field wajib
+    const { nama, email: emailBody, no_hp, alamat, judul, uraian, nik, tanggal_pengaduan } = req.body;
+    // Ambil email dari user login jika ada
+    const email = req.user ? req.user.email : emailBody;
+    console.log('DEBUG pengaduan:', { nama, email, no_hp, alamat, judul, uraian, nik, tanggal_pengaduan, user: req.user });
+    if (!nama || !email || !no_hp || !alamat || !judul || !uraian || !nik || !tanggal_pengaduan) {
+      return res.status(400).json({ error: 'Semua field wajib diisi.' });
+    }
+    // Validasi email hanya jika user tidak login
+    if (!req.user) {
+      if (!/^\S+@\S+\.\S+$/.test(email)) {
+        return res.status(400).json({ error: 'Email tidak valid.' });
+      }
+    }
+    // Validasi NIK
+    if (!/^\d{16}$/.test(nik)) {
+      return res.status(400).json({ error: 'NIK harus 16 digit.' });
+    }
+    // Validasi tanggal_pengaduan (ISO date)
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(tanggal_pengaduan)) {
+      return res.status(400).json({ error: 'Tanggal pengaduan wajib format YYYY-MM-DD.' });
+    }
+    // Simpan ke database
+    try {
+      const lampiran = req.file ? `/uploads/${req.file.filename}` : null;
+      const user_id = req.user ? req.user.id : null;
+      const [result] = await promisePool.query(
+        'INSERT INTO pengaduan (user_id, nama, email, no_hp, alamat, judul, uraian, lampiran, nik, tanggal_pengaduan) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+        [user_id, nama, email, no_hp, alamat, judul, uraian, lampiran, nik, tanggal_pengaduan]
+      );
+      const [newPengaduan] = await promisePool.query(
+        'SELECT * FROM pengaduan WHERE id = ?',
+        [result.insertId]
+      );
+      res.status(201).json({
+        message: 'Pengaduan berhasil dikirim',
+        pengaduan: newPengaduan[0]
+      });
+    } catch (error) {
+      console.error('Create pengaduan error:', error);
+      res.status(500).json({ error: error.message || 'Terjadi kesalahan server' });
+    }
+  });
 });
 
 // Update pengaduan status (admin only)
@@ -190,39 +267,6 @@ router.get('/stats/overview', adminAuth, async (req, res) => {
     });
   } catch (error) {
     console.error('Get pengaduan stats error:', error);
-    res.status(500).json({ error: 'Terjadi kesalahan server' });
-  }
-});
-
-// Get pengaduan milik user login
-router.get('/my-pengaduan', auth, async (req, res) => {
-  try {
-    const userEmail = req.user.email;
-    // Jika ingin filter lebih spesifik, bisa gunakan NIK jika tersedia di req.user
-    const { page = 1, limit = 10 } = req.query;
-    const offset = (page - 1) * limit;
-
-    const [pengaduan] = await promisePool.query(
-      'SELECT * FROM pengaduan WHERE email = ? ORDER BY tanggal_pengaduan DESC LIMIT ? OFFSET ?',
-      [userEmail, parseInt(limit), offset]
-    );
-
-    const [countResult] = await promisePool.query(
-      'SELECT COUNT(*) as total FROM pengaduan WHERE email = ?',
-      [userEmail]
-    );
-
-    res.json({
-      pengaduan,
-      pagination: {
-        current_page: parseInt(page),
-        total_pages: Math.ceil(countResult[0].total / limit),
-        total_items: countResult[0].total,
-        items_per_page: parseInt(limit)
-      }
-    });
-  } catch (error) {
-    console.error('Get my pengaduan error:', error);
     res.status(500).json({ error: 'Terjadi kesalahan server' });
   }
 });

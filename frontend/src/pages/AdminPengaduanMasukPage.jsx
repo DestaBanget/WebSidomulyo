@@ -8,6 +8,9 @@ export default function AdminPengaduanMasukPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [search, setSearch] = useState('');
+  const [showStatusModal, setShowStatusModal] = useState(false);
+  const [selectedPengaduan, setSelectedPengaduan] = useState(null);
+  const [updatingStatus, setUpdatingStatus] = useState(false);
   const navigate = useNavigate();
   const { apiCall } = useAuth();
 
@@ -35,6 +38,25 @@ export default function AdminPengaduanMasukPage() {
     p.nik?.toLowerCase().includes(search.toLowerCase()) ||
     p.judul?.toLowerCase().includes(search.toLowerCase())
   );
+
+  // Fungsi update status pengaduan
+  const updatePengaduanStatus = async (pengaduanId, newStatus) => {
+    try {
+      setUpdatingStatus(true);
+      setError('');
+      await apiCall(`/pengaduan/${pengaduanId}/status`, {
+        method: 'PUT',
+        body: JSON.stringify({ status: newStatus })
+      });
+      setPengaduan(pengaduan.map(p => p.id === pengaduanId ? { ...p, status: newStatus } : p));
+      setShowStatusModal(false);
+      setSelectedPengaduan(null);
+    } catch (error) {
+      setError(error.message);
+    } finally {
+      setUpdatingStatus(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -122,6 +144,12 @@ export default function AdminPengaduanMasukPage() {
                     >
                       Lihat Detail
                     </button>
+                    <button
+                      className="px-3 py-1 rounded bg-green-600 text-white text-xs font-bold hover:bg-green-700 transition"
+                      onClick={() => { setSelectedPengaduan(p); setShowStatusModal(true); }}
+                    >
+                      Ubah Status
+                    </button>
                   </td>
                 </tr>
               ))}
@@ -129,6 +157,41 @@ export default function AdminPengaduanMasukPage() {
           </table>
         </div>
       </div>
+      {/* Modal Ubah Status */}
+      {showStatusModal && selectedPengaduan && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black/40 z-50">
+          <div className="bg-white rounded-xl shadow-lg p-8 max-w-sm w-full text-center">
+            <h3 className="text-xl font-bold mb-4">Ubah Status Pengaduan</h3>
+            <div className="mb-4">Pilih status baru untuk pengaduan dari <span className="font-semibold">{selectedPengaduan.nama}</span>:</div>
+            <select
+              className="w-full border border-gray-300 rounded px-3 py-2 mb-6"
+              value={selectedPengaduan.status}
+              onChange={e => setSelectedPengaduan({ ...selectedPengaduan, status: e.target.value })}
+              disabled={updatingStatus}
+            >
+              <option value="Baru">Baru</option>
+              <option value="Diproses">Diproses</option>
+              <option value="Selesai">Selesai</option>
+            </select>
+            <div className="flex gap-4 justify-center">
+              <button
+                onClick={() => updatePengaduanStatus(selectedPengaduan.id, selectedPengaduan.status)}
+                className="px-6 py-2 bg-green-600 text-white rounded font-semibold hover:bg-green-700 transition disabled:opacity-50"
+                disabled={updatingStatus}
+              >
+                {updatingStatus ? 'Menyimpan...' : 'Simpan'}
+              </button>
+              <button
+                onClick={() => setShowStatusModal(false)}
+                className="px-6 py-2 bg-gray-400 text-white rounded font-semibold hover:bg-gray-500 transition"
+                disabled={updatingStatus}
+              >
+                Batal
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 } 
