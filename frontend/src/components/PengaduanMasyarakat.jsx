@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { API_BASE_URL, uploadFile } from '../config/api';
+import { useAuth } from '../contexts/AuthContext';
 
 export default function PengaduanMasyarakat() {
+  const { user } = useAuth();
   const [data, setData] = useState({
     nama: '',
-    email: '',
     noHp: '',
     alamat: '',
     nik: '', // tambah NIK
@@ -22,7 +23,16 @@ export default function PengaduanMasyarakat() {
   };
   
   const handleUpload = (e) => {
-    setData({ ...data, lampiran: e.target.files[0] });
+    const file = e.target.files[0];
+    if (file) {
+      const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+      if (!allowedTypes.includes(file.type)) {
+        setError('Hanya file gambar JPG, JPEG, atau PNG yang diperbolehkan!');
+        return;
+      }
+      setError('');
+      setData({ ...data, lampiran: file });
+    }
   };
   
   const handleSubmit = async (e) => {
@@ -34,7 +44,7 @@ export default function PengaduanMasyarakat() {
     try {
       const formData = new FormData();
       formData.append('nama', data.nama);
-      formData.append('email', data.email);
+      // Gunakan email user login jika ada
       formData.append('no_hp', data.noHp);
       formData.append('alamat', data.alamat);
       formData.append('judul', data.judul);
@@ -43,7 +53,7 @@ export default function PengaduanMasyarakat() {
       formData.append('tanggal_pengaduan', data.tanggal_pengaduan); // kirim tanggal_pengaduan
       
       if (data.lampiran) {
-        formData.append('lampiran', data.lampiran);
+        formData.append('img', data.lampiran);
       }
 
       await uploadFile('/pengaduan', formData);
@@ -51,7 +61,6 @@ export default function PengaduanMasyarakat() {
       setSuccess(true);
       setData({
         nama: '',
-        email: '',
         noHp: '',
         alamat: '',
         nik: '', // reset NIK
@@ -138,16 +147,6 @@ export default function PengaduanMasyarakat() {
               required 
               disabled={loading}
             />
-            <label className="block mb-1 text-sm font-semibold">Email <span className="text-red-500">*</span></label>
-            <input 
-              name="email" 
-              type="email"
-              value={data.email} 
-              onChange={handleChange} 
-              className="w-full px-4 py-2 border-2 border-gray-300 bg-gray-50 rounded-lg shadow-sm focus:outline-none focus:border-blue-600 mb-3" 
-              required 
-              disabled={loading}
-            />
             <label className="block mb-1 text-sm font-semibold">Nomor ponsel <span className="text-red-500">*</span></label>
             <input 
               name="noHp" 
@@ -218,7 +217,7 @@ export default function PengaduanMasyarakat() {
               <input 
                 id="lampiran-input" 
                 type="file" 
-                accept=".jpg,.jpeg,.png,.pdf" 
+                accept=".jpg,.jpeg,.png" 
                 onChange={handleUpload} 
                 className="hidden" 
                 disabled={loading}
