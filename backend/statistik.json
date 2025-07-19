@@ -1,0 +1,30 @@
+[
+  {
+    "id": 1,
+    "kategori": "utama",
+    "label": "Total Penduduk",
+    "value": "2352",
+    "color": "#00aaff"
+  },
+  {
+    "id": 2,
+    "kategori": "utama",
+    "label": "Jumlah Keluarga",
+    "value": "700",
+    "color": "#ff55aa"
+  },
+  {
+    "id": 3,
+    "kategori": "utama",
+    "label": "Surat Diproses Bulan Ini",
+    "value": 48,
+    "color": "#ffaa00"
+  },
+  {
+    "id": 4,
+    "kategori": "utama",
+    "label": "Program Aktif",
+    "value": 3,
+    "color": "#55ff55"
+  }
+]

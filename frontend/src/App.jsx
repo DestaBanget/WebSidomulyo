@@ -54,6 +54,7 @@ import AdminKontakPage from './pages/AdminKontakPage';
 import UserAuth from './components/UserAuth';
 
 import PengaduanDetail from './components/PengaduanDetail';
+import { apiCall } from './config/api';
 
 
 function PlaceholderLogo({ label }) {
@@ -99,6 +100,48 @@ function App() {
   const sortedPariwisata = [...initialPariwisata].sort((a, b) => new Date(b.date) - new Date(a.date));
   const latestPariwisata = sortedPariwisata.slice(0, 6);
 
+  // State untuk statistik utama
+  const [dashboardStats, setDashboardStats] = useState([]);
+
+  useEffect(() => {
+    const fetchDashboardStats = async () => {
+      try {
+        const res = await apiCall('/statistik');
+        let data = [];
+        if (Array.isArray(res.statistik)) {
+          data = res.statistik;
+        } else {
+          Object.values(res.statistik).forEach(arr => {
+            data = data.concat(arr);
+          });
+        }
+        // Mapping label, value, icon
+        const mapping = [
+          { kategori: 'utama', label: 'Total Penduduk', icon: '👨‍👩‍👧‍👦' },
+          { kategori: 'utama', label: 'Jumlah Keluarga', icon: '🏠' },
+          { kategori: 'utama', label: 'Surat Diproses Bulan Ini', icon: '📄' },
+          { kategori: 'utama', label: 'Program Aktif', icon: '🎯' },
+        ];
+        const mappedStats = mapping.map(map => {
+          const found = data.find(d => d.kategori === map.kategori && d.label === map.label);
+          return found ? {
+            title: found.label,
+            value: found.value,
+            icon: map.icon,
+          } : {
+            title: map.label,
+            value: '-',
+            icon: map.icon,
+          };
+        });
+        setDashboardStats(mappedStats);
+      } catch (err) {
+        setDashboardStats([]);
+      }
+    };
+    fetchDashboardStats();
+  }, []);
+
   // State untuk login modal
   const [showLoginModal, setShowLoginModal] = useState(false);
 
@@ -134,27 +177,13 @@ function App() {
                       Statistik Ringkas Desa
                     </h2>
                   <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                    {/* 4 statistik utama, hardcode atau import dari StatistikDesa jika perlu */}
-                    <div className="bg-white rounded-xl shadow p-5 flex flex-col items-center text-center">
-                      <div className="text-3xl mb-2">👨‍👩‍👧‍👦</div>
-                      <div className="text-lg font-semibold text-gray-700 mb-1">Total Penduduk</div>
-                      <div className="text-2xl font-bold text-primary mb-2">2.350</div>
-                    </div>
-                    <div className="bg-white rounded-xl shadow p-5 flex flex-col items-center text-center">
-                      <div className="text-3xl mb-2">🏠</div>
-                      <div className="text-lg font-semibold text-gray-700 mb-1">Jumlah Keluarga</div>
-                      <div className="text-2xl font-bold text-primary mb-2">670</div>
-                    </div>
-                    <div className="bg-white rounded-xl shadow p-5 flex flex-col items-center text-center">
-                      <div className="text-3xl mb-2">📄</div>
-                      <div className="text-lg font-semibold text-gray-700 mb-1">Surat Diproses Bulan Ini</div>
-                      <div className="text-2xl font-bold text-primary mb-2">48</div>
-                    </div>
-                    <div className="bg-white rounded-xl shadow p-5 flex flex-col items-center text-center">
-                      <div className="text-3xl mb-2">🎯</div>
-                      <div className="text-lg font-semibold text-gray-700 mb-1">Program Aktif</div>
-                      <div className="text-2xl font-bold text-primary mb-2">3</div>
-                    </div>
+                    {dashboardStats.map((s, idx) => (
+                      <div key={s.title} className="bg-white rounded-xl shadow p-5 flex flex-col items-center text-center">
+                        <div className="text-3xl mb-2">{s.icon}</div>
+                        <div className="text-lg font-semibold text-gray-700 mb-1">{s.title}</div>
+                        <div className="text-2xl font-bold text-primary mb-2">{s.value}</div>
+                      </div>
+                    ))}
                   </div>
                   <div className="flex justify-center">
                     <Link to="/profil/statistik" className="inline-block px-6 py-2 bg-primary text-white rounded-full font-semibold shadow hover:bg-blue-700 transition animate-bounce">Lihat Statistik Lainnya</Link>

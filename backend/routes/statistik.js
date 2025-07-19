@@ -1,7 +1,7 @@
 const express = require('express');
 const { body, validationResult } = require('express-validator');
-const { promisePool } = require('../config');
 const { auth, adminAuth } = require('../middleware/auth');
+const { readStatistik, writeStatistik, generateId } = require('../utils/statistikFile');
 
 const router = express.Router();
 
@@ -9,28 +9,22 @@ const router = express.Router();
 router.get('/', async (req, res) => {
   try {
     const { kategori } = req.query;
-
-    let query = 'SELECT * FROM statistik';
-    let params = [];
-
+    let statistik = await readStatistik();
     if (kategori) {
-      query += ' WHERE kategori = ?';
-      params.push(kategori);
+      statistik = statistik.filter(item => item.kategori === kategori);
     }
-
-    query += ' ORDER BY kategori, label';
-
-    const [statistik] = await promisePool.query(query, params);
-
+    statistik.sort((a, b) => {
+      if (a.kategori === b.kategori) {
+        return a.label.localeCompare(b.label);
+      }
+      return a.kategori.localeCompare(b.kategori);
+    });
     // Group by kategori
     const groupedStatistik = statistik.reduce((acc, item) => {
-      if (!acc[item.kategori]) {
-        acc[item.kategori] = [];
-      }
+      if (!acc[item.kategori]) acc[item.kategori] = [];
       acc[item.kategori].push(item);
       return acc;
     }, {});
-
     res.json({ statistik: groupedStatistik });
   } catch (error) {
     console.error('Get statistik error:', error);
@@ -42,12 +36,9 @@ router.get('/', async (req, res) => {
 router.get('/kategori/:kategori', async (req, res) => {
   try {
     const { kategori } = req.params;
-
-    const [statistik] = await promisePool.query(
-      'SELECT * FROM statistik WHERE kategori = ? ORDER BY label',
-      [kategori]
-    );
-
+    let statistik = await readStatistik();
+    statistik = statistik.filter(item => item.kategori === kategori);
+    statistik.sort((a, b) => a.label.localeCompare(b.label));
     res.json({ statistik });
   } catch (error) {
     console.error('Get statistik by kategori error:', error);
@@ -67,33 +58,17 @@ router.post('/', adminAuth, [
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
     }
-
     const { kategori, label, value, color } = req.body;
-
-    // Check if statistik with same kategori and label already exists
-    const [existingStatistik] = await promisePool.query(
-      'SELECT id FROM statistik WHERE kategori = ? AND label = ?',
-      [kategori, label]
-    );
-
-    if (existingStatistik.length > 0) {
+    let statistik = await readStatistik();
+    // Cek duplikat
+    if (statistik.some(item => item.kategori === kategori && item.label === label)) {
       return res.status(400).json({ error: 'Statistik dengan kategori dan label yang sama sudah ada' });
     }
-
-    const [result] = await promisePool.query(
-      'INSERT INTO statistik (kategori, label, value, color) VALUES (?, ?, ?, ?)',
-      [kategori, label, value, color]
-    );
-
-    const [newStatistik] = await promisePool.query(
-      'SELECT * FROM statistik WHERE id = ?',
-      [result.insertId]
-    );
-
-    res.status(201).json({
-      message: 'Statistik berhasil ditambahkan',
-      statistik: newStatistik[0]
-    });
+    const id = generateId(statistik);
+    const newStat = { id, kategori, label, value, color };
+    statistik.push(newStat);
+    await writeStatistik(statistik);
+    res.status(201).json({ message: 'Statistik berhasil ditambahkan', statistik: newStat });
   } catch (error) {
     console.error('Create statistik error:', error);
     res.status(500).json({ error: 'Terjadi kesalahan server' });
@@ -112,25 +87,16 @@ router.put('/:id', adminAuth, [
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
     }
-
     const { id } = req.params;
     const { kategori, label, value, color } = req.body;
-
-    // Cek apakah data ada
-    const [existing] = await promisePool.query('SELECT * FROM statistik WHERE id = ?', [id]);
-    if (existing.length === 0) {
+    let statistik = await readStatistik();
+    const idx = statistik.findIndex(item => String(item.id) === String(id));
+    if (idx === -1) {
       return res.status(404).json({ error: 'Statistik tidak ditemukan' });
     }
-
-    // Update data
-    const [updateResult] = await promisePool.query(
-      'UPDATE statistik SET kategori = ?, label = ?, value = ?, color = ? WHERE id = ?',
-      [kategori, label, value, color, id]
-    );
-
-    // Ambil data terbaru
-    const [updated] = await promisePool.query('SELECT * FROM statistik WHERE id = ?', [id]);
-    res.json({ message: 'Statistik berhasil diupdate', statistik: updated[0], updateResult });
+    statistik[idx] = { ...statistik[idx], kategori, label, value, color };
+    await writeStatistik(statistik);
+    res.json({ message: 'Statistik berhasil diupdate', statistik: statistik[idx] });
   } catch (error) {
     console.error('Update statistik error:', error);
     res.status(500).json({ error: 'Terjadi kesalahan server' });
@@ -141,19 +107,13 @@ router.put('/:id', adminAuth, [
 router.delete('/:id', adminAuth, async (req, res) => {
   try {
     const { id } = req.params;
-
-    // Check if statistik exists
-    const [existingStatistik] = await promisePool.query(
-      'SELECT * FROM statistik WHERE id = ?',
-      [id]
-    );
-
-    if (existingStatistik.length === 0) {
+    let statistik = await readStatistik();
+    const idx = statistik.findIndex(item => String(item.id) === String(id));
+    if (idx === -1) {
       return res.status(404).json({ error: 'Statistik tidak ditemukan' });
     }
-
-    await promisePool.query('DELETE FROM statistik WHERE id = ?', [id]);
-
+    statistik.splice(idx, 1);
+    await writeStatistik(statistik);
     res.json({ message: 'Statistik berhasil dihapus' });
   } catch (error) {
     console.error('Delete statistik error:', error);
@@ -172,17 +132,15 @@ router.put('/bulk/update', adminAuth, [
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
     }
-
-    const { statistik } = req.body;
-
-    // Update multiple statistik
-    for (const item of statistik) {
-      await promisePool.query(
-        'UPDATE statistik SET value = ? WHERE id = ?',
-        [item.value, item.id]
-      );
+    const { statistik: updates } = req.body;
+    let statistik = await readStatistik();
+    for (const item of updates) {
+      const idx = statistik.findIndex(s => String(s.id) === String(item.id));
+      if (idx !== -1) {
+        statistik[idx].value = item.value;
+      }
     }
-
+    await writeStatistik(statistik);
     res.json({ message: 'Statistik berhasil diupdate secara massal' });
   } catch (error) {
     console.error('Bulk update statistik error:', error);
@@ -193,13 +151,11 @@ router.put('/bulk/update', adminAuth, [
 // Get statistik overview (admin only)
 router.get('/overview', adminAuth, async (req, res) => {
   try {
-    const [totalStatistik] = await promisePool.query('SELECT COUNT(*) as total FROM statistik');
-    const [kategoriCount] = await promisePool.query('SELECT COUNT(DISTINCT kategori) as total FROM statistik');
-
-    res.json({
-      total_items: totalStatistik[0].total,
-      total_kategori: kategoriCount[0].total
-    });
+    const statistik = await readStatistik();
+    const total_items = statistik.length;
+    const kategoriSet = new Set(statistik.map(item => item.kategori));
+    const total_kategori = kategoriSet.size;
+    res.json({ total_items, total_kategori });
   } catch (error) {
     console.error('Get statistik overview error:', error);
     res.status(500).json({ error: 'Terjadi kesalahan server' });

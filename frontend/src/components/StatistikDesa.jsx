@@ -143,44 +143,46 @@ export default function StatistikDesa() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const fetchStats = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        const res = await apiCall('/statistik');
-        let data = [];
-        if (Array.isArray(res.statistik)) {
-          data = res.statistik;
-        } else {
-          Object.values(res.statistik).forEach(arr => {
-            data = data.concat(arr);
-          });
-        }
-        // Mapping ke format frontend lama (title, value, icon, breakdown)
-        const mapping = [
-          { kategori: 'utama', label: 'Total Penduduk', icon: '👨‍👩‍👧‍👦' },
-          { kategori: 'utama', label: 'Jumlah Keluarga', icon: '🏠' },
-          { kategori: 'utama', label: 'Surat Diproses Bulan Ini', icon: '📄' },
-          { kategori: 'utama', label: 'Program Aktif', icon: '🎯' },
-        ];
-        const mappedStats = mapping.map(map => {
-          const found = data.find(d => d.kategori === map.kategori && d.label === map.label);
-          return found ? {
-            title: found.label,
-            value: found.value,
-            icon: map.icon,
-            id: found.id,
-          } : null;
-        }).filter(Boolean);
-        setStats(mappedStats);
-      } catch (err) {
-        setError('Gagal memuat data statistik');
-        setStats([]);
-      } finally {
-        setLoading(false);
+  const fetchStats = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await apiCall('/statistik');
+      let data = [];
+      if (Array.isArray(res.statistik)) {
+        data = res.statistik;
+      } else {
+        Object.values(res.statistik).forEach(arr => {
+          data = data.concat(arr);
+        });
       }
-    };
+      // Mapping ke format frontend lama (title, value, icon, breakdown)
+      const mapping = [
+        { kategori: 'utama', label: 'Total Penduduk', icon: '👨‍👩‍👧‍👦' },
+        { kategori: 'utama', label: 'Jumlah Keluarga', icon: '🏠' },
+        { kategori: 'utama', label: 'Surat Diproses Bulan Ini', icon: '📄' },
+        { kategori: 'utama', label: 'Program Aktif', icon: '🎯' },
+      ];
+      const mappedStats = mapping.map(map => {
+        const found = data.find(d => d.kategori === map.kategori && d.label === map.label);
+        return found ? {
+          title: found.label,
+          value: found.value,
+          icon: map.icon,
+          id: found.id,
+          color: found.color,
+        } : null;
+      }).filter(Boolean);
+      setStats(mappedStats);
+    } catch (err) {
+      setError('Gagal memuat data statistik');
+      setStats([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     fetchStats();
   }, []);
 
@@ -189,14 +191,25 @@ export default function StatistikDesa() {
     setEditValue(stats[idx].value);
     setEditBreakdown(stats[idx].breakdown ? [...stats[idx].breakdown] : []);
   };
-  const handleSave = (idx) => {
-    console.log('[DEBUG] handleSave dipanggil untuk idx', idx, 'nilai baru:', editValue);
-    const newStats = [...stats];
-    newStats[idx].value = editValue;
-    if (newStats[idx].breakdown) newStats[idx].breakdown = editBreakdown;
-    setStats(newStats);
-    setEditIdx(null);
-    console.log('[DEBUG] State stats setelah simpan:', newStats);
+  const handleSave = async (idx) => {
+    try {
+      const stat = stats[idx];
+      // Kirim update ke backend
+      await apiCall(`/statistik/${stat.id}`, {
+        method: 'PUT',
+        body: JSON.stringify({
+          kategori: 'utama',
+          label: stat.title,
+          value: editValue,
+          color: stat.color || '#00aaff'
+        }),
+      });
+      // Setelah berhasil, fetch ulang data dari backend
+      await fetchStats();
+      setEditIdx(null);
+    } catch (err) {
+      alert('Gagal menyimpan perubahan statistik');
+    }
   };
   const handleBreakdownChange = (bIdx, val) => {
     const newBreakdown = [...editBreakdown];
