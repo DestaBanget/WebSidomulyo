@@ -387,91 +387,95 @@ export default function ProfilePage() {
             </div>
 
             {/* Box Riwayat Pengajuan Surat */}
-            <div className="bg-white rounded-2xl shadow p-6 mb-8">
-              <h3 className="text-2xl font-bold text-primary mb-4">Riwayat Pengajuan Surat</h3>
-              {loadingSurat ? (
-                <div className="text-gray-500">Memuat riwayat surat...</div>
-              ) : errorSurat ? (
-                <div className="text-red-500">{errorSurat}</div>
-              ) : riwayatSurat.length === 0 ? (
-                <div className="text-gray-400">Belum ada pengajuan surat.</div>
-              ) : (
-                <div className="overflow-x-auto rounded-xl">
-                  <table className="min-w-full border text-sm md:text-base">
-                    <thead className="bg-primary text-white">
-                      <tr>
-                        <th className="px-4 py-2">ID</th>
-                        <th className="px-4 py-2">Jenis Surat</th>
-                        <th className="px-4 py-2">Tanggal Pengajuan</th>
-                        <th className="px-4 py-2">Status</th>
-                        <th className="px-4 py-2">Aksi</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {riwayatSurat.map((s) => (
-                        <tr key={s.id} className="border-b hover:bg-gray-50">
-                          <td className="px-4 py-2 text-center">{s.id}</td>
-                          <td className="px-4 py-2">{s.jenis_surat}</td>
-                          <td className="px-4 py-2 text-center">{new Date(s.tanggal_pengajuan).toLocaleDateString('id-ID')}</td>
-                          <td className="px-4 py-2 text-center">
-                            <span className={`px-2 py-1 rounded text-xs font-bold ${
-                              s.status === 'Selesai' ? 'bg-green-100 text-green-700' :
-                              s.status === 'Diproses' ? 'bg-yellow-100 text-yellow-700' :
-                              'bg-gray-200 text-gray-700'
-                            }`}>
-                              {s.status}
-                            </span>
-                          </td>
-                          <td className="px-4 py-2 text-center">
-                            <button
-                              className="px-3 py-1 rounded bg-primary text-white text-xs font-bold hover:bg-blue-800 transition"
-                              onClick={() => navigate(user.role === 'admin' ? `/admin/surat-masuk/${s.id}` : `/surat/${s.id}`)}
-                            >
-                              Lihat Detail
-                            </button>
-                          </td>
+            {user.role !== 'admin' && (
+              <div className="bg-white rounded-2xl shadow p-6 mb-8">
+                <h3 className="text-2xl font-bold text-primary mb-4">Riwayat Pengajuan Surat</h3>
+                {loadingSurat ? (
+                  <div className="text-gray-500">Memuat riwayat surat...</div>
+                ) : errorSurat ? (
+                  <div className="text-red-500">{errorSurat}</div>
+                ) : riwayatSurat.length === 0 ? (
+                  <div className="text-gray-400">Belum ada pengajuan surat.</div>
+                ) : (
+                  <div className="overflow-x-auto rounded-xl">
+                    <table className="min-w-full border text-sm md:text-base">
+                      <thead className="bg-primary text-white">
+                        <tr>
+                          <th className="px-4 py-2">ID</th>
+                          <th className="px-4 py-2">Jenis Surat</th>
+                          <th className="px-4 py-2">Tanggal Pengajuan</th>
+                          <th className="px-4 py-2">Status</th>
+                          <th className="px-4 py-2">Aksi</th>
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              )}
-            </div>
+                      </thead>
+                      <tbody>
+                        {riwayatSurat.map((s) => (
+                          <tr key={s.id} className="border-b hover:bg-gray-50">
+                            <td className="px-4 py-2 text-center">{s.id}</td>
+                            <td className="px-4 py-2">{s.jenis_surat}</td>
+                            <td className="px-4 py-2 text-center">{new Date(s.tanggal_pengajuan).toLocaleDateString('id-ID')}</td>
+                            <td className="px-4 py-2 text-center">
+                              <span className={`px-2 py-1 rounded text-xs font-bold ${
+                                s.status === 'Selesai' ? 'bg-green-100 text-green-700' :
+                                s.status === 'Diproses' ? 'bg-yellow-100 text-yellow-700' :
+                                'bg-gray-200 text-gray-700'
+                              }`}>
+                                {s.status}
+                              </span>
+                            </td>
+                            <td className="px-4 py-2 text-center">
+                              <button
+                                className="px-3 py-1 rounded bg-primary text-white text-xs font-bold hover:bg-blue-800 transition"
+                                onClick={() => navigate(user.role === 'admin' ? `/admin/surat-masuk/${s.id}` : `/surat/${s.id}`)}
+                              >
+                                Lihat Detail
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </div>
+            )}
 
             {/* Box Riwayat Pengaduan */}
-            <div className="bg-white rounded-2xl shadow p-6 mb-8">
-              <h3 className="text-2xl font-bold text-primary mb-4">Riwayat Pengaduan</h3>
-              {loadingPengaduan ? (
-                <div className="text-gray-500">Memuat riwayat pengaduan...</div>
-              ) : errorPengaduan ? (
-                <div className="text-red-500">{errorPengaduan}</div>
-              ) : riwayatPengaduan.length === 0 ? (
-                <div className="text-gray-400">Belum ada pengaduan.</div>
-              ) : (
-                <div className="overflow-x-auto rounded-xl">
-                  <table className="min-w-full border text-sm md:text-base">
-                    <thead className="bg-primary text-white">
-                      <tr>
-                        <th className="px-4 py-2">ID</th>
-                        <th className="px-4 py-2">Judul</th>
-                        <th className="px-4 py-2">Tanggal Pengaduan</th>
-                        <th className="px-4 py-2">Status</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {riwayatPengaduan.map((p) => (
-                        <tr key={p.id} className="border-b hover:bg-gray-50">
-                          <td className="px-4 py-2 text-center">{p.id}</td>
-                          <td className="px-4 py-2">{p.judul}</td>
-                          <td className="px-4 py-2 text-center">{new Date(p.tanggal_pengaduan).toLocaleDateString('id-ID')}</td>
-                          <td className="px-4 py-2 text-center">{p.status}</td>
+            {user.role !== 'admin' && (
+              <div className="bg-white rounded-2xl shadow p-6 mb-8">
+                <h3 className="text-2xl font-bold text-primary mb-4">Riwayat Pengaduan</h3>
+                {loadingPengaduan ? (
+                  <div className="text-gray-500">Memuat riwayat pengaduan...</div>
+                ) : errorPengaduan ? (
+                  <div className="text-red-500">{errorPengaduan}</div>
+                ) : riwayatPengaduan.length === 0 ? (
+                  <div className="text-gray-400">Belum ada pengaduan.</div>
+                ) : (
+                  <div className="overflow-x-auto rounded-xl">
+                    <table className="min-w-full border text-sm md:text-base">
+                      <thead className="bg-primary text-white">
+                        <tr>
+                          <th className="px-4 py-2">ID</th>
+                          <th className="px-4 py-2">Judul</th>
+                          <th className="px-4 py-2">Tanggal Pengaduan</th>
+                          <th className="px-4 py-2">Status</th>
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              )}
-            </div>
+                      </thead>
+                      <tbody>
+                        {riwayatPengaduan.map((p) => (
+                          <tr key={p.id} className="border-b hover:bg-gray-50">
+                            <td className="px-4 py-2 text-center">{p.id}</td>
+                            <td className="px-4 py-2">{p.judul}</td>
+                            <td className="px-4 py-2 text-center">{new Date(p.tanggal_pengaduan).toLocaleDateString('id-ID')}</td>
+                            <td className="px-4 py-2 text-center">{p.status}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </div>
+            )}
 
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
               <button
