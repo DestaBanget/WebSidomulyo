@@ -2,6 +2,7 @@ const fs = require('fs').promises;
 const path = require('path');
 
 const DATA_PATH = path.join(__dirname, '../statistik.json');
+const TEMP_PATH = path.join(__dirname, '../statistik.tmp.json');
 
 async function readStatistik() {
   try {
@@ -14,7 +15,13 @@ async function readStatistik() {
 }
 
 async function writeStatistik(data) {
-  await fs.writeFile(DATA_PATH, JSON.stringify(data, null, 2), 'utf-8');
+  try {
+    await fs.writeFile(TEMP_PATH, JSON.stringify(data, null, 2), 'utf-8');
+    await fs.rename(TEMP_PATH, DATA_PATH);
+  } catch (err) {
+    console.error('Gagal menulis statistik.json:', err);
+    throw err;
+  }
 }
 
 function generateId(data) {

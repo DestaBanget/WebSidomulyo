@@ -1,77 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { apiCall } from '../config/api';
-
-const initialStats = [
-  {
-    title: 'Total Penduduk',  
-    value: '2.350',
-    icon: '👨‍👩‍👧‍👦',
-    breakdown: [
-      { label: 'Laki-laki', value: '1.200', color: 'text-blue-600' },
-      { label: 'Perempuan', value: '1.150', color: 'text-pink-500' },
-    ],
-  },
-  {
-    title: 'Jumlah Keluarga',
-    value: '670',
-    icon: '🏠',
-  },
-  {
-    title: 'Surat Diproses Bulan Ini',
-    value: '48',
-    icon: '📄',
-  },
-  {
-    title: 'Program Aktif',
-    value: '3',
-    icon: '🎯',
-  },
-];
-
-const initialUsia = [
-  { label: '0-5 th', value: 210, color: 'bg-blue-200' },
-  { label: '6-17 th', value: 480, color: 'bg-blue-400' },
-  { label: '18-59 th', value: 1400, color: 'bg-blue-600' },
-  { label: '60+ th', value: 260, color: 'bg-blue-900' },
-];
-const initialPendidikan = [
-  { label: 'Tidak Sekolah', value: 120, color: 'bg-gray-300' },
-  { label: 'SD', value: 700, color: 'bg-yellow-300' },
-  { label: 'SMP', value: 600, color: 'bg-green-300' },
-  { label: 'SMA', value: 650, color: 'bg-blue-300' },
-  { label: 'Diploma/S1+', value: 280, color: 'bg-purple-300' },
-];
-const initialPekerjaan = [
-  { label: 'Petani', value: 800, color: 'bg-green-500' },
-  { label: 'Buruh', value: 400, color: 'bg-yellow-500' },
-  { label: 'PNS', value: 120, color: 'bg-blue-500' },
-  { label: 'Wiraswasta', value: 350, color: 'bg-pink-400' },
-  { label: 'Pelajar/Mahasiswa', value: 480, color: 'bg-indigo-400' },
-  { label: 'Lainnya', value: 200, color: 'bg-gray-400' },
-];
-const initialDusun = [
-  { label: 'Dusun Bareng', value: 900, color: 'bg-blue-400' },
-  { label: 'Dusun Tebelo', value: 800, color: 'bg-green-400' },
-  { label: 'Dusun Mangunrejo', value: 650, color: 'bg-yellow-400' },
-  { label: 'Dusun Sumberkrecek', value: 500, color: 'bg-purple-400' },
-  { label: 'Dusun [Nama Lain]', value: 400, color: 'bg-pink-400' },
-];
-
-function BarStat({ data, total }) {
-  return (
-    <div className="space-y-2">
-      {data.map((d) => (
-        <div key={d.label} className="flex items-center gap-3">
-          <span className="w-32 text-sm font-medium text-gray-700">{d.label}</span>
-          <div className="flex-1 h-4 rounded-full overflow-hidden bg-gray-100">
-            <div className={`${d.color} h-4`} style={{ width: `${(d.value / total) * 100}%` }} />
-          </div>
-          <span className="w-12 text-right text-sm font-semibold text-gray-700">{d.value}</span>
-        </div>
-      ))}
-    </div>
-  );
-}
+import { useAuth } from '../contexts/AuthContext';
 
 function BarStatEditable({ data, setData, isAdmin, title }) {
   const [edit, setEdit] = useState(false);
@@ -87,9 +16,39 @@ function BarStatEditable({ data, setData, isAdmin, title }) {
     newData[idx].value = val;
     setEditData(newData);
   };
-  const handleSave = () => {
-    setData(editData);
-    setEdit(false);
+  const handleColorChange = (idx, val) => {
+    const newData = [...editData];
+    newData[idx].color = val;
+    setEditData(newData);
+  };
+  const handleSave = async () => {
+    try {
+      // Cari data yang berubah dibandingkan data asli
+      const changed = editData.find((item, idx) => {
+        const original = data[idx];
+        return (
+          item.value !== original.value ||
+          item.color !== original.color
+        );
+      });
+      if (!changed) {
+        setEdit(false);
+        return;
+      }
+      await apiCall(`/statistik/${changed.id}`, {
+        method: 'PUT',
+        body: JSON.stringify({
+          kategori: changed.kategori,
+          label: changed.label,
+          value: Number(changed.value),
+          color: changed.color && /^#([0-9A-Fa-f]{6})$/.test(changed.color) ? changed.color : '#cccccc'
+        }),
+      });
+      setEdit(false);
+      if (typeof window !== 'undefined' && window.fetchStats) window.fetchStats();
+    } catch (err) {
+      alert('Gagal menyimpan perubahan statistik');
+    }
   };
   const handleCancel = () => setEdit(false);
 
@@ -104,15 +63,24 @@ function BarStatEditable({ data, setData, isAdmin, title }) {
           <div key={d.label} className="flex items-center gap-3">
             <span className="w-32 text-sm font-medium text-gray-700">{d.label}</span>
             <div className="flex-1 h-4 rounded-full overflow-hidden bg-gray-100">
-              <div className={`${d.color} h-4`} style={{ width: `${(d.value / total) * 100}%` }} />
+              <div className="h-4" style={{ width: `${(d.value / total) * 100}%`, backgroundColor: d.color || '#cccccc' }} />
             </div>
             {edit ? (
-              <input
-                type="number"
-                className="w-16 border-b-2 border-primary outline-none text-right text-sm font-semibold text-gray-700"
-                value={d.value}
-                onChange={e => handleChange(idx, e.target.value)}
-              />
+              <>
+                <input
+                  type="number"
+                  className="w-16 border-b-2 border-primary outline-none text-right text-sm font-semibold text-gray-700"
+                  value={d.value}
+                  onChange={e => handleChange(idx, e.target.value)}
+                />
+                <input
+                  type="color"
+                  className="ml-2 w-8 h-8 p-0 border-none bg-transparent cursor-pointer"
+                  value={d.color || '#cccccc'}
+                  onChange={e => handleColorChange(idx, e.target.value)}
+                  title="Pilih warna bar"
+                />
+              </>
             ) : (
               <span className="w-12 text-right text-sm font-semibold text-gray-700">{d.value}</span>
             )}
@@ -131,12 +99,12 @@ function BarStatEditable({ data, setData, isAdmin, title }) {
 
 export default function StatistikDesa() {
   const heroImg = '/surat.jpg';
-  const isAdmin = true; // ganti dengan context jika sudah ada
+  const { isAdmin } = useAuth(); // Ambil status admin dari context
   const [stats, setStats] = useState([]); // Awal kosong, bukan initialStats
-  const [usia, setUsia] = useState(initialUsia);
-  const [pendidikan, setPendidikan] = useState(initialPendidikan);
-  const [pekerjaan, setPekerjaan] = useState(initialPekerjaan);
-  const [dusun, setDusun] = useState(initialDusun);
+  const [usia, setUsia] = useState([]);
+  const [pendidikan, setPendidikan] = useState([]);
+  const [pekerjaan, setPekerjaan] = useState([]);
+  const [dusun, setDusun] = useState([]);
   const [editIdx, setEditIdx] = useState(null);
   const [editValue, setEditValue] = useState('');
   const [editBreakdown, setEditBreakdown] = useState([]);
@@ -174,6 +142,21 @@ export default function StatistikDesa() {
         } : null;
       }).filter(Boolean);
       setStats(mappedStats);
+
+      // Setelah fetch data dari backend:
+      const usiaData = data.filter(d => d.kategori === 'usia').map(d => ({ ...d, kategori: d.kategori || 'usia' }));
+      const pendidikanData = data.filter(d => d.kategori === 'pendidikan').map(d => ({ ...d, kategori: d.kategori || 'pendidikan' }));
+      const pekerjaanData = data.filter(d => d.kategori === 'pekerjaan').map(d => ({ ...d, kategori: d.kategori || 'pekerjaan' }));
+      const dusunData = data.filter(d => d.kategori === 'dusun').map(d => ({ ...d, kategori: d.kategori || 'dusun' }));
+      console.log('Usia:', usiaData);
+      console.log('Pendidikan:', pendidikanData);
+      console.log('Pekerjaan:', pekerjaanData);
+      console.log('Dusun:', dusunData);
+      setUsia(usiaData);
+      setPendidikan(pendidikanData);
+      setPekerjaan(pekerjaanData);
+      setDusun(dusunData);
+
     } catch (err) {
       setError('Gagal memuat data statistik');
       setStats([]);

@@ -59,21 +59,17 @@ const allowedOrigins = [
   'http://127.0.0.1:4173',
   // Tambahkan port frontend Anda di sini jika berbeda
 ];
-app.use((req, res, next) => {
-  const origin = req.headers.origin;
-  if (allowedOrigins.includes(origin)) {
-    res.header('Access-Control-Allow-Origin', origin);
-    res.header('Access-Control-Allow-Credentials', 'true');
-    res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
-    res.header('Access-Control-Allow-Headers', 'Content-Type,Authorization,X-Requested-With');
-    if (req.method === 'OPTIONS') {
-      return res.sendStatus(204);
-    }
-  } else if (origin) {
-    console.log('CORS blocked origin:', origin);
-  }
-  next();
-});
+app.use(cors({
+  origin: function(origin, callback) {
+    // Allow requests with no origin (like mobile apps, curl, etc.)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin)) return callback(null, true);
+    return callback(new Error('CORS not allowed for this origin'), false);
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 
 // Body parsing middleware
 app.use(express.json({ limit: '10mb' }));

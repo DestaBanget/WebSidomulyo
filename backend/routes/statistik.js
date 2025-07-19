@@ -80,7 +80,7 @@ router.put('/:id', adminAuth, [
   body('kategori').notEmpty().withMessage('Kategori wajib diisi'),
   body('label').notEmpty().withMessage('Label wajib diisi'),
   body('value').isInt({ min: 0 }).withMessage('Value harus berupa angka positif'),
-  body('color').optional().isHexColor().withMessage('Color harus berupa hex color')
+  body('color').optional({ nullable: true }).isHexColor().withMessage('Color harus berupa hex color')
 ], async (req, res) => {
   try {
     const errors = validationResult(req);
@@ -94,7 +94,14 @@ router.put('/:id', adminAuth, [
     if (idx === -1) {
       return res.status(404).json({ error: 'Statistik tidak ditemukan' });
     }
-    statistik[idx] = { ...statistik[idx], kategori, label, value, color };
+    // Pastikan color tidak hilang jika tidak dikirim
+    statistik[idx] = {
+      ...statistik[idx],
+      kategori,
+      label,
+      value,
+      color: color || statistik[idx].color
+    };
     await writeStatistik(statistik);
     res.json({ message: 'Statistik berhasil diupdate', statistik: statistik[idx] });
   } catch (error) {
