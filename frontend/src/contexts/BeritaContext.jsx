@@ -42,11 +42,17 @@ export function BeritaProvider({ children }) {
 
   const addBerita = async (beritaData) => {
     try {
+      console.log('=== Starting addBerita ===');
+      
+      // Get token from localStorage
       const token = localStorage.getItem('token');
+      console.log('Token available:', !!token);
+      
       if (!token) {
-        throw new Error('Token tidak ditemukan');
+        throw new Error('Token tidak ditemukan. Silakan login ulang.');
       }
 
+      // Prepare FormData
       const formData = new FormData();
       formData.append('title', beritaData.title);
       formData.append('content', beritaData.content);
@@ -57,14 +63,34 @@ export function BeritaProvider({ children }) {
         formData.append('img', beritaData.img);
       }
 
-      const data = await uploadFile('/berita', formData);
+      console.log('Making API call to /berita with token');
+      
+      const response = await fetch(`${API_BASE_URL}/berita`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        },
+        body: formData
+      });
+
+      console.log('Response status:', response.status);
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error('API Error:', errorData);
+        throw new Error(errorData.error || 'Gagal menambahkan berita');
+      }
+
+      const data = await response.json();
+      console.log('Berita added successfully:', data);
       
       // Refresh berita list
       await fetchBerita();
       
       return { success: true, berita: data.berita };
-    } catch (error) {
-      return { success: false, error: error.message };
+    } catch (err) {
+      console.error('Error in addBerita:', err);
+      return { success: false, error: err.message };
     }
   };
 

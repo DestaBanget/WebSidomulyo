@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
-import { useAuth } from '../contexts/AuthContext';
+import React, { useState, useEffect } from 'react';
+import { apiCall } from '../config/api';
 
 const initialStats = [
   {
-    title: 'Total Penduduk',
+    title: 'Total Penduduk',  
     value: '2.350',
     icon: '👨‍👩‍👧‍👦',
     breakdown: [
@@ -53,7 +53,8 @@ const initialDusun = [
   { label: 'Dusun Bareng', value: 900, color: 'bg-blue-400' },
   { label: 'Dusun Tebelo', value: 800, color: 'bg-green-400' },
   { label: 'Dusun Mangunrejo', value: 650, color: 'bg-yellow-400' },
-  { label: 'Dusun Sumberkreco', value: 500, color: 'bg-purple-400' },
+  { label: 'Dusun Sumberkrecek', value: 500, color: 'bg-purple-400' },
+  { label: 'Dusun [Nama Lain]', value: 400, color: 'bg-pink-400' },
 ];
 
 function BarStat({ data, total }) {
@@ -130,8 +131,8 @@ function BarStatEditable({ data, setData, isAdmin, title }) {
 
 export default function StatistikDesa() {
   const heroImg = '/surat.jpg';
-  const { isAdmin } = useAuth();
-  const [stats, setStats] = useState(initialStats);
+  const isAdmin = true; // ganti dengan context jika sudah ada
+  const [stats, setStats] = useState([]); // Awal kosong, bukan initialStats
   const [usia, setUsia] = useState(initialUsia);
   const [pendidikan, setPendidikan] = useState(initialPendidikan);
   const [pekerjaan, setPekerjaan] = useState(initialPekerjaan);
@@ -139,6 +140,49 @@ export default function StatistikDesa() {
   const [editIdx, setEditIdx] = useState(null);
   const [editValue, setEditValue] = useState('');
   const [editBreakdown, setEditBreakdown] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const res = await apiCall('/statistik');
+        let data = [];
+        if (Array.isArray(res.statistik)) {
+          data = res.statistik;
+        } else {
+          Object.values(res.statistik).forEach(arr => {
+            data = data.concat(arr);
+          });
+        }
+        // Mapping ke format frontend lama (title, value, icon, breakdown)
+        const mapping = [
+          { kategori: 'utama', label: 'Total Penduduk', icon: '👨‍👩‍👧‍👦' },
+          { kategori: 'utama', label: 'Jumlah Keluarga', icon: '🏠' },
+          { kategori: 'utama', label: 'Surat Diproses Bulan Ini', icon: '📄' },
+          { kategori: 'utama', label: 'Program Aktif', icon: '🎯' },
+        ];
+        const mappedStats = mapping.map(map => {
+          const found = data.find(d => d.kategori === map.kategori && d.label === map.label);
+          return found ? {
+            title: found.label,
+            value: found.value,
+            icon: map.icon,
+            id: found.id,
+          } : null;
+        }).filter(Boolean);
+        setStats(mappedStats);
+      } catch (err) {
+        setError('Gagal memuat data statistik');
+        setStats([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchStats();
+  }, []);
 
   const handleEdit = (idx) => {
     setEditIdx(idx);
@@ -146,17 +190,23 @@ export default function StatistikDesa() {
     setEditBreakdown(stats[idx].breakdown ? [...stats[idx].breakdown] : []);
   };
   const handleSave = (idx) => {
+    console.log('[DEBUG] handleSave dipanggil untuk idx', idx, 'nilai baru:', editValue);
     const newStats = [...stats];
     newStats[idx].value = editValue;
     if (newStats[idx].breakdown) newStats[idx].breakdown = editBreakdown;
     setStats(newStats);
     setEditIdx(null);
+    console.log('[DEBUG] State stats setelah simpan:', newStats);
   };
   const handleBreakdownChange = (bIdx, val) => {
     const newBreakdown = [...editBreakdown];
     newBreakdown[bIdx].value = val;
     setEditBreakdown(newBreakdown);
   };
+
+  if (loading) return <div className="p-8 text-gray-500">Memuat data statistik...</div>;
+  if (error) return <div className="p-8 text-red-500">{error}</div>;
+  if (!stats.length) return <div className="p-8 text-gray-500">Tidak ada data statistik.</div>;
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">

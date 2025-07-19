@@ -8,6 +8,7 @@
   "dependencies": {
     "express": "^5.1.0",
     "mysql2": "^3.14.2",
+    "node-fetch": "^3.3.2",
     "react-icons": "^5.5.0"
   },
   "name": "websidomulyo",

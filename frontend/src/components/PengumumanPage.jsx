@@ -1,70 +1,20 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-
-const dummyPengumuman = [
-  {
-    id: 1,
-    title: 'Pemadaman Listrik Sementara',
-    desc: 'Akan ada pemadaman listrik di wilayah Dusun Barat pada 15 Januari 2025 pukul 09.00-15.00 WIB.',
-    date: '2025-01-13',
-    img: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=600&q=80',
-  },
-  {
-    id: 2,
-    title: 'Pendaftaran Bantuan Sosial Dibuka',
-    desc: 'Pendaftaran bantuan sosial untuk warga kurang mampu dibuka hingga 20 Januari 2025.',
-    date: '2025-01-12',
-    img: 'https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=600&q=80',
-  },
-  {
-    id: 3,
-    title: 'Jadwal Posyandu Bulan Januari',
-    desc: 'Posyandu akan dilaksanakan pada 18 Januari 2025 di balai desa mulai pukul 08.00 WIB.',
-    date: '2025-01-11',
-    img: 'https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=600&q=80',
-  },
-  {
-    id: 4,
-    title: 'Penutupan Jalan Sementara',
-    desc: 'Jalan utama desa akan ditutup sementara untuk perbaikan mulai 16 Januari 2025.',
-    date: '2025-01-10',
-    img: 'https://images.unsplash.com/photo-1503676382389-4809596d5290?auto=format&fit=crop&w=600&q=80',
-  },
-  {
-    id: 5,
-    title: 'Pengambilan KTP Elektronik',
-    desc: 'Warga yang telah melakukan perekaman KTP elektronik dapat mengambil KTP di kantor desa.',
-    date: '2025-01-09',
-    img: 'https://images.unsplash.com/photo-1465101178521-c1a9136a3b99?auto=format&fit=crop&w=600&q=80',
-  },
-  {
-    id: 6,
-    title: 'Pendaftaran Lomba Desa Sehat',
-    desc: 'Pendaftaran lomba desa sehat dibuka hingga 25 Januari 2025 untuk seluruh warga.',
-    date: '2025-01-08',
-    img: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=600&q=80',
-  },
-];
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
+import { usePengumuman } from '../contexts/PengumumanContext';
 
 export default function PengumumanPage() {
-  const [pengumuman, setPengumuman] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const { isAdmin } = useAuth();
+  const navigate = useNavigate();
+  const { pengumuman, loading, error } = usePengumuman();
   const [search, setSearch] = useState('');
   const heroImg = '/surat.jpg';
 
-  useEffect(() => {
-    fetch('/api/pengumuman')
-      .then(res => {
-        if (!res.ok) throw new Error('Gagal memuat data');
-        return res.json();
-      })
-      .then(data => setPengumuman(data))
-      .catch(() => setPengumuman(dummyPengumuman))
-      .finally(() => setLoading(false));
-  }, []);
-
-  const filtered = pengumuman.filter(b => b.title.toLowerCase().includes(search.toLowerCase()) || b.desc.toLowerCase().includes(search.toLowerCase()));
+  const filtered = pengumuman.filter(b => 
+    b.title.toLowerCase().includes(search.toLowerCase()) || 
+    (b.desc && b.desc.toLowerCase().includes(search.toLowerCase())) ||
+    (b.content && b.content.toLowerCase().includes(search.toLowerCase()))
+  );
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
@@ -86,6 +36,12 @@ export default function PengumumanPage() {
           />
         </div>
       </div>
+      {/* Tombol Tambah Pengumuman untuk Admin */}
+      {isAdmin && (
+        <div className="flex justify-center mt-10">
+          <button className="px-6 py-2 bg-primary text-white rounded font-semibold shadow hover:bg-primary/90 transition" onClick={() => navigate('/admin/tambah-pengumuman')}>Tambah Pengumuman</button>
+        </div>
+      )}
       {/* Grid Cards */}
       <div className="flex-1 w-full max-w-7xl mx-auto px-4 md:px-8 py-12 mt-10">
         {loading ? (
@@ -100,12 +56,12 @@ export default function PengumumanPage() {
             {filtered.map(b => (
               <Link to={`/publikasi/pengumuman/${b.id}`} key={b.id} className="bg-white rounded-3xl shadow-xl overflow-hidden flex flex-col group transition-all duration-500 hover:shadow-2xl hover:-translate-y-2 hover:scale-105 hover:ring-2 hover:ring-primary/20 relative">
                 <div className="relative h-52 overflow-hidden">
-                  <img src={b.img} alt={b.title} className="w-full h-full object-cover group-hover:scale-110 group-hover:brightness-95 transition-transform duration-700" />
+                  <img src={b.img || 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=600&q=80'} alt={b.title} className="w-full h-full object-cover group-hover:scale-110 group-hover:brightness-95 transition-transform duration-700" />
                 </div>
                 <div className="flex-1 flex flex-col p-7">
                   <h3 className="font-bold text-xl md:text-2xl text-gray-800 mb-2 line-clamp-2 min-h-[2.6em] tracking-tight drop-shadow-sm">{b.title}</h3>
-                  <p className="text-gray-500 text-base mb-4 line-clamp-3 min-h-[4.2em]">{b.desc}</p>
-                  <span className="text-gray-400 text-sm mt-auto font-medium">{new Date(b.date).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' })}</span>
+                  <p className="text-gray-500 text-base mb-4 line-clamp-3 min-h-[4.2em]">{b.desc || b.content?.substring(0, 150) + '...'}</p>
+                  <span className="text-gray-400 text-sm mt-auto font-medium">{new Date(b.tanggal).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' })}</span>
                 </div>
               </Link>
             ))}

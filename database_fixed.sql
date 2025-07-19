@@ -103,6 +103,39 @@ CREATE TABLE IF NOT EXISTS statistik (
 );
 
 -- =====================================================
+-- Tabel Pengumuman
+-- =====================================================
+CREATE TABLE IF NOT EXISTS pengumuman (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  title VARCHAR(255) NOT NULL,
+  content TEXT NOT NULL,
+  kategori VARCHAR(50) NOT NULL,
+  img VARCHAR(255),
+  tanggal DATE NOT NULL,
+  desc TEXT,
+  created_by INT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL
+);
+
+-- =====================================================
+-- Tabel Agenda
+-- =====================================================
+CREATE TABLE IF NOT EXISTS agenda (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  title VARCHAR(255) NOT NULL,
+  deskripsi TEXT NOT NULL,
+  tanggal DATE NOT NULL,
+  waktu TIME NOT NULL,
+  lokasi VARCHAR(255) NOT NULL,
+  status ENUM('Akan Datang', 'Sedang Berlangsung', 'Selesai') DEFAULT 'Akan Datang',
+  img VARCHAR(255),
+  created_by INT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL
+);
+
+-- =====================================================
 -- Tabel Pariwisata
 -- =====================================================
 CREATE TABLE IF NOT EXISTS pariwisata (
@@ -156,6 +189,31 @@ INSERT IGNORE INTO berita (title, content, kategori, tanggal, created_by) VALUES
 ('Kegiatan Posyandu', 'Kegiatan posyandu rutin bulanan untuk balita dan lansia.', 'Kesehatan', '2024-01-20', 1),
 ('Rapat Koordinasi RT/RW', 'Rapat koordinasi rutin untuk membahas program desa.', 'Sosial', '2024-01-25', 1);
 
+-- Insert sample pengumuman (hanya jika belum ada)
+INSERT IGNORE INTO pengumuman (title, content, kategori, tanggal, desc, created_by) VALUES
+('Pemadaman Listrik Sementara', 'Akan ada pemadaman listrik di wilayah Dusun Barat pada 15 Januari 2025 pukul 09.00-15.00 WIB. Mohon warga mempersiapkan diri dan mengantisipasi kebutuhan listrik selama pemadaman berlangsung.', 'Penting', '2025-01-13', 'Akan ada pemadaman listrik di wilayah Dusun Barat pada 15 Januari 2025 pukul 09.00-15.00 WIB.', 1),
+('Pendaftaran Bantuan Sosial Dibuka', 'Pendaftaran bantuan sosial untuk warga kurang mampu dibuka hingga 20 Januari 2025. Silakan datang ke kantor desa dengan membawa dokumen pendukung.', 'Informasi', '2025-01-12', 'Pendaftaran bantuan sosial untuk warga kurang mampu dibuka hingga 20 Januari 2025.', 1),
+('Jadwal Posyandu Bulan Januari', 'Posyandu akan dilaksanakan pada 18 Januari 2025 di balai desa mulai pukul 08.00 WIB. Diharapkan seluruh ibu dan balita hadir tepat waktu.', 'Kesehatan', '2025-01-11', 'Posyandu akan dilaksanakan pada 18 Januari 2025 di balai desa mulai pukul 08.00 WIB.', 1);
+
+-- Insert sample agenda (hanya jika belum ada)
+INSERT IGNORE INTO agenda (title, deskripsi, tanggal, waktu, lokasi, status, created_by) VALUES
+('Rapat Koordinasi Desa', 'Rapat koordinasi bulanan untuk membahas program pembangunan desa dan evaluasi kinerja perangkat desa dalam melayani masyarakat. Acara ini akan dihadiri oleh seluruh perangkat desa dan tokoh masyarakat.', '2024-12-20', '09:00:00', 'Balai Desa Sidomulyo, Jl. Raya Sidomulyo No. 123', 'Akan Datang', 1),
+('Pelatihan UMKM', 'Pelatihan pengembangan usaha mikro kecil menengah untuk warga desa dengan fokus pada digital marketing dan pengelolaan keuangan. Peserta akan mendapatkan sertifikat pelatihan.', '2024-12-25', '14:00:00', 'Aula Desa Sidomulyo, Kompleks Kantor Desa', 'Akan Datang', 1),
+('Gotong Royong', 'Kegiatan gotong royong membersihkan lingkungan desa dan perbaikan infrastruktur jalan kampung. Semua warga diharapkan berpartisipasi untuk menjaga kebersihan desa.', '2024-12-15', '07:00:00', 'Seluruh Desa Sidomulyo, Mulai dari RT 01 hingga RT 15', 'Selesai', 1),
+('Posyandu Lansia', 'Kegiatan posyandu untuk lansia dengan pemeriksaan kesehatan rutin dan pemberian vitamin. Diharapkan seluruh lansia hadir untuk pemeriksaan kesehatan berkala.', '2024-12-18', '08:00:00', 'Poskesdes Sidomulyo, Jl. Kesehatan No. 45', 'Sedang Berlangsung', 1),
+('Sosialisasi Program Desa', 'Sosialisasi program pembangunan desa dan pengenalan aplikasi digital untuk layanan warga. Acara ini akan menjelaskan berbagai program pemerintah desa yang sedang berjalan.', '2024-12-22', '19:00:00', 'Masjid Al-Ikhlas, Jl. Masjid No. 67', 'Akan Datang', 1),
+('Festival Kuliner Desa', 'Festival kuliner tradisional dan modern hasil kreasi warga desa Sidomulyo. Acara ini akan menampilkan berbagai makanan khas desa dan lomba masak antar RT.', '2024-12-28', '16:00:00', 'Lapangan Desa Sidomulyo, Jl. Lapangan No. 89', 'Akan Datang', 1),
+('Pelatihan Kader Posyandu', 'Pelatihan kader posyandu untuk meningkatkan pelayanan kesehatan masyarakat desa. Peserta akan dilatih tentang cara memberikan pelayanan kesehatan yang baik.', '2024-12-30', '08:00:00', 'Balai Desa Sidomulyo, Ruang Rapat Utama', 'Akan Datang', 1),
+('Kerja Bakti Bersama', 'Kerja bakti membersihkan lingkungan desa bersama seluruh warga. Kegiatan ini bertujuan untuk menjaga kebersihan dan keindahan desa Sidomulyo.', '2024-12-10', '07:00:00', 'Seluruh Desa Sidomulyo, Fokus pada Jalan Utama dan Taman', 'Selesai', 1),
+('Lomba Cerdas Cermat Antar RT', 'Lomba cerdas cermat antar RT dalam rangka memperingati HUT RI. Acara ini akan menguji pengetahuan warga tentang sejarah dan budaya Indonesia.', '2024-12-05', '08:00:00', 'Lapangan Desa Sidomulyo, Jl. Lapangan No. 89', 'Selesai', 1),
+('Pelatihan Pertanian Modern', 'Pelatihan teknik pertanian modern untuk meningkatkan hasil panen warga desa. Peserta akan diajarkan cara menggunakan teknologi pertanian terkini.', '2024-12-27', '09:00:00', 'Kebun Percobaan Desa, Jl. Pertanian No. 12', 'Akan Datang', 1),
+('Rapat RT/RW', 'Rapat koordinasi RT/RW untuk membahas program pembangunan tingkat RT dan koordinasi antar warga.', '2024-12-23', '19:30:00', 'Balai RT 01, Jl. RT 01 No. 5', 'Akan Datang', 1),
+('Kegiatan Posyandu Balita', 'Kegiatan posyandu untuk balita dengan pemeriksaan tumbuh kembang dan pemberian makanan tambahan.', '2024-12-19', '08:00:00', 'Poskesdes Sidomulyo, Jl. Kesehatan No. 45', 'Akan Datang', 1),
+('Pelatihan Keterampilan Wanita', 'Pelatihan keterampilan untuk wanita desa seperti menjahit, memasak, dan kerajinan tangan untuk meningkatkan ekonomi keluarga.', '2024-12-26', '13:00:00', 'Aula Desa Sidomulyo, Kompleks Kantor Desa', 'Akan Datang', 1),
+('Sosialisasi Program Bantuan Sosial', 'Sosialisasi program bantuan sosial pemerintah untuk warga kurang mampu. Acara ini akan menjelaskan syarat dan prosedur pengajuan bantuan.', '2024-12-24', '14:00:00', 'Balai Desa Sidomulyo, Jl. Raya Sidomulyo No. 123', 'Akan Datang', 1),
+('Kegiatan Olahraga Bersama', 'Kegiatan olahraga bersama warga desa untuk menjaga kesehatan dan kebugaran. Acara ini akan diisi dengan senam pagi dan permainan tradisional.', '2024-12-29', '06:00:00', 'Lapangan Desa Sidomulyo, Jl. Lapangan No. 89', 'Akan Datang', 1),
+('Rapat Evaluasi Program Desa', 'Rapat evaluasi program pembangunan desa yang telah dilaksanakan selama tahun ini dan perencanaan untuk tahun depan.', '2024-12-31', '09:00:00', 'Balai Desa Sidomulyo, Ruang Rapat Utama', 'Akan Datang', 1);
+
 -- Insert sample statistik (hanya jika belum ada)
 INSERT IGNORE INTO statistik (kategori, nilai, satuan, deskripsi, tahun) VALUES
 ('Total Penduduk', 2350, 'orang', 'Jumlah penduduk desa', 2024),
@@ -201,6 +259,16 @@ CREATE INDEX idx_surat_jenis_surat ON surat(jenis_surat);
 -- Index untuk tabel pengaduan
 CREATE INDEX idx_pengaduan_status ON pengaduan(status);
 CREATE INDEX idx_pengaduan_created_at ON pengaduan(created_at);
+
+-- Index untuk tabel pengumuman
+CREATE INDEX idx_pengumuman_kategori ON pengumuman(kategori);
+CREATE INDEX idx_pengumuman_tanggal ON pengumuman(tanggal);
+CREATE INDEX idx_pengumuman_created_by ON pengumuman(created_by);
+
+-- Index untuk tabel agenda
+CREATE INDEX idx_agenda_tanggal ON agenda(tanggal);
+CREATE INDEX idx_agenda_status ON agenda(status);
+CREATE INDEX idx_agenda_created_by ON agenda(created_by);
 
 -- Index untuk tabel statistik
 CREATE INDEX idx_statistik_kategori ON statistik(kategori);

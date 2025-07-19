@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useBerita } from '../contexts/BeritaContext';
+import { useAuth } from '../contexts/AuthContext';
 
 export default function BeritaPage() {
   const { berita, loading } = useBerita();
-  const isAdmin = true; // ganti dengan context jika sudah ada
+  const { isAdmin } = useAuth();
   const [search, setSearch] = useState('');
   const heroImg = '/surat.jpg';
   const navigate = useNavigate();

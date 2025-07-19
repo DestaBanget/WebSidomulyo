@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Header from './components/Header';
 import Hero from './components/Hero';
 import StatistikDesa from './components/StatistikDesa';
@@ -31,9 +31,13 @@ import AgendaDetail from './components/AgendaDetail';
 import PariwisataDetail from './components/PariwisataDetail';
 import BeritaDesaDefault, { defaultBerita } from './components/BeritaDesa';
 import { BeritaProvider } from './contexts/BeritaContext';
+import { PengumumanProvider } from './contexts/PengumumanContext';
+import { AgendaProvider } from './contexts/AgendaContext';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import FormSuratPage from './pages/FormSuratPage';
 import AddBeritaPage from './pages/AddBeritaPage';
+import AddPengumumanPage from './pages/AddPengumumanPage';
+import AddAgendaPage from './pages/AddAgendaPage';
 import ProfilePage from './pages/ProfilePage';
 import AdminSuratMasukPage from './pages/AdminSuratMasukPage';
 import SuratDetail from './components/SuratDetail';
@@ -47,6 +51,7 @@ import KelompokTani from './components/KelompokTani';
 import AdminPengaduanMasukPage from './pages/AdminPengaduanMasukPage';
 import AdminPesanMasukPage from './pages/AdminPesanMasukPage';
 import AdminKontakPage from './pages/AdminKontakPage';
+import UserAuth from './components/UserAuth';
 
 function PlaceholderLogo({ label }) {
   return (
@@ -94,11 +99,29 @@ function App() {
   const sortedPariwisata = [...initialPariwisata].sort((a, b) => new Date(b.date) - new Date(a.date));
   const latestPariwisata = sortedPariwisata.slice(0, 6);
 
+  // State untuk login modal
+  const [showLoginModal, setShowLoginModal] = useState(false);
+
+  // Event listener untuk openLoginModal
+  useEffect(() => {
+    const handleOpenLoginModal = () => {
+      setShowLoginModal(true);
+    };
+
+    window.addEventListener('openLoginModal', handleOpenLoginModal);
+    
+    return () => {
+      window.removeEventListener('openLoginModal', handleOpenLoginModal);
+    };
+  }, []);
+
   return (
     <BeritaProvider>
-      <AuthProvider>
-        <Header />
-        <ScrollToTop />
+      <PengumumanProvider>
+        <AgendaProvider>
+          <AuthProvider>
+            <Header />
+            <ScrollToTop />
         <Routes>
           <Route path="/" element={
             <>
@@ -174,6 +197,8 @@ function App() {
           <Route path="/publikasi/agenda/:id" element={<AgendaDetail />} />
           <Route path="/pariwisata/:id" element={<PariwisataDetail />} />
           <Route path="/admin/tambah-berita" element={<AddBeritaPage />} />
+          <Route path="/admin/tambah-pengumuman" element={<AddPengumumanPage />} />
+          <Route path="/admin/agenda/tambah" element={<AddAgendaPage />} />
           <Route path="/profil" element={<ProfilePage />} />
           <Route path="/admin/surat-masuk" element={<AdminSuratMasukPage />} />
           <Route path="/admin/surat-masuk/:id" element={<SuratDetail />} />
@@ -184,7 +209,14 @@ function App() {
         </Routes>
         <Footer />
         <FloatingButton />
-      </AuthProvider>
+        
+        {/* Login Modal */}
+        {showLoginModal && (
+          <UserAuth onClose={() => setShowLoginModal(false)} />
+        )}
+          </AuthProvider>
+        </AgendaProvider>
+      </PengumumanProvider>
     </BeritaProvider>
   );
 }

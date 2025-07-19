@@ -116,40 +116,21 @@ router.put('/:id', adminAuth, [
     const { id } = req.params;
     const { kategori, label, value, color } = req.body;
 
-    // Check if statistik exists
-    const [existingStatistik] = await promisePool.query(
-      'SELECT * FROM statistik WHERE id = ?',
-      [id]
-    );
-
-    if (existingStatistik.length === 0) {
+    // Cek apakah data ada
+    const [existing] = await promisePool.query('SELECT * FROM statistik WHERE id = ?', [id]);
+    if (existing.length === 0) {
       return res.status(404).json({ error: 'Statistik tidak ditemukan' });
     }
 
-    // Check if statistik with same kategori and label already exists (excluding current id)
-    const [duplicateStatistik] = await promisePool.query(
-      'SELECT id FROM statistik WHERE kategori = ? AND label = ? AND id != ?',
-      [kategori, label, id]
-    );
-
-    if (duplicateStatistik.length > 0) {
-      return res.status(400).json({ error: 'Statistik dengan kategori dan label yang sama sudah ada' });
-    }
-
-    await promisePool.query(
+    // Update data
+    const [updateResult] = await promisePool.query(
       'UPDATE statistik SET kategori = ?, label = ?, value = ?, color = ? WHERE id = ?',
       [kategori, label, value, color, id]
     );
 
-    const [updatedStatistik] = await promisePool.query(
-      'SELECT * FROM statistik WHERE id = ?',
-      [id]
-    );
-
-    res.json({
-      message: 'Statistik berhasil diupdate',
-      statistik: updatedStatistik[0]
-    });
+    // Ambil data terbaru
+    const [updated] = await promisePool.query('SELECT * FROM statistik WHERE id = ?', [id]);
+    res.json({ message: 'Statistik berhasil diupdate', statistik: updated[0], updateResult });
   } catch (error) {
     console.error('Update statistik error:', error);
     res.status(500).json({ error: 'Terjadi kesalahan server' });

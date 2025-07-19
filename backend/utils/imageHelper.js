@@ -24,10 +24,10 @@ const getImageUrl = (req, imagePath) => {
   return `${baseUrl}${imagePath}`;
 };
 
-// Save image path dengan URL lengkap
+// Save image path dengan path relatif
 const saveImagePath = (req, filename) => {
   if (!filename) return null;
-  return `${req.protocol}://${req.get('host')}/uploads/${filename}`;
+  return `/uploads/${filename}`;
 };
 
 // Validate image URL

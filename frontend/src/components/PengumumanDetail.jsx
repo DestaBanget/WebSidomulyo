@@ -1,55 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-
-const dummyPengumuman = [
-  {
-    id: '1',
-    title: 'Pemadaman Listrik Sementara',
-    date: '2025-01-13',
-    content: `Akan ada pemadaman listrik di wilayah Dusun Barat pada 15 Januari 2025 pukul 09.00-15.00 WIB. Mohon warga mempersiapkan diri dan mengantisipasi kebutuhan listrik selama pemadaman berlangsung.`,
-  },
-  {
-    id: '2',
-    title: 'Pendaftaran Bantuan Sosial Dibuka',
-    date: '2025-01-12',
-    content: `Pendaftaran bantuan sosial untuk warga kurang mampu dibuka hingga 20 Januari 2025. Silakan datang ke kantor desa dengan membawa dokumen pendukung.`,
-  },
-  {
-    id: '3',
-    title: 'Jadwal Posyandu Bulan Januari',
-    date: '2025-01-11',
-    content: `Posyandu akan dilaksanakan pada 18 Januari 2025 di balai desa mulai pukul 08.00 WIB. Diharapkan seluruh ibu dan balita hadir tepat waktu.`,
-  },
-  {
-    id: '4',
-    title: 'Penutupan Jalan Sementara',
-    date: '2025-01-10',
-    content: `Jalan utama desa akan ditutup sementara untuk perbaikan mulai 16 Januari 2025. Mohon warga menggunakan jalur alternatif.`,
-  },
-  {
-    id: '5',
-    title: 'Pengambilan KTP Elektronik',
-    date: '2025-01-09',
-    content: `Warga yang telah melakukan perekaman KTP elektronik dapat mengambil KTP di kantor desa pada jam kerja.`,
-  },
-  {
-    id: '6',
-    title: 'Pendaftaran Lomba Desa Sehat',
-    date: '2025-01-08',
-    content: `Pendaftaran lomba desa sehat dibuka hingga 25 Januari 2025 untuk seluruh warga. Segera daftarkan diri Anda!`,
-  },
-];
+import { usePengumuman } from '../contexts/PengumumanContext';
 
 export default function PengumumanDetail() {
   const { id } = useParams();
-  const [pengumuman, setPengumuman] = useState(null);
+  const { pengumuman } = usePengumuman();
+  const [pengumumanDetail, setPengumumanDetail] = useState(null);
 
   useEffect(() => {
-    const found = dummyPengumuman.find(p => p.id === id);
-    setPengumuman(found);
-  }, [id]);
+    const found = pengumuman.find(p => p.id.toString() === id);
+    setPengumumanDetail(found);
+  }, [id, pengumuman]);
 
-  if (!pengumuman) {
+  if (!pengumumanDetail) {
     return <div className="min-h-screen flex items-center justify-center text-gray-400 text-lg">Pengumuman tidak ditemukan.</div>;
   }
 
@@ -64,9 +27,40 @@ export default function PengumumanDetail() {
       </div>
       <section className="max-w-3xl mx-auto px-4 py-10 mt-10 bg-white rounded-2xl shadow-lg">
         <span className="inline-block mb-2 px-3 py-1 rounded-full bg-blue-100 text-blue-700 text-xs font-bold">Pengumuman Desa</span>
-        <h2 className="text-2xl md:text-3xl font-extrabold text-gray-900 mb-4">{pengumuman.title}</h2>
-        <div className="text-gray-500 text-sm mb-6">Dipublikasikan pada {new Date(pengumuman.date).toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' })}</div>
-        <div className="text-gray-800 text-lg whitespace-pre-line leading-relaxed">{pengumuman.content}</div>
+        <h2 className="text-2xl md:text-3xl font-extrabold text-gray-900 mb-4">{pengumumanDetail.title}</h2>
+        <div className="text-gray-500 text-sm mb-6">Dipublikasikan pada {new Date(pengumumanDetail.tanggal).toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' })}</div>
+        
+        {/* Gambar Pengumuman */}
+        {(pengumumanDetail.img || pengumumanDetail.image || pengumumanDetail.photo) && (
+          <div className="mb-6">
+            <img 
+              src={pengumumanDetail.img || pengumumanDetail.image || pengumumanDetail.photo} 
+              alt={pengumumanDetail.title}
+              className="w-full h-auto rounded-lg shadow-lg object-cover"
+              style={{ maxHeight: '400px' }}
+              onError={(e) => {
+                console.log('Gambar gagal dimuat:', pengumumanDetail.img || pengumumanDetail.image || pengumumanDetail.photo);
+                e.target.style.display = 'none';
+              }}
+            />
+          </div>
+        )}
+        
+        {/* Placeholder jika tidak ada gambar */}
+        {!pengumumanDetail.img && !pengumumanDetail.image && !pengumumanDetail.photo && (
+          <div className="mb-6 bg-gray-100 rounded-lg p-8 text-center">
+            <div className="text-gray-400 text-lg">Tidak ada gambar untuk pengumuman ini</div>
+          </div>
+        )}
+        
+        {/* Deskripsi Singkat */}
+        {pengumumanDetail.desc && pengumumanDetail.desc !== pengumumanDetail.content && (
+          <div className="text-gray-600 text-base mb-6 italic">
+            {pengumumanDetail.desc}
+          </div>
+        )}
+        
+        <div className="text-gray-800 text-lg whitespace-pre-line leading-relaxed">{pengumumanDetail.content}</div>
       </section>
     </div>
   );
