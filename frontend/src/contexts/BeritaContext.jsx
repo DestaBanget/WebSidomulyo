@@ -1,5 +1,4 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { defaultBerita } from '../components/BeritaDesa';
 import { API_BASE_URL, uploadFile } from '../config/api';
 
 const BeritaContext = createContext();
@@ -22,19 +21,24 @@ export function BeritaProvider({ children }) {
       setLoading(true);
       setError(null);
       
+      console.log('Fetching berita from:', `${API_BASE_URL}/berita`);
       const response = await fetch(`${API_BASE_URL}/berita`);
       
+      console.log('Response status:', response.status);
+      
       if (!response.ok) {
-        throw new Error('Gagal mengambil data berita');
+        const errorData = await response.json().catch(() => ({ error: 'Gagal mengambil data berita' }));
+        throw new Error(errorData.error || 'Gagal mengambil data berita');
       }
       
       const data = await response.json();
+      console.log('Berita data received:', data);
+      
       setBerita(data.berita || []);
     } catch (error) {
       console.error('Error fetching berita:', error);
       setError(error.message);
-      // Fallback ke data dummy jika API gagal
-      setBerita(defaultBerita);
+      setBerita([]); // Set empty array instead of fallback to dummy data
     } finally {
       setLoading(false);
     }

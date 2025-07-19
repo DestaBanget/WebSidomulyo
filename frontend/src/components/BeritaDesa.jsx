@@ -2,83 +2,6 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { useBerita } from '../contexts/BeritaContext';
 
-export const defaultBerita = [
-  {
-    id: '10',
-    title: 'Desa Sidomulyo Raih Penghargaan Desa Terbersih 2024',
-    kategori: 'Prestasi',
-    tanggal: '2024-06-11',
-    img: '/surat.jpg',
-    content: `Desa Sidomulyo berhasil meraih penghargaan sebagai Desa Terbersih tingkat kabupaten tahun 2024. Penghargaan ini diberikan atas partisipasi aktif warga dalam menjaga kebersihan lingkungan dan pengelolaan sampah yang inovatif.\n\nKepala Desa mengucapkan terima kasih kepada seluruh warga dan berharap prestasi ini dapat dipertahankan di tahun-tahun berikutnya.`,
-  },
-  {
-    id: '9',
-    title: 'Festival Kuliner Desa Sidomulyo Sukses Digelar',
-    kategori: 'Kuliner',
-    tanggal: '2024-06-10',
-    img: '/surat2.jpeg',
-    content: `Festival Kuliner Desa Sidomulyo menghadirkan aneka makanan tradisional dan modern hasil kreasi warga. Acara ini ramai dikunjungi dan menjadi ajang promosi UMKM lokal.\n\nBerbagai lomba masak dan bazar makanan turut memeriahkan festival yang digelar di lapangan desa.`,
-  },
-  {
-    id: '7',
-    title: 'Launching Wisata Sawah Indah: Destinasi Baru di Sidomulyo',
-    kategori: 'Pariwisata',
-    tanggal: '2024-06-09',
-    img: '/surat.jpg',
-    content: `Desa Sidomulyo resmi meluncurkan destinasi wisata baru, Wisata Sawah Indah, pada hari ini. Destinasi ini menawarkan pemandangan sawah hijau yang menenangkan, spot foto instagramable, dan area piknik keluarga. Kepala Desa berharap wisata ini dapat meningkatkan perekonomian warga dan menarik wisatawan lokal maupun luar daerah.\n\nAcara launching dihadiri oleh perangkat desa, tokoh masyarakat, dan warga sekitar. Berbagai hiburan dan bazar UMKM turut memeriahkan acara peresmian.`,
-  },
-  {
-    id: 1,
-    title: 'Pembangunan Jalan Baru di Dusun Krajan Selesai Lebih Cepat',
-    kategori: 'Pembangunan',
-    tanggal: '2024-06-01',
-    img: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=600&q=80',
-  },
-  {
-    id: 2,
-    title: 'Penyaluran Bantuan Sosial Tahap II untuk Warga Kurang Mampu',
-    kategori: 'Sosial',
-    tanggal: '2024-05-28',
-    img: 'https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=600&q=80',
-  },
-  {
-    id: 3,
-    title: 'Lomba 17 Agustus: Meriahkan HUT RI ke-79 di Desa Sidomulyo',
-    kategori: 'Agenda',
-    tanggal: '2024-05-20',
-    img: 'https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=600&q=80',
-  },
-  {
-    id: 4,
-    title: 'Pelatihan Digitalisasi Administrasi untuk Perangkat Desa',
-    kategori: 'Pendidikan',
-    tanggal: '2024-05-15',
-    img: 'https://images.unsplash.com/photo-1503676382389-4809596d5290?auto=format&fit=crop&w=600&q=80',
-  },
-  {
-    id: 5,
-    title: 'Gotong Royong Bersihkan Lingkungan Menjelang Musim Hujan',
-    kategori: 'Lingkungan',
-    tanggal: '2024-05-10',
-    img: 'https://images.unsplash.com/photo-1465101178521-c1a9136a3b99?auto=format&fit=crop&w=600&q=80',
-  },
-  {
-    id: 6,
-    title: 'Sosialisasi Program Kesehatan Ibu dan Anak di Balai Desa',
-    kategori: 'Kesehatan',
-    tanggal: '2024-05-05',
-    img: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=600&q=80',
-  },
-  {
-    id: '8',
-    title: 'Pelatihan Kewirausahaan untuk Remaja Desa',
-    kategori: 'Pendidikan',
-    tanggal: '2024-06-09',
-    img: '/surat2.jpeg',
-    content: `Pemerintah Desa Sidomulyo mengadakan pelatihan kewirausahaan bagi remaja desa. Kegiatan ini bertujuan membekali generasi muda dengan keterampilan berwirausaha dan membangun usaha mandiri.\n\nPelatihan diisi oleh narasumber dari UMKM sukses dan diikuti antusias oleh puluhan peserta. Diharapkan, pelatihan ini dapat menumbuhkan semangat wirausaha di kalangan remaja dan meningkatkan perekonomian desa.`,
-  },
-];
-
 const kategoriColor = {
   Pembangunan: 'bg-primary/90 text-white',
   Sosial: 'bg-green-500/90 text-white',
@@ -87,12 +10,65 @@ const kategoriColor = {
   Lingkungan: 'bg-emerald-600/90 text-white',
   Kesehatan: 'bg-red-500/90 text-white',
   Pariwisata: 'bg-blue-500/90 text-white',
+  Prestasi: 'bg-purple-500/90 text-white',
+  Kuliner: 'bg-orange-500/90 text-white',
 };
 
-export default function BeritaDesa({ data }) {
-  const { berita: beritaContext, loading } = useBerita();
-  const berita = data || beritaContext || defaultBerita;
-  if (loading) return null;
+export default function BeritaDesa() {
+  const { berita, loading, error } = useBerita();
+
+  // Loading state
+  if (loading) {
+    return (
+      <section className="max-w-7xl mx-auto px-5 md:px-10 lg:px-20 py-14">
+        <h2 className="text-2xl md:text-3xl font-extrabold text-primary mb-10 text-center tracking-tight drop-shadow-lg">Berita Desa</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-12">
+          {[...Array(6)].map((_, index) => (
+            <div key={index} className="bg-white rounded-3xl shadow-xl overflow-hidden animate-pulse">
+              <div className="h-52 bg-gray-200"></div>
+              <div className="p-7">
+                <div className="h-6 bg-gray-200 rounded mb-2"></div>
+                <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <section className="max-w-7xl mx-auto px-5 md:px-10 lg:px-20 py-14">
+        <h2 className="text-2xl md:text-3xl font-extrabold text-primary mb-10 text-center tracking-tight drop-shadow-lg">Berita Desa</h2>
+        <div className="text-center py-10">
+          <div className="text-red-500 mb-4">⚠️ Gagal memuat berita</div>
+          <p className="text-gray-600 mb-4">{error}</p>
+          <button 
+            onClick={() => window.location.reload()} 
+            className="px-6 py-2 bg-primary text-white rounded-full hover:bg-blue-700 transition"
+          >
+            Coba Lagi
+          </button>
+        </div>
+      </section>
+    );
+  }
+
+  // Empty state
+  if (!berita || berita.length === 0) {
+    return (
+      <section className="max-w-7xl mx-auto px-5 md:px-10 lg:px-20 py-14">
+        <h2 className="text-2xl md:text-3xl font-extrabold text-primary mb-10 text-center tracking-tight drop-shadow-lg">Berita Desa</h2>
+        <div className="text-center py-10">
+          <div className="text-gray-500 mb-4">📰 Belum ada berita tersedia</div>
+          <p className="text-gray-600">Berita akan ditampilkan di sini setelah ditambahkan oleh admin.</p>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section className="max-w-7xl mx-auto px-5 md:px-10 lg:px-20 py-14">
       <h2 className="text-2xl md:text-3xl font-extrabold text-primary mb-10 text-center tracking-tight drop-shadow-lg">Berita Desa</h2>
@@ -106,9 +82,12 @@ export default function BeritaDesa({ data }) {
           >
             <div className="relative h-52 overflow-hidden">
               <img
-                src={b.img}
+                src={b.img || '/surat.jpg'}
                 alt={b.title}
                 className="w-full h-full object-cover group-hover:scale-110 group-hover:brightness-95 transition-transform duration-700"
+                onError={(e) => {
+                  e.target.src = '/surat.jpg';
+                }}
               />
               <span className={`absolute top-3 left-3 px-3 py-1 rounded-full text-xs font-semibold shadow ${kategoriColor[b.kategori] || 'bg-primary text-white'}`}>
                 {b.kategori}
@@ -116,14 +95,18 @@ export default function BeritaDesa({ data }) {
             </div>
             <div className="flex-1 flex flex-col p-7">
               <h3 className="font-bold text-xl md:text-2xl text-gray-800 mb-2 line-clamp-3 min-h-[3.6em] tracking-tight drop-shadow-sm">{b.title}</h3>
-              <span className="text-gray-400 text-sm mt-auto font-medium">{new Date(b.tanggal).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' })}</span>
+              <span className="text-gray-400 text-sm mt-auto font-medium">
+                {new Date(b.tanggal).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' })}
+              </span>
             </div>
             <div className="absolute inset-0 pointer-events-none rounded-3xl group-hover:shadow-inner group-hover:shadow-primary/10 transition-all duration-500" />
           </Link>
         ))}
       </div>
       <div className="flex justify-center mt-10">
-        <a href="/publikasi/berita" className="inline-block px-7 py-3 rounded-full bg-primary text-white font-semibold shadow hover:bg-primary/90 transition text-lg animate-bounce">Lihat Berita</a>
+        <Link to="/publikasi/berita" className="inline-block px-7 py-3 rounded-full bg-primary text-white font-semibold shadow hover:bg-primary/90 transition text-lg animate-bounce">
+          Lihat Berita
+        </Link>
       </div>
     </section>
   );

@@ -29,7 +29,6 @@ import BeritaDetail from './components/BeritaDetail';
 import PengumumanDetail from './components/PengumumanDetail';
 import AgendaDetail from './components/AgendaDetail';
 import PariwisataDetail from './components/PariwisataDetail';
-import BeritaDesaDefault, { defaultBerita } from './components/BeritaDesa';
 import { BeritaProvider } from './contexts/BeritaContext';
 import { PengumumanProvider } from './contexts/PengumumanContext';
 import { AgendaProvider } from './contexts/AgendaContext';
@@ -51,7 +50,9 @@ import KelompokTani from './components/KelompokTani';
 import AdminPengaduanMasukPage from './pages/AdminPengaduanMasukPage';
 import AdminPesanMasukPage from './pages/AdminPesanMasukPage';
 import AdminKontakPage from './pages/AdminKontakPage';
+
 import UserAuth from './components/UserAuth';
+
 import PengaduanDetail from './components/PengaduanDetail';
 
 
@@ -94,9 +95,6 @@ function DummyChart() {
 }
 
 function App() {
-  // Ambil data berita dari defaultBerita di BeritaDesa
-  const sortedBerita = [...defaultBerita].sort((a, b) => new Date(b.tanggal) - new Date(a.tanggal));
-  const latestBerita = sortedBerita.slice(0, 6);
   // Ambil data pariwisata dari initialPariwisata di PariwisataPage
   const sortedPariwisata = [...initialPariwisata].sort((a, b) => new Date(b.date) - new Date(a.date));
   const latestPariwisata = sortedPariwisata.slice(0, 6);
@@ -165,7 +163,7 @@ function App() {
               </div>
               {/* End Statistik Ringkas */}
               <LayananUnggulan />
-              <BeritaDesa data={latestBerita} />
+              <BeritaDesa />
           
         
             </>
