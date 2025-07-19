@@ -17,6 +17,7 @@ const lembagaRoutes = require('./routes/lembaga');
 const strukturRoutes = require('./routes/struktur');
 const pesanKontakRoutes = require('./routes/pesan_kontak');
 const agendaRoutes = require('./routes/agenda');
+const tentangRoutes = require('./routes/tentang');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -45,7 +46,7 @@ const authLimiter = rateLimit({
 });
 
 // Terapkan general limiter hanya untuk endpoint data
-app.use(['/api/berita', '/api/surat', '/api/pengaduan', '/api/statistik', '/api/pengumuman', '/api/pariwisata', '/api/lembaga', '/api/struktur'], generalLimiter);
+app.use(['/api/berita', '/api/surat', '/api/pengaduan', '/api/statistik', '/api/pengumuman', '/api/pariwisata', '/api/lembaga', '/api/struktur', '/api/tentang'], generalLimiter);
 // Terapkan limiter ketat hanya untuk login/register
 app.use('/api/auth/login', authLimiter);
 app.use('/api/auth/register', authLimiter);
@@ -94,6 +95,7 @@ app.use('/api/lembaga', lembagaRoutes);
 app.use('/api/struktur', strukturRoutes);
 app.use('/api/pesan-kontak', pesanKontakRoutes);
 app.use('/api/agenda', agendaRoutes);
+app.use('/api/tentang', tentangRoutes);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
@@ -115,7 +117,8 @@ app.get('/', (req, res) => {
       auth: '/api/auth',
       berita: '/api/berita',
       surat: '/api/surat',
-      pengaduan: '/api/pengaduan'
+      pengaduan: '/api/pengaduan',
+      tentang: '/api/tentang'
     }
   });
 });

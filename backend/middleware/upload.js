@@ -59,12 +59,12 @@ const handleMulterError = (err, req, res, next) => {
 };
 
 // Specific upload configurations
-const uploadImage = upload.single('img'); // Changed from 'image' to 'img'
+const uploadImage = upload.single('foto'); // Changed to 'foto' to match frontend
 const uploadDocument = upload.single('document');
 const uploadMultiple = upload.array('files', 5); // Max 5 files
 
 // Flexible upload middleware that accepts multiple field names
-const uploadFlexible = (fieldNames = ['img', 'image', 'file']) => {
+const uploadFlexible = (fieldNames = ['foto', 'img', 'image', 'file']) => {
   return (req, res, next) => {
     const uploadSingle = upload.single(fieldNames[0]);
     uploadSingle(req, res, (err) => {
