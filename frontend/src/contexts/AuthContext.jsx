@@ -1,65 +1,94 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { API_BASE_URL } from '../config/api';
+import { useSmartCache } from '../hooks/useSmartCache';
 
 const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
-  const [isAdmin, setIsAdmin] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [initialLoadComplete, setInitialLoadComplete] = useState(false);
+  
+  const { smartFetch, isOnline } = useSmartCache();
 
   // Cek localStorage saat mount
   useEffect(() => {
-    const verifyToken = async (retryCount = 0) => {
+    const verifyToken = async () => {
       const token = localStorage.getItem('token');
-      console.log('AuthContext: Checking token on mount:', !!token, 'retry:', retryCount);
+      const cachedUser = localStorage.getItem('user');
+      const lastVerified = localStorage.getItem('tokenLastVerified');
+      const now = Date.now();
+      
+      console.log('AuthContext: Checking token on mount:', !!token, 'last verified:', lastVerified, 'online:', isOnline);
       
       if (token) {
-        try {
-          console.log('AuthContext: Verifying token with backend...');
-          // Verify token dengan backend
-          const response = await fetch(`${API_BASE_URL}/auth/me`, {
-            headers: {
-              'Authorization': `Bearer ${token}`,
-              'Content-Type': 'application/json'
-            }
-          });
-
-          console.log('AuthContext: Token verification response status:', response.status);
-
-          if (response.ok) {
-            const data = await response.json();
-            console.log('AuthContext: Token valid, setting user data:', data.user);
+        // Optimistic loading: set user data from cache immediately
+        if (cachedUser) {
+          try {
+            const userData = JSON.parse(cachedUser);
+            console.log('AuthContext: Setting cached user data immediately:', userData.username);
+            setUser(userData);
+            setIsLoggedIn(true);
+            setIsAdmin(userData.role === 'admin');
+            setLoading(false); // Set loading to false immediately for better UX
+            setInitialLoadComplete(true);
+          } catch (error) {
+            console.error('AuthContext: Error parsing cached user data:', error);
+          }
+        }
+        
+        // Check if we need to verify token (only if not verified recently and online)
+        const shouldVerify = isOnline && (!lastVerified || (now - parseInt(lastVerified)) > 5 * 60 * 1000); // 5 minutes
+        
+        if (shouldVerify) {
+          try {
+            console.log('AuthContext: Verifying token with smart fetch...');
+            
+            const data = await smartFetch(`${API_BASE_URL}/auth/me`, {
+              headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+              }
+            });
+            
+            console.log('AuthContext: Token valid, updating user data:', data.user);
             setUser(data.user);
             setIsLoggedIn(true);
             setIsAdmin(data.user.role === 'admin');
-          } else {
-            console.log('AuthContext: Token invalid, clearing localStorage');
-            throw new Error('Token invalid');
+            // Update cached user data and verification timestamp
+            localStorage.setItem('user', JSON.stringify(data.user));
+            localStorage.setItem('tokenLastVerified', now.toString());
+          } catch (error) {
+            console.error('AuthContext: Token verification failed:', error);
+            
+            // Handle different types of errors
+            if (error.message.includes('Offline mode') || !isOnline) {
+              console.log('AuthContext: Offline mode, keeping cached data');
+              // Keep cached data when offline
+              return;
+            } else {
+              // Only clear localStorage for actual auth errors
+              localStorage.removeItem('token');
+              localStorage.removeItem('user');
+              localStorage.removeItem('tokenLastVerified');
+              setUser(null);
+              setIsLoggedIn(false);
+              setIsAdmin(false);
+            }
           }
-        } catch (error) {
-          console.error('AuthContext: Token verification failed:', error);
-          
-          // Retry up to 3 times for network errors
-          if (retryCount < 3 && (error.name === 'TypeError' || error.message.includes('fetch'))) {
-            console.log(`AuthContext: Retrying token verification (${retryCount + 1}/3)...`);
-            setTimeout(() => verifyToken(retryCount + 1), 1000 * (retryCount + 1));
-            return;
-          }
-          
-          // Token invalid or max retries reached, hapus dari localStorage
-          localStorage.removeItem('token');
-          localStorage.removeItem('user');
-          setUser(null);
-          setIsLoggedIn(false);
-          setIsAdmin(false);
+        } else {
+          console.log('AuthContext: Token recently verified or offline, skipping verification');
         }
       } else {
         console.log('AuthContext: No token found in localStorage');
+        setLoading(false);
+        setInitialLoadComplete(true);
       }
       
       setLoading(false);
+      setInitialLoadComplete(true);
     };
 
     verifyToken();
@@ -86,7 +115,7 @@ export function AuthProvider({ children }) {
       window.removeEventListener('storage', handleStorageChange);
       window.removeEventListener('localStorageChanged', handleCustomStorageChange);
     };
-  }, []);
+  }, [smartFetch, isOnline]);
 
   const login = async (username, password) => {
     try {
@@ -263,6 +292,7 @@ export function AuthProvider({ children }) {
       isLoggedIn, 
       user, 
       loading,
+      initialLoadComplete,
       login, 
       logout, 
       register,
