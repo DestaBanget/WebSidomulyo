@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
+import { API_BASE_URL } from '../config/api';
 
 // Fungsi helper untuk mendapatkan URL foto yang benar
 const getFotoUrl = (fotoPath) => {
@@ -17,11 +18,11 @@ const getFotoUrl = (fotoPath) => {
   
   // Jika path relatif, tambahkan base URL backend
   if (fotoPath.startsWith('/')) {
-    return `http://localhost:5000${fotoPath}`;
+    return `${API_BASE_URL.replace('/api', '')}${fotoPath}`;
   }
   
   // Jika tidak ada prefix, tambahkan /uploads/
-  return `http://localhost:5000/uploads/${fotoPath}`;
+  return `${API_BASE_URL.replace('/api', '')}/uploads/${fotoPath}`;
 };
 
 // Data default sebagai fallback
@@ -129,20 +130,72 @@ export default function StrukturOrganisasi() {
       setLoading(true);
       setError(null);
       
-      const response = await fetch('http://localhost:5000/api/struktur');
-      if (!response.ok) {
-        throw new Error('Gagal mengambil data struktur organisasi');
-      }
+      console.log('Fetching struktur data from:', `${API_BASE_URL}/struktur`);
       
-      const data = await response.json();
+      // Try multiple approaches to handle CORS issues
+      let response = null;
+      let data = null;
+      
+      // Approach 1: Try with default headers
+      try {
+        response = await fetch(`${API_BASE_URL}/struktur`, {
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          }
+        });
+        
+        if (response.ok) {
+          data = await response.json();
+          console.log('✅ API Response (approach 1):', data);
+        } else {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+      } catch (error) {
+        console.log('❌ Approach 1 failed:', error.message);
+        
+        // Approach 2: Try without Content-Type header
+        try {
+          response = await fetch(`${API_BASE_URL}/struktur`, {
+            headers: {
+              'Accept': 'application/json'
+            }
+          });
+          
+          if (response.ok) {
+            data = await response.json();
+            console.log('✅ API Response (approach 2):', data);
+          } else {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+          }
+        } catch (error2) {
+          console.log('❌ Approach 2 failed:', error2.message);
+          
+          // Approach 3: Try with no headers
+          try {
+            response = await fetch(`${API_BASE_URL}/struktur`);
+            
+            if (response.ok) {
+              data = await response.json();
+              console.log('✅ API Response (approach 3):', data);
+            } else {
+              throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            }
+          } catch (error3) {
+            console.log('❌ Approach 3 failed:', error3.message);
+            throw new Error(`Semua pendekatan gagal. Error terakhir: ${error3.message}`);
+          }
+        }
+      }
       
       // Transform data dari API ke format yang dibutuhkan frontend
       const transformedData = transformApiDataToFrontend(data.struktur);
       setStruktur(transformedData);
       setEditStruktur(transformedData);
+      
     } catch (error) {
       console.error('Error fetching struktur:', error);
-      setError(error.message);
+      setError(`Gagal memuat data dari server: ${error.message}. Menggunakan data default.`);
       // Gunakan data default jika API gagal
       setStruktur(strukturDefault);
       setEditStruktur(strukturDefault);
@@ -294,7 +347,7 @@ export default function StrukturOrganisasi() {
             formData.append('foto', item.fotoFile);
           }
 
-          const response = await fetch(`http://localhost:5000/api/struktur/${item.id}`, {
+          const response = await fetch(`${API_BASE_URL}/struktur/${item.id}`, {
             method: 'PUT',
             headers: {
               'Authorization': `Bearer ${token}`
@@ -318,7 +371,7 @@ export default function StrukturOrganisasi() {
             formData.append('foto', item.fotoFile);
           }
 
-          const response = await fetch('http://localhost:5000/api/struktur', {
+          const response = await fetch(`${API_BASE_URL}/struktur`, {
             method: 'POST',
             headers: {
               'Authorization': `Bearer ${token}`

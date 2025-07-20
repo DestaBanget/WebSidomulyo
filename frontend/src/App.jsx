@@ -103,6 +103,36 @@ function App() {
   // State untuk statistik utama
   const [dashboardStats, setDashboardStats] = useState([]);
 
+  // State untuk login modal
+  const [showLoginModal, setShowLoginModal] = useState(false);
+
+  // Event listener untuk openLoginModal
+  useEffect(() => {
+    const handleOpenLoginModal = () => {
+      setShowLoginModal(true);
+    };
+
+    window.addEventListener('openLoginModal', handleOpenLoginModal);
+    
+    return () => {
+      window.removeEventListener('openLoginModal', handleOpenLoginModal);
+    };
+  }, []);
+
+  // Error boundary untuk handle API errors
+  useEffect(() => {
+    const handleUnhandledRejection = (event) => {
+      console.error('Unhandled promise rejection:', event.reason);
+      // Don't prevent default to allow normal error handling
+    };
+
+    window.addEventListener('unhandledrejection', handleUnhandledRejection);
+    
+    return () => {
+      window.removeEventListener('unhandledrejection', handleUnhandledRejection);
+    };
+  }, []);
+
   useEffect(() => {
     const fetchDashboardStats = async () => {
       try {
@@ -140,22 +170,6 @@ function App() {
       }
     };
     fetchDashboardStats();
-  }, []);
-
-  // State untuk login modal
-  const [showLoginModal, setShowLoginModal] = useState(false);
-
-  // Event listener untuk openLoginModal
-  useEffect(() => {
-    const handleOpenLoginModal = () => {
-      setShowLoginModal(true);
-    };
-
-    window.addEventListener('openLoginModal', handleOpenLoginModal);
-    
-    return () => {
-      window.removeEventListener('openLoginModal', handleOpenLoginModal);
-    };
   }, []);
 
   return (

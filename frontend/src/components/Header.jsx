@@ -87,7 +87,7 @@ export default function Header({ onShowLogin }) {
   const [activeMenu, setActiveMenu] = useState(null);
   const [showUserAuth, setShowUserAuth] = useState(false);
   const location = useLocation();
-  const { isAdmin, isLoggedIn, user, logout } = useAuth ? useAuth() : { isAdmin: false, isLoggedIn: false, user: null };
+  const { isAdmin, isLoggedIn, user, loading, logout } = useAuth();
 
   // Selalu anggap semua halaman sebagai heroBg
   const isHeroBg = true;
@@ -338,13 +338,30 @@ export default function Header({ onShowLogin }) {
         </nav>
         {/* Tombol Login di kanan */}
         <div className="hidden lg:flex items-center ml-auto">
-          {!isLoggedIn && (
+          {loading ? (
+            // Loading indicator
+            <div className="flex items-center gap-2 px-6 py-2 text-gray-400">
+              <div className="w-4 h-4 border-2 border-gray-300 border-t-primary rounded-full animate-spin"></div>
+              <span className="text-sm">Loading...</span>
+            </div>
+          ) : !isLoggedIn ? (
             <button
               onClick={() => setShowUserAuth(true)}
               className="whitespace-nowrap flex items-center gap-2 px-6 py-2 bg-primary text-white rounded-full shadow font-semibold text-base transition-all duration-200 hover:bg-blue-800 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-primary/50"
             >
               <FaLock className="text-lg" />
               Masuk
+            </button>
+          ) : (
+            // User is logged in, show profile button
+            <button
+              onClick={() => window.location.href = '/profil'}
+              className="whitespace-nowrap flex items-center gap-2 px-6 py-2 bg-primary text-white rounded-full shadow font-semibold text-base transition-all duration-200 hover:bg-blue-800 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-primary/50"
+            >
+              <span className="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center text-sm font-bold">
+                {user?.nama?.charAt(0)?.toUpperCase() || 'U'}
+              </span>
+              {user?.nama?.split(' ')[0] || 'Profil'}
             </button>
           )}
         </div>
@@ -469,8 +486,13 @@ export default function Header({ onShowLogin }) {
               )}
             </div>
             {/* Tombol Login di mobile */}
-              {!isLoggedIn && (
-                <button
+            {loading ? (
+              <div className="flex items-center justify-center gap-2 py-2 text-gray-400 mt-4">
+                <div className="w-4 h-4 border-2 border-gray-300 border-t-primary rounded-full animate-spin"></div>
+                <span className="text-sm">Loading...</span>
+              </div>
+            ) : !isLoggedIn ? (
+              <button
                 onClick={() => {
                   setShowUserAuth(true);
                   setMobileOpen(false);
@@ -478,8 +500,21 @@ export default function Header({ onShowLogin }) {
                 className="w-full bg-primary text-white py-2 rounded font-semibold mt-4 hover:bg-blue-800 transition"
               >
                 <FaLock className="inline mr-2" /> Masuk
-                </button>
-              )}
+              </button>
+            ) : (
+              <button
+                onClick={() => {
+                  window.location.href = '/profil';
+                  setMobileOpen(false);
+                }}
+                className="w-full bg-primary text-white py-2 rounded font-semibold mt-4 hover:bg-blue-800 transition flex items-center justify-center gap-2"
+              >
+                <span className="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center text-sm font-bold">
+                  {user?.nama?.charAt(0)?.toUpperCase() || 'U'}
+                </span>
+                {user?.nama?.split(' ')[0] || 'Profil'}
+              </button>
+            )}
           </nav>
         </div>
       )}
