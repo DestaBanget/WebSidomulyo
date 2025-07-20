@@ -93,7 +93,7 @@ export const publicApiCall = async (endpoint, options = {}) => {
 };
 
 // Helper untuk file upload
-export const uploadFile = async (endpoint, formData) => {
+export const uploadFile = async (endpoint, formData, method = 'POST') => {
   const token = localStorage.getItem('token');
   
   // Daftar endpoint yang tidak memerlukan autentikasi (public endpoints)
@@ -102,7 +102,6 @@ export const uploadFile = async (endpoint, formData) => {
     '/berita', // GET berita (public)
     '/pengumuman', // GET pengumuman (public)
     '/pariwisata', // GET pariwisata (public)
-    '/lembaga', // GET lembaga (public)
     '/statistik', // GET statistik (public)
     '/struktur', // GET struktur (public)
   ];
@@ -124,7 +123,7 @@ export const uploadFile = async (endpoint, formData) => {
   });
   
   const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-    method: 'POST',
+    method,
     headers: {
       // Kirim token jika diperlukan
       ...(shouldSendToken && { 'Authorization': `Bearer ${token}` })
