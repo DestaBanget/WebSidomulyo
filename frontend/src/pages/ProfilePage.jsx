@@ -40,8 +40,8 @@ export default function ProfilePage() {
     email: user?.email || '',
     phone: user?.no_hp || '',
   });
-  const [profileImage, setProfileImage] = useState(user?.profileImage || null);
-  const [imagePreview, setImagePreview] = useState(user?.profileImage || null);
+  const [profileImage, setProfileImage] = useState(user?.profile_image || null);
+  const [imagePreview, setImagePreview] = useState(user?.profile_image || null);
   const [success, setSuccess] = useState('');
   const [error, setError] = useState('');
   const [showDelete, setShowDelete] = useState(false);
@@ -106,6 +106,12 @@ export default function ProfilePage() {
     };
     fetchRiwayatPengaduan();
   }, []);
+
+  // Sinkronkan state dengan perubahan user.profile_image
+  React.useEffect(() => {
+    setProfileImage(user?.profile_image || null);
+    setImagePreview(user?.profile_image || null);
+  }, [user?.profile_image]);
 
   if (!user) {
     return <div className="p-8 text-center">Anda belum login.</div>;
