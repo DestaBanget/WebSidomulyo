@@ -47,7 +47,6 @@ const menuFooter = [
   {
     title: 'Lainnya',
     links: [
-      { label: 'Pariwisata', to: '/pariwisata' },
       { label: 'Kontak', to: '/kontak' },
     ],
   },
@@ -69,7 +68,7 @@ export default function Footer() {
         {/* Logo dan Info */}
         <div className="flex flex-col items-center md:items-start gap-7">
           <div className="flex items-center gap-4 mb-2">
-            <img src="https://upload.wikimedia.org/wikipedia/id/7/7a/Manchester_United_FC_crest.svg" alt="Logo MU" className="w-14 h-14 object-contain drop-shadow-lg" />
+            <img src="/Logo Only.svg" alt="Logo Desa Sidomulyo" className="w-14 h-14 object-contain drop-shadow-lg" />
             <span className="text-2xl font-extrabold tracking-widest uppercase" style={{ fontFamily: 'inherit' }}>Desa Sidomulyo</span>
           </div>
           <div className="text-2xl font-bold">Desa Sidomulyo</div>

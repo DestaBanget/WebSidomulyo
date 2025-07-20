@@ -3,11 +3,42 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useAgenda } from '../contexts/AgendaContext';
 
+function ConfirmModal({ open, onClose, onConfirm, title, message, loading }) {
+  if (!open) return null;
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+      <div className="bg-white rounded-xl shadow-xl p-8 max-w-sm w-full text-center animate-fade-in">
+        <div className="text-xl font-bold mb-2 text-gray-800">{title}</div>
+        <div className="text-gray-600 mb-6">{message}</div>
+        <div className="flex justify-center gap-4">
+          <button
+            className="px-5 py-2 rounded bg-red-600 text-white font-semibold hover:bg-red-700 transition disabled:opacity-60"
+            onClick={onConfirm}
+            disabled={loading}
+          >
+            {loading ? 'Menghapus...' : 'Ya, Hapus'}
+          </button>
+          <button
+            className="px-5 py-2 rounded bg-gray-200 text-gray-700 font-semibold hover:bg-gray-300 transition"
+            onClick={onClose}
+            disabled={loading}
+          >
+            Batal
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function AgendaPage() {
   const { isAdmin } = useAuth();
-  const { agenda, loading } = useAgenda();
+  const { agenda, loading, deleteAgenda } = useAgenda();
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('Semua');
+  const [deletingId, setDeletingId] = useState(null);
+  const [deleteError, setDeleteError] = useState(null);
+  const [confirmId, setConfirmId] = useState(null);
   const navigate = useNavigate();
 
   if (loading) return (
@@ -57,8 +88,29 @@ export default function AgendaPage() {
     });
   };
 
+  const handleDelete = async (id) => {
+    setDeletingId(id);
+    setDeleteError(null);
+    try {
+      await deleteAgenda(id);
+    } catch (err) {
+      setDeleteError(err.message || 'Gagal menghapus agenda');
+    }
+    setDeletingId(null);
+    setConfirmId(null);
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
+      {/* Konfirmasi Modal */}
+      <ConfirmModal
+        open={!!confirmId}
+        onClose={() => setConfirmId(null)}
+        onConfirm={() => handleDelete(confirmId)}
+        title="Konfirmasi Hapus"
+        message="Yakin ingin menghapus agenda ini? Tindakan ini tidak dapat dibatalkan."
+        loading={deletingId === confirmId}
+      />
       {/* Hero Section */}
       <div className="relative w-full h-[400px] md:h-[500px] flex items-center justify-center overflow-hidden" style={{
         background: `url('/surat.jpg') center/cover no-repeat`,
@@ -100,68 +152,79 @@ export default function AgendaPage() {
         {/* Agenda List */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {filtered.map((item) => (
-            <Link
-              to={`/publikasi/agenda/${item.id}`}
-              key={item.id}
-              className="bg-white rounded-3xl shadow-xl overflow-hidden flex flex-col group transition-all duration-500 hover:shadow-2xl hover:-translate-y-2 hover:scale-105 hover:ring-2 hover:ring-primary/20 relative h-full min-h-[500px]"
-              style={{boxShadow: '0 8px 32px 0 rgba(31, 38, 135, 0.10), 0 1.5px 4px 0 rgba(0,0,0,0.04)'}}
-            >
-              {/* Image Section */}
-              <div className="relative h-56 overflow-hidden">
-                {item.img ? (
-                  <img
-                    src={item.img}
-                    alt={item.title}
-                    className="w-full h-full object-cover group-hover:scale-110 group-hover:brightness-95 transition-transform duration-700"
-                  />
-                ) : (
-                  <div className="w-full h-full bg-gradient-to-br from-blue-100 to-blue-200 flex items-center justify-center">
-                    <svg className="w-16 h-16 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                    </svg>
-                  </div>
-                )}
-                {/* Status Badge */}
-                <span className={`absolute top-3 left-3 px-3 py-1 rounded-full text-xs font-semibold shadow ${getStatusColor(item.status)}`}>
-                  {item.status}
-                </span>
-              </div>
-              
-              {/* Content Section */}
-              <div className="flex-1 flex flex-col p-8">
-                <h3 className="font-bold text-xl md:text-2xl text-gray-800 mb-4 line-clamp-2 min-h-[2.6em] tracking-tight drop-shadow-sm">{item.title}</h3>
-                
-                {/* Info Section */}
-                <div className="space-y-3 mb-6">
-                  <div className="flex items-center text-gray-600">
-                    <svg className="w-5 h-5 mr-3 text-primary flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                    </svg>
-                    <span className="text-base font-medium">{formatDate(item.tanggal)}</span>
-                  </div>
-                  
-                  <div className="flex items-center text-gray-600">
-                    <svg className="w-5 h-5 mr-3 text-primary flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    <span className="text-base font-medium">{item.waktu} WIB</span>
-                  </div>
-                  
-                  <div className="flex items-start text-gray-600">
-                    <svg className="w-5 h-5 mr-3 text-primary mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                    </svg>
-                    <span className="text-base font-medium line-clamp-2">{item.lokasi}</span>
-                  </div>
+            <div key={item.id} className="relative group">
+              <Link
+                to={`/publikasi/agenda/${item.id}`}
+                className="bg-white rounded-3xl shadow-xl overflow-hidden flex flex-col group transition-all duration-500 hover:shadow-2xl hover:-translate-y-2 hover:scale-105 hover:ring-2 hover:ring-primary/20 relative h-full min-h-[500px]"
+                style={{boxShadow: '0 8px 32px 0 rgba(31, 38, 135, 0.10), 0 1.5px 4px 0 rgba(0,0,0,0.04)'}}
+              >
+                {/* Image Section */}
+                <div className="relative h-56 overflow-hidden">
+                  {item.img ? (
+                    <img
+                      src={item.img}
+                      alt={item.title}
+                      className="w-full h-full object-cover group-hover:scale-110 group-hover:brightness-95 transition-transform duration-700"
+                    />
+                  ) : (
+                    <div className="w-full h-full bg-gradient-to-br from-blue-100 to-blue-200 flex items-center justify-center">
+                      <svg className="w-16 h-16 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                      </svg>
+                    </div>
+                  )}
+                  {/* Status Badge */}
+                  <span className={`absolute top-3 left-3 px-3 py-1 rounded-full text-xs font-semibold shadow ${getStatusColor(item.status)}`}>
+                    {item.status}
+                  </span>
                 </div>
                 
-                <p className="text-gray-500 text-base leading-relaxed line-clamp-4 min-h-[5.6em]">{item.deskripsi}</p>
-              </div>
-              
-              {/* Hover Effect */}
-              <div className="absolute inset-0 pointer-events-none rounded-3xl group-hover:shadow-inner group-hover:shadow-primary/10 transition-all duration-500" />
-            </Link>
+                {/* Content Section */}
+                <div className="flex-1 flex flex-col p-8">
+                  <h3 className="font-bold text-xl md:text-2xl text-gray-800 mb-4 line-clamp-2 min-h-[2.6em] tracking-tight drop-shadow-sm">{item.title}</h3>
+                  
+                  {/* Info Section */}
+                  <div className="space-y-3 mb-6">
+                    <div className="flex items-center text-gray-600">
+                      <svg className="w-5 h-5 mr-3 text-primary flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                      </svg>
+                      <span className="text-base font-medium">{formatDate(item.tanggal)}</span>
+                    </div>
+                    
+                    <div className="flex items-center text-gray-600">
+                      <svg className="w-5 h-5 mr-3 text-primary flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      <span className="text-base font-medium">{item.waktu} WIB</span>
+                    </div>
+                    
+                    <div className="flex items-start text-gray-600">
+                      <svg className="w-5 h-5 mr-3 text-primary mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                      </svg>
+                      <span className="text-base font-medium line-clamp-2">{item.lokasi}</span>
+                    </div>
+                  </div>
+                  
+                  <p className="text-gray-500 text-base leading-relaxed line-clamp-4 min-h-[5.6em]">{item.deskripsi}</p>
+                </div>
+                
+                {/* Hover Effect */}
+                <div className="absolute inset-0 pointer-events-none rounded-3xl group-hover:shadow-inner group-hover:shadow-primary/10 transition-all duration-500" />
+              </Link>
+              {isAdmin && (
+                <button
+                  className="absolute top-3 right-3 px-3 py-1 bg-red-600 text-white text-xs rounded shadow hover:bg-red-700 transition z-20"
+                  onClick={() => setConfirmId(item.id)}
+                  disabled={deletingId === item.id}
+                  title="Hapus agenda"
+                >
+                  Hapus
+                </button>
+              )}
+            </div>
           ))}
         </div>
 
