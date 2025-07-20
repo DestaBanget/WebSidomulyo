@@ -284,28 +284,28 @@ export default function FormSurat({ jenisSurat, persyaratan }) {
               const isLuarDesa = /jika penduduk luar desa, wajib membawa identitas asli/i.test(p);
               const notRequired = /jika ada|jika diperlukan|jika sudah menikah|jika kehilangan|jika suami|jika sudah berumur|atau|bermaterai|catatan umum|opsional/i.test(p);
               return (
-                <div key={p} className="mb-3">
+              <div key={p} className="mb-3">
                   <label className="block mb-1 text-sm font-semibold text-gray-700">
                     {p} {isPasFoto ? <span className="text-blue-600 italic ml-1">(Dibawa pada saat mengambil surat)</span> : null}
                     {isLuarDesa ? null : (!notRequired && !isPasFoto ? <span className="text-red-500">*</span> : notRequired ? <span className="text-gray-400 italic">(opsional)</span> : null)}
                   </label>
-                  <div
-                    className="w-full border-2 border-primary rounded-lg px-4 py-8 text-center bg-white cursor-pointer flex flex-col items-center justify-center mb-1 transition hover:bg-primary/5"
-                    onClick={() => !loading && handleAreaClick(p)}
-                  >
-                    <img src="/file.svg" alt="Pilih Berkas" className="mx-auto mb-2 w-10 h-10 object-contain" />
-                    <span className="text-gray-500 text-sm">{uploads[p] ? uploads[p].name : 'Pilih berkas'}</span>
-                    <input
-                      type="file"
-                      accept=".jpg,.jpeg,.png,.pdf"
-                      onChange={e => handleUpload(e, p)}
-                      className="hidden"
-                      ref={el => (fileRefs.current[p] = el)}
+                <div
+                  className="w-full border-2 border-primary rounded-lg px-4 py-8 text-center bg-white cursor-pointer flex flex-col items-center justify-center mb-1 transition hover:bg-primary/5"
+                  onClick={() => !loading && handleAreaClick(p)}
+                >
+                  <img src="/file.svg" alt="Pilih Berkas" className="mx-auto mb-2 w-10 h-10 object-contain" />
+                  <span className="text-gray-500 text-sm">{uploads[p] ? uploads[p].name : 'Pilih berkas'}</span>
+                  <input
+                    type="file"
+                    accept=".jpg,.jpeg,.png,.pdf"
+                    onChange={e => handleUpload(e, p)}
+                    className="hidden"
+                    ref={el => (fileRefs.current[p] = el)}
                       required={isLuarDesa ? false : (!notRequired && !isPasFoto)}
-                      disabled={loading}
-                    />
-                  </div>
+                    disabled={loading}
+                  />
                 </div>
+              </div>
               );
             })}
           </div>

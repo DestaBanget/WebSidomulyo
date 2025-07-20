@@ -87,7 +87,7 @@ export default function Header({ onShowLogin }) {
   const [activeMenu, setActiveMenu] = useState(null);
   const [showUserAuth, setShowUserAuth] = useState(false);
   const location = useLocation();
-  const { isAdmin, isLoggedIn, user, logout } = useAuth ? useAuth() : { isAdmin: false, isLoggedIn: false, user: null };
+  const { isAdmin, isLoggedIn, user, logout } = useAuth();
 
   // Selalu anggap semua halaman sebagai heroBg
   const isHeroBg = true;
