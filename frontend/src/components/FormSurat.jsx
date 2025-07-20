@@ -278,28 +278,47 @@ export default function FormSurat({ jenisSurat, persyaratan }) {
         <div className="pt-8 mt-8 border-t-2 border-primary/20">
           <div className="font-bold mb-4 text-primary text-lg border-l-4 border-primary pl-3">B. LAMPIRAN PERSYARATAN</div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {persyaratan.map((p, idx) => (
-              <div key={p} className="mb-3">
-                <label className="block mb-1 text-sm font-semibold text-gray-700">{p} <span className="text-red-500">*</span></label>
-                <div
-                  className="w-full border-2 border-primary rounded-lg px-4 py-8 text-center bg-white cursor-pointer flex flex-col items-center justify-center mb-1 transition hover:bg-primary/5"
-                  onClick={() => !loading && handleAreaClick(p)}
-                >
-                  <img src="/file.svg" alt="Pilih Berkas" className="mx-auto mb-2 w-10 h-10 object-contain" />
-                  <span className="text-gray-500 text-sm">{uploads[p] ? uploads[p].name : 'Pilih berkas'}</span>
-                  <input
-                    type="file"
-                    accept=".jpg,.jpeg,.png,.pdf"
-                    onChange={e => handleUpload(e, p)}
-                    className="hidden"
-                    ref={el => (fileRefs.current[p] = el)}
-                    required
-                    disabled={loading}
-                  />
+            {persyaratan.map((p, idx) => {
+              // Deteksi syarat khusus pas foto
+              const isPasFoto = /pas foto 4x6/i.test(p);
+              const isLuarDesa = /jika penduduk luar desa, wajib membawa identitas asli/i.test(p);
+              const notRequired = /jika ada|jika diperlukan|jika sudah menikah|jika kehilangan|jika suami|jika sudah berumur|atau|bermaterai|catatan umum|opsional/i.test(p);
+              return (
+                <div key={p} className="mb-3">
+                  <label className="block mb-1 text-sm font-semibold text-gray-700">
+                    {p} {isPasFoto ? <span className="text-blue-600 italic ml-1">(Dibawa pada saat mengambil surat)</span> : null}
+                    {isLuarDesa ? null : (!notRequired && !isPasFoto ? <span className="text-red-500">*</span> : notRequired ? <span className="text-gray-400 italic">(opsional)</span> : null)}
+                  </label>
+                  <div
+                    className="w-full border-2 border-primary rounded-lg px-4 py-8 text-center bg-white cursor-pointer flex flex-col items-center justify-center mb-1 transition hover:bg-primary/5"
+                    onClick={() => !loading && handleAreaClick(p)}
+                  >
+                    <img src="/file.svg" alt="Pilih Berkas" className="mx-auto mb-2 w-10 h-10 object-contain" />
+                    <span className="text-gray-500 text-sm">{uploads[p] ? uploads[p].name : 'Pilih berkas'}</span>
+                    <input
+                      type="file"
+                      accept=".jpg,.jpeg,.png,.pdf"
+                      onChange={e => handleUpload(e, p)}
+                      className="hidden"
+                      ref={el => (fileRefs.current[p] = el)}
+                      required={isLuarDesa ? false : (!notRequired && !isPasFoto)}
+                      disabled={loading}
+                    />
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
+        </div>
+        {/* Catatan Penting */}
+        <div className="mt-10 p-4 bg-yellow-50 border-l-4 border-yellow-400 rounded">
+          <div className="font-bold text-yellow-700 mb-2">Catatan Penting Saat Mengambil Surat:</div>
+          <ul className="list-disc ml-6 text-yellow-800 text-sm">
+            <li>Membawa HP (untuk keperluan komunikasi/konfirmasi)</li>
+            <li>Membawa materai 10.000 (jika diperlukan untuk penandatanganan/pernyataan)</li>
+            <li>Membawa identitas asli (KTP/KK/SIM) untuk verifikasi</li>
+            <li>Pastikan semua dokumen asli dan fotokopi sudah lengkap sebelum datang ke kantor desa</li>
+          </ul>
         </div>
         <button 
           type="submit" 

@@ -3,6 +3,29 @@ import { useAuth } from '../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { API_BASE_URL } from '../config/api';
 
+// Fungsi helper untuk mendapatkan URL foto yang benar
+const getProfileImageUrl = (imagePath) => {
+  if (!imagePath) return null;
+  
+  // Jika sudah full URL, gunakan langsung
+  if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
+    return imagePath;
+  }
+  
+  // Jika data URL (base64), gunakan langsung
+  if (imagePath.startsWith('data:')) {
+    return imagePath;
+  }
+  
+  // Jika path relatif, tambahkan base URL backend
+  if (imagePath.startsWith('/')) {
+    return `http://localhost:5000${imagePath}`;
+  }
+  
+  // Jika tidak ada prefix, tambahkan /uploads/
+  return `http://localhost:5000/uploads/${imagePath}`;
+};
+
 export default function ProfilePage() {
   const { user, logout, updateUser } = useAuth();
   const navigate = useNavigate();
@@ -13,9 +36,9 @@ export default function ProfilePage() {
     confirmPassword: '',
   });
   const [editForm, setEditForm] = useState({
-    fullName: user?.fullName || '',
+    fullName: user?.nama || '',
     email: user?.email || '',
-    phone: user?.phone || '',
+    phone: user?.no_hp || '',
   });
   const [profileImage, setProfileImage] = useState(user?.profileImage || null);
   const [imagePreview, setImagePreview] = useState(user?.profileImage || null);
@@ -25,6 +48,7 @@ export default function ProfilePage() {
   const [showLogout, setShowLogout] = useState(false);
   const [showPasswordChange, setShowPasswordChange] = useState(false);
   const [showEditProfile, setShowEditProfile] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [riwayatSurat, setRiwayatSurat] = useState([]);
   const [loadingSurat, setLoadingSurat] = useState(true);
   const [errorSurat, setErrorSurat] = useState('');
@@ -92,10 +116,46 @@ export default function ProfilePage() {
     navigate('/');
   };
 
-  const handleDelete = () => {
-    localStorage.removeItem('user');
-    setShowDelete(false);
-    handleLogout();
+  const handleDelete = async () => {
+    setLoading(true);
+    setError('');
+    
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        throw new Error('Token tidak ditemukan. Silakan login ulang.');
+      }
+
+      const response = await fetch(`${API_BASE_URL}/auth/account`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Gagal menghapus akun');
+      }
+
+      setSuccess(data.message || 'Akun berhasil dihapus');
+      
+      // Clear local storage and logout
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      
+      // Close modal and logout after a short delay
+      setTimeout(() => {
+        setShowDelete(false);
+        handleLogout();
+      }, 2000);
+
+    } catch (error) {
+      setError(error.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const validatePassword = () => {
@@ -151,10 +211,14 @@ export default function ProfilePage() {
         return;
       }
 
+      setProfileImage(file);
+      
       const reader = new FileReader();
       reader.onload = (e) => {
         setImagePreview(e.target.result);
-        setProfileImage(e.target.result);
+      };
+      reader.onerror = () => {
+        setError('Gagal membaca file gambar');
       };
       reader.readAsDataURL(file);
       setError('');
@@ -167,55 +231,131 @@ export default function ProfilePage() {
     setError('');
   };
 
-  const handleChangePassword = () => {
+  const handleChangePassword = async () => {
     if (!validatePassword()) return;
 
-    if (passwordForm.currentPassword !== user.password) {
-      setError('Password saat ini tidak benar!');
-      return;
-    }
-
-    const updatedUser = { ...user, password: passwordForm.newPassword };
-    localStorage.setItem('user', JSON.stringify(updatedUser));
-    setSuccess('Password berhasil diubah!');
+    setLoading(true);
     setError('');
-    setPasswordForm({
-      currentPassword: '',
-      newPassword: '',
-      confirmPassword: '',
-    });
-    setShowPasswordChange(false);
+    setSuccess('');
+
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        throw new Error('Token tidak ditemukan. Silakan login ulang.');
+      }
+
+      const response = await fetch(`${API_BASE_URL}/auth/change-password`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          currentPassword: passwordForm.currentPassword,
+          newPassword: passwordForm.newPassword
+        })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        if (data.error) {
+          throw new Error(data.error);
+        } else if (data.errors && data.errors.length > 0) {
+          const errorMessages = data.errors.map(err => err.msg).join(', ');
+          throw new Error(errorMessages);
+        } else {
+          throw new Error('Gagal mengubah password');
+        }
+      }
+
+      setSuccess(data.message || 'Password berhasil diubah!');
+      setError('');
+      setPasswordForm({
+        currentPassword: '',
+        newPassword: '',
+        confirmPassword: '',
+      });
+      setShowPasswordChange(false);
+
+    } catch (error) {
+      setError(error.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleUpdateProfile = () => {
+  const handleUpdateProfile = async () => {
     if (!validateEditForm()) return;
 
-    const updatedUser = {
-      ...user,
-      fullName: editForm.fullName.trim(),
-      email: editForm.email.trim(),
-      phone: editForm.phone.trim(),
-      profileImage: profileImage,
-    };
-
-    localStorage.setItem('user', JSON.stringify(updatedUser));
-    if (updateUser) {
-      updateUser(updatedUser);
-    }
-    
-    setSuccess('Profil berhasil diperbarui!');
+    setLoading(true);
     setError('');
-    setShowEditProfile(false);
+    setSuccess('');
+
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        throw new Error('Token tidak ditemukan. Silakan login ulang.');
+      }
+
+      // Create FormData for file upload
+      const formDataToSend = new FormData();
+      formDataToSend.append('nama', editForm.fullName.trim());
+      formDataToSend.append('email', editForm.email.trim());
+      formDataToSend.append('no_hp', editForm.phone.trim() || '');
+      
+      // Jika ada file yang dipilih, tambahkan ke FormData
+      if (profileImage && profileImage instanceof File) {
+        formDataToSend.append('foto', profileImage);
+      }
+
+      const response = await fetch(`${API_BASE_URL}/auth/profile`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`
+          // Don't set Content-Type, let browser set it with boundary for FormData
+        },
+        body: formDataToSend
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        // Handle specific error messages
+        if (data.error) {
+          throw new Error(data.error);
+        } else if (data.errors && data.errors.length > 0) {
+          // Handle validation errors
+          const errorMessages = data.errors.map(err => err.msg).join(', ');
+          throw new Error(errorMessages);
+        } else {
+          throw new Error('Gagal mengupdate profil');
+        }
+      }
+
+      // Update user data in context dengan data dari backend
+      if (updateUser && data.user) {
+        updateUser(data.user);
+      }
+      
+      setSuccess(data.message || 'Profil berhasil diperbarui!');
+      setShowEditProfile(false);
+
+    } catch (error) {
+      setError(error.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleEditProfileClick = () => {
     setEditForm({
-      fullName: user.fullName || '',
+      fullName: user.nama || '',
       email: user.email || '',
-      phone: user.phone || '',
+      phone: user.no_hp || '',
     });
-    setImagePreview(user.profileImage || null);
-    setProfileImage(user.profileImage || null);
+    setImagePreview(user.profile_image || null);
+    setProfileImage(user.profile_image || null);
     setShowEditProfile(true);
     setError('');
     setSuccess('');
@@ -246,15 +386,21 @@ export default function ProfilePage() {
         <div className="relative z-10 flex flex-col items-center justify-center w-full h-full py-12 md:py-20">
           <div className="mb-6">
             <div className="w-32 h-32 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-4xl font-bold text-white border-8 border-white/30 shadow-2xl mb-4 transform hover:scale-105 transition-transform duration-300 overflow-hidden">
-              {profileImage ? (
+              {user.profile_image ? (
                 <img
-                  src={profileImage}
+                  src={getProfileImageUrl(user.profile_image)}
                   alt="Profile"
                   className="w-full h-full object-cover"
+                  onError={(e) => {
+                    // Fallback jika gambar gagal dimuat
+                    e.target.style.display = 'none';
+                    e.target.nextSibling.style.display = 'flex';
+                  }}
                 />
-              ) : (
-                user.fullName ? user.fullName[0].toUpperCase() : 'U'
-              )}
+              ) : null}
+              <div className={`w-full h-full flex items-center justify-center ${user.profile_image ? 'hidden' : ''}`}>
+                {user.nama ? user.nama[0].toUpperCase() : 'U'}
+              </div>
             </div>
           </div>
           <h1 className="text-5xl md:text-6xl font-extrabold mb-3 drop-shadow-lg bg-gradient-to-r from-white to-blue-100 bg-clip-text text-transparent">
@@ -274,7 +420,7 @@ export default function ProfilePage() {
         <div className="bg-white rounded-3xl shadow-2xl p-8 md:p-12">
           <div className="text-center mb-8">
             <h2 className="text-3xl font-bold text-gray-800 mb-2">
-              {user.fullName || 'Pengguna'}
+              {user.nama || 'Pengguna'}
             </h2>
             <p className="text-gray-600">@{user.username || 'username'}</p>
             <div className="mt-4 inline-flex items-center px-4 py-2 bg-blue-50 text-blue-700 rounded-full text-sm font-medium">
@@ -355,7 +501,7 @@ export default function ProfilePage() {
                       Nama Lengkap
                     </div>
                     <div className="font-semibold text-gray-900">
-                      {user.fullName || '-'}
+                      {user.nama || '-'}
                     </div>
                   </div>
                   <div>
@@ -379,7 +525,7 @@ export default function ProfilePage() {
                       Nomor Telepon
                     </div>
                     <div className="font-semibold text-gray-900">
-                      {user.phone || '-'}
+                      {user.no_hp || '-'}
                     </div>
                   </div>
                 </div>
@@ -555,10 +701,11 @@ export default function ProfilePage() {
       {showDelete && (
         <Modal
           title="Konfirmasi Hapus Akun"
-          message="Apakah Anda yakin ingin menghapus akun ini? Tindakan ini tidak dapat dibatalkan."
-          confirmLabel="Ya, Hapus"
+          message="Apakah Anda yakin ingin menghapus akun ini? Tindakan ini tidak dapat dibatalkan dan semua data Anda akan hilang permanen."
+          confirmLabel={loading ? "Menghapus..." : "Ya, Hapus"}
           onConfirm={handleDelete}
           onCancel={() => setShowDelete(false)}
+          disabled={loading}
         />
       )}
 
@@ -689,9 +836,10 @@ export default function ProfilePage() {
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 rounded-xl bg-green-600 text-white hover:bg-green-700 transition-all duration-200"
+                  disabled={loading}
+                  className="px-4 py-2 rounded-xl bg-green-600 text-white hover:bg-green-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  Simpan
+                  {loading ? 'Menyimpan...' : 'Simpan'}
                 </button>
               </div>
             </form>
@@ -741,7 +889,7 @@ export default function ProfilePage() {
                         className="w-full h-full object-cover"
                       />
                     ) : (
-                      user.fullName ? user.fullName[0].toUpperCase() : 'U'
+                      user.nama ? user.nama[0].toUpperCase() : 'U'
                     )}
                   </div>
                   {imagePreview && (
@@ -873,9 +1021,10 @@ export default function ProfilePage() {
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 rounded-xl bg-blue-600 text-white hover:bg-blue-700 transition-all duration-200"
+                  disabled={loading}
+                  className="px-4 py-2 rounded-xl bg-blue-600 text-white hover:bg-blue-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  Simpan Perubahan
+                  {loading ? 'Menyimpan...' : 'Simpan Perubahan'}
                 </button>
               </div>
             </form>
@@ -886,7 +1035,7 @@ export default function ProfilePage() {
   );
 }
 
-function Modal({ title, message, confirmLabel, onConfirm, onCancel }) {
+function Modal({ title, message, confirmLabel, onConfirm, onCancel, disabled = false }) {
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50">
       <div className="bg-white rounded-3xl shadow-2xl p-8 max-w-md w-full mx-4">
@@ -895,13 +1044,15 @@ function Modal({ title, message, confirmLabel, onConfirm, onCancel }) {
         <div className="flex justify-end space-x-3">
           <button
             onClick={onCancel}
-            className="px-4 py-2 rounded-xl bg-gray-100 text-gray-700 hover:bg-gray-200 transition-all duration-200"
+            disabled={disabled}
+            className="px-4 py-2 rounded-xl bg-gray-100 text-gray-700 hover:bg-gray-200 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Batal
           </button>
           <button
             onClick={onConfirm}
-            className="px-4 py-2 rounded-xl bg-red-600 text-white hover:bg-red-700 transition-all duration-200"
+            disabled={disabled}
+            className="px-4 py-2 rounded-xl bg-red-600 text-white hover:bg-red-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {confirmLabel}
           </button>

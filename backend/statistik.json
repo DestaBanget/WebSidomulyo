@@ -3,14 +3,14 @@
     "id": 1,
     "kategori": "utama",
     "label": "Total Penduduk",
-    "value": 2352,
+    "value": "23512",
     "color": "#00aaff"
   },
   {
     "id": 2,
     "kategori": "utama",
     "label": "Jumlah Keluarga",
-    "value": 670,
+    "value": "6711",
     "color": "#ff55aa"
   },
   {
