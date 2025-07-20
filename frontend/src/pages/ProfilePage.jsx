@@ -3,6 +3,9 @@ import { useAuth } from '../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { API_BASE_URL } from '../config/api';
 
+// Ambil base URL backend dari API_BASE_URL, hilangkan /api jika ada
+const BASE_URL = API_BASE_URL.replace(/\/api$/, '');
+
 // Fungsi helper untuk mendapatkan URL foto yang benar
 const getProfileImageUrl = (imagePath) => {
   if (!imagePath) return null;
@@ -19,11 +22,11 @@ const getProfileImageUrl = (imagePath) => {
   
   // Jika path relatif, tambahkan base URL backend
   if (imagePath.startsWith('/')) {
-    return `http://localhost:5000${imagePath}`;
+    return BASE_URL + imagePath;
   }
   
   // Jika tidak ada prefix, tambahkan /uploads/
-  return `http://localhost:5000/uploads/${imagePath}`;
+  return BASE_URL + '/uploads/' + imagePath;
 };
 
 export default function ProfilePage() {
