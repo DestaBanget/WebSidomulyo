@@ -35,8 +35,7 @@ body.modal-open {
   overflow: hidden;
 }
 
-/* Ensure modal inputs are clickable */
-.modal input,
+/* Ensure modal inputs are clickable */odal input,
 .modal select,
 .modal textarea {
   pointer-events: auto;

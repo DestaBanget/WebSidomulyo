@@ -13,7 +13,7 @@ const auth = async (req, res, next) => {
     
     // Get user from database
     const [users] = await promisePool.query(
-      'SELECT id, username, nama, email, role FROM users WHERE id = ?',
+      'SELECT id, username, nama, email, no_hp, profile_image, role FROM users WHERE id = ?',
       [decoded.userId]
     );
 
