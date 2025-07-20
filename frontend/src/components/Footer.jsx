@@ -1,42 +1,55 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { FaGlobe, FaBookOpen, FaInstagram, FaYoutube, FaEnvelope } from 'react-icons/fa';
 
 const menuFooter = [
   {
     title: 'Profil Desa',
-    links: ['Tentang', 'Visi-Misi', 'Struktur Organisasi', 'Statistik'],
+    links: [
+      { label: 'Tentang', to: '/profil/tentang' },
+      { label: 'Visi-Misi', to: '/profil/visi-misi' },
+      { label: 'Struktur Organisasi', to: '/profil/struktur-organisasi' },
+      { label: 'Statistik', to: '/profil/statistik' },
+    ],
   },
   {
     title: 'Lembaga',
     links: [
-      'BPD',
-      'LPM',
-      'PKK',
-      'KARANG TARUNA',
-      'LINMAS',
-      'BHABINKAMTIBMAS',
-      'BABINSA',
-      'KOPERASI WANITA',
-      'DHARMA WANITA',
-      'POSKESDES',
-      'KELOMPOK TANI',
+      { label: 'BPD', to: '/lembaga/bpd' },
+      { label: 'LPM', to: '/lembaga/lpm' },
+      { label: 'PKK', to: '/lembaga/pkk' },
+      { label: 'KARANG TARUNA', to: '/lembaga/karang-taruna' },
+      { label: 'LINMAS', to: '/lembaga/linmas' },
+      { label: 'BHABINKAMTIBMAS', to: '/lembaga/bhabinkamtibmas' },
+      { label: 'BABINSA', to: '/lembaga/babinsa' },
+      { label: 'KOPERASI WANITA', to: '/lembaga/koperasi-wanita' },
+      { label: 'DHARMA WANITA', to: '/lembaga/dharma-wanita' },
+      { label: 'POSKESDES', to: '/lembaga/poskesdes' },
+      { label: 'KELOMPOK TANI', to: '/lembaga/kelompok-tani' },
     ],
   },
   {
     title: 'Publikasi',
     links: [
-      { label: 'Berita', href: '/publikasi/berita' },
-      { label: 'Pengumuman', href: '/publikasi/pengumuman' },
-      { label: 'Agenda', href: '/publikasi/agenda' },
+      { label: 'Berita', to: '/publikasi/berita' },
+      { label: 'Pengumuman', to: '/publikasi/pengumuman' },
+      { label: 'Agenda', to: '/publikasi/agenda' },
     ],
   },
   {
     title: 'Layanan',
-    links: ['Surat Online', 'Pengaduan', 'Panduan'],
+    links: [
+      { label: 'Surat Online', to: '/layanan/surat-online' },
+      { label: 'Pengaduan', to: '/layanan/pengaduan' },
+      { label: 'Panduan', to: '/layanan/panduan' },
+    ],
   },
   {
     title: 'Lainnya',
-    links: ['Pariwisata', 'Kontak'],
+    links: [
+      { label: 'Pariwisata', to: '/pariwisata' },
+      { label: 'Kontak', to: '/kontak' },
+    ],
   },
 ];
 
@@ -69,13 +82,9 @@ export default function Footer() {
             <div key={m.title}>
               <div className="font-semibold mb-3 text-white/90 text-lg">{m.title}</div>
               <ul className="space-y-2">
-                {Array.isArray(m.links) ? m.links.map((l) => (
-                  <li key={l.label || l}>
-                    <a href={l.href || '#'} className="text-white/80 hover:text-white underline-offset-2 hover:underline transition text-base">{l.label || l}</a>
-                  </li>
-                )) : m.links.map((l) => (
-                  <li key={l}>
-                    <a href="#" className="text-white/80 hover:text-white underline-offset-2 hover:underline transition text-base">{l}</a>
+                {m.links.map((l) => (
+                  <li key={l.label}>
+                    <Link to={l.to} className="text-white/80 hover:text-white underline-offset-2 hover:underline transition text-base">{l.label}</Link>
                   </li>
                 ))}
               </ul>
