@@ -31,7 +31,7 @@ export const AgendaProvider = ({ children }) => {
         try {
           console.log('Testing token validity...');
           // Test if token is valid by calling a protected endpoint
-          const tokenTest = await fetch('http://localhost:5000/api/auth/me', {
+          const tokenTest = await fetch(`${API_BASE_URL}/auth/me`, {
             headers: {
               'Authorization': `Bearer ${token}`
             }
