@@ -3,6 +3,9 @@ import { useAuth } from '../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { API_BASE_URL } from '../config/api';
 
+// Ambil base URL backend dari API_BASE_URL, hilangkan /api jika ada
+const BASE_URL = API_BASE_URL.replace(/\/api$/, '');
+
 // Fungsi helper untuk mendapatkan URL foto yang benar
 const getProfileImageUrl = (imagePath) => {
   if (!imagePath) return null;
@@ -19,11 +22,11 @@ const getProfileImageUrl = (imagePath) => {
   
   // Jika path relatif, tambahkan base URL backend
   if (imagePath.startsWith('/')) {
-    return `http://localhost:5000${imagePath}`;
+    return BASE_URL + imagePath;
   }
   
   // Jika tidak ada prefix, tambahkan /uploads/
-  return `http://localhost:5000/uploads/${imagePath}`;
+  return BASE_URL + '/uploads/' + imagePath;
 };
 
 export default function ProfilePage() {
@@ -40,8 +43,8 @@ export default function ProfilePage() {
     email: user?.email || '',
     phone: user?.no_hp || '',
   });
-  const [profileImage, setProfileImage] = useState(user?.profileImage || null);
-  const [imagePreview, setImagePreview] = useState(user?.profileImage || null);
+  const [profileImage, setProfileImage] = useState(user?.profile_image || null);
+  const [imagePreview, setImagePreview] = useState(user?.profile_image || null);
   const [success, setSuccess] = useState('');
   const [error, setError] = useState('');
   const [showDelete, setShowDelete] = useState(false);
@@ -106,6 +109,12 @@ export default function ProfilePage() {
     };
     fetchRiwayatPengaduan();
   }, []);
+
+  // Sinkronkan state dengan perubahan user.profile_image
+  React.useEffect(() => {
+    setProfileImage(user?.profile_image || null);
+    setImagePreview(user?.profile_image || null);
+  }, [user?.profile_image]);
 
   if (!user) {
     return <div className="p-8 text-center">Anda belum login.</div>;
