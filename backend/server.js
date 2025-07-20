@@ -80,29 +80,41 @@ app.use(cors({
       return callback(null, true);
     }
     
-    // Allow Vercel domains
+    // Allow Vercel domains (including subdomains)
     if (origin.includes('vercel.app')) {
+      console.log('✅ Allowing Vercel domain:', origin);
       return callback(null, true);
     }
     
     // Allow Railway domains
     if (origin.includes('railway.app')) {
+      console.log('✅ Allowing Railway domain:', origin);
       return callback(null, true);
     }
     
-    // For production, be more restrictive
+    // For production, be more restrictive but still allow Vercel
     if (process.env.NODE_ENV === 'production') {
-      console.log('CORS blocked origin:', origin);
+      console.log('❌ CORS blocked origin:', origin);
       return callback(new Error('CORS not allowed for this origin'), false);
     }
     
     // For development, allow all
+    console.log('✅ Allowing origin in development:', origin);
     return callback(null, true);
   },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'Accept']
 }));
+
+// Handle OPTIONS requests specifically
+app.options('*', (req, res) => {
+  res.header('Access-Control-Allow-Origin', req.headers.origin || '*');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Accept');
+  res.header('Access-Control-Allow-Credentials', 'true');
+  res.status(200).end();
+});
 
 // Body parsing middleware - tingkatkan limit untuk handle base64 images
 app.use(express.json({ limit: '50mb' }));
