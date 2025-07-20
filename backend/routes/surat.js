@@ -314,4 +314,38 @@ router.get('/stats/overview', adminAuth, async (req, res) => {
   }
 });
 
+// --- PERBAIKAN PERSYARATAN SURAT ---
+// Catatan Umum Pengambilan Surat:
+// - Harap membawa identitas asli (KTP/KK/SIM)
+// - Materai 10.000 (jika diperlukan untuk penandatanganan)
+// - Handphone (untuk keperluan komunikasi/konfirmasi)
+
+// Persyaratan Khusus:
+// 1. Surat Keterangan Bepergian / Buruh Kerja:
+//    - Membawa identitas asli (KTP/KK/SIM)
+//    - Alamat tujuan (domisili tujuan) yang jelas
+//    - Berkas pendukung lain (misal: surat keterangan kerja, surat pengantar RT/RW, dsb.)
+//
+// 2. Surat Keterangan Menikah / Belum Menikah:
+//    - Membawa identitas asli (KTP/KK/SIM)
+//    - Berkas pendukung (misal: surat pengantar RT/RW, surat pernyataan belum menikah, dsb.)
+//    - Jika kehilangan buku nikah, suami dan istri wajib hadir bersama saat pengajuan
+//    - Jika suami/istri bekerja di luar negeri, wajib membuat surat pernyataan bermaterai
+//
+// 3. Surat Keterangan Waris / Legal Hasil:
+//    - Membawa identitas asli (KTP/KK/SIM)
+//    - Berkas pendukung (riwayat waris, dokumen legal hasil, dsb.)
+//
+// 4. Surat Keterangan Kelahiran:
+//    - Membawa identitas asli (KTP/KK/SIM)
+//    - Berkas pendukung (misal: surat keterangan lahir dari bidan/rumah sakit, KK orang tua, dsb.)
+//    - Pas Foto 4x6 (2 lembar):
+//        - Jika lahir pada tanggal ganjil: pas foto berwarna merah
+//        - Jika lahir pada tanggal genap: pas foto berwarna biru
+//
+// Catatan Tambahan:
+// - Pastikan semua dokumen asli dan fotokopi sudah lengkap sebelum datang ke kantor desa.
+// - Untuk dokumen yang memerlukan materai, siapkan materai 10.000 sesuai kebutuhan.
+// - Bawa handphone untuk memudahkan komunikasi jika diperlukan saat pengambilan surat.
+
 module.exports = router; 
