@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { FaInstagram, FaFacebook, FaWhatsapp, FaEnvelope, FaMapMarkerAlt, FaEdit, FaSave, FaTimes } from 'react-icons/fa';
 import { apiCall } from '../config/api';
+import images from '../config/images';
 
 export default function AdminKontakPage() {
   const [kontak, setKontak] = useState(null);
@@ -102,7 +103,7 @@ export default function AdminKontakPage() {
       <div
         className="relative w-full flex items-center justify-center text-white px-4 text-center min-h-[260px] md:min-h-[320px]"
         style={{
-          backgroundImage: "linear-gradient(90deg,rgba(37,99,235,0.7),rgba(96,165,250,0.7)), url('/surat.jpg')",
+          backgroundImage: `linear-gradient(90deg,rgba(37,99,235,0.7),rgba(96,165,250,0.7)), url('${images.kontak}')`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           color: '#fff',

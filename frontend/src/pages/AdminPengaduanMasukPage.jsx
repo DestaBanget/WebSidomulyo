@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { API_BASE_URL } from '../config/api';
+import images from '../config/images';
 
 export default function AdminPengaduanMasukPage() {
   const [pengaduan, setPengaduan] = useState([]);
@@ -73,7 +74,7 @@ export default function AdminPengaduanMasukPage() {
     <div className="min-h-screen bg-gray-50 pb-10">
       {/* Hero Section */}
       <div className="relative w-full flex items-center justify-center text-white px-4 text-center min-h-[300px] md:min-h-[400px]" style={{
-        backgroundImage: "linear-gradient(90deg,rgba(37,99,235,0.7),rgba(96,165,250,0.7)), url('/surat2.jpeg')",
+        backgroundImage: `linear-gradient(90deg,rgba(37,99,235,0.7),rgba(96,165,250,0.7)), url('${images.layanan.pengaduan}')`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         color: '#fff',

@@ -41,49 +41,6 @@ router.get('/:section', async (req, res) => {
   }
 });
 
-// Update selayang pandang (admin only)
-router.put('/selayang-pandang', adminAuth, [
-  body('judul').notEmpty().withMessage('Judul wajib diisi'),
-  body('konten').notEmpty().withMessage('Konten wajib diisi'),
-  body('gambar').optional().custom((value) => {
-    if (value !== null && value !== undefined && value !== '') {
-      // If value is provided, it must be a valid URL
-      const urlPattern = /^https?:\/\/.+/;
-      if (!urlPattern.test(value)) {
-        throw new Error('Gambar harus berupa URL yang valid');
-      }
-    }
-    return true;
-  })
-], async (req, res) => {
-  try {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
-    
-    const { judul, konten, gambar } = req.body;
-    const tentang = await readTentang();
-    
-    tentang.selayangPandang = {
-      ...tentang.selayangPandang,
-      judul,
-      konten,
-      gambar: gambar || null,
-      updatedAt: new Date().toISOString()
-    };
-    
-    await writeTentang(tentang);
-    res.json({ 
-      message: 'Selayang pandang berhasil diupdate', 
-      tentang: tentang.selayangPandang 
-    });
-  } catch (error) {
-    console.error('Update selayang pandang error:', error);
-    res.status(500).json({ error: 'Terjadi kesalahan server' });
-  }
-});
-
 // Update visi misi (admin only)
 router.put('/visi-misi', adminAuth, [
   body('judul').notEmpty().withMessage('Judul wajib diisi'),

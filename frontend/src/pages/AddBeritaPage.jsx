@@ -6,7 +6,7 @@ import { useAuth } from '../contexts/AuthContext';
 import logokamera from '/logokamera.svg';
 
 const kategoriList = [
-  'Pembangunan', 'Sosial', 'Agenda', 'Pendidikan', 'Lingkungan', 'Kesehatan', 'Pariwisata'
+  'Pembangunan', 'Sosial', 'Agenda', 'Pendidikan', 'Lingkungan', 'Kesehatan',
 ];
 
 export default function AddBeritaPage() {

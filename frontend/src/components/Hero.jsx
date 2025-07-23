@@ -22,13 +22,7 @@ const slides = [
     desc: "Sampaikan aspirasi dan pengaduan Anda langsung ke perangkat desa secara digital, mudah dan cepat.",
     img: "https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=1200&q=80",
     cta: { label: "Laporkan Masalah", href: "/layanan/pengaduan" },
-  },
-  {
-    title: "Pariwisata Desa",
-    desc: "Jelajahi potensi wisata dan keindahan alam Desa Sidomulyo. Info destinasi, agenda, dan galeri foto.",
-    img: "https://images.unsplash.com/photo-1503676382389-4809596d5290?auto=format&fit=crop&w=1200&q=80",
-    cta: { label: "Lihat Pariwisata", href: "/pariwisata" },
-  },
+  }
 ]
 
 export default function Hero() {

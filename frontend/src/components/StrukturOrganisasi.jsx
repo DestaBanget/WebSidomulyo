@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { API_BASE_URL } from '../config/api';
+import images from '../config/images';
 
 // Fungsi helper untuk mendapatkan URL foto yang benar
 const getFotoUrl = (fotoPath) => {
@@ -490,14 +491,14 @@ export default function StrukturOrganisasi() {
       <div
         className="relative w-full flex items-center justify-center text-white px-4 text-center min-h-[400px] md:min-h-[600px]"
         style={{
-          backgroundImage: "linear-gradient(90deg,rgba(37,99,235,0.7),rgba(96,165,250,0.7)), url('/surat2.jpeg')",
+          backgroundImage: `linear-gradient(90deg,rgba(37,99,235,0.7),rgba(96,165,250,0.7)), url('${images.profil.struktur}')`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           color: '#fff',
           borderRadius: '0 0 2.5rem 2.5rem',
         }}
       >
-        <div className="relative z-10 flex flex-col items-center justify-center w-full h-full py-10 md:py-16">
+        <div className="relative z-10 flex flex-col items-center justify-center w-full h-full py-10 md:py-20">
           <h1 className="text-4xl md:text-6xl font-extrabold mb-6 drop-shadow-lg">Struktur Organisasi Desa Sidomulyo</h1>
           <p className="max-w-2xl mx-auto text-lg md:text-2xl font-medium drop-shadow mb-4 md:mb-8">Bagan hierarki perangkat desa sesuai Peraturan Menteri Dalam Negeri No. 67/2017 & Perbup Malang No. 233/2019.</p>
         </div>

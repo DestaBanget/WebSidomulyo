@@ -11,13 +11,6 @@ async function readTentang() {
     if (err.code === 'ENOENT') {
       // Return default data if file doesn't exist
       const defaultData = {
-        selayangPandang: {
-          id: 1,
-          judul: "Selayang Pandang",
-          konten: "Desa Sidomulyo adalah desa yang terletak di Kecamatan X, Kabupaten Y, Provinsi Z. Desa ini memiliki luas wilayah sekitar X hektar dengan jumlah penduduk sekitar X jiwa.",
-          gambar: null,
-          updatedAt: new Date().toISOString()
-        },
         visiMisi: {
           id: 2,
           judul: "Visi & Misi",

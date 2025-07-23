@@ -11,7 +11,6 @@ export const apiCall = async (endpoint, options = {}) => {
     '/agenda', // GET agenda (public)
     '/berita', // GET berita (public)
     '/pengumuman', // GET pengumuman (public)
-    '/pariwisata', // GET pariwisata (public)
     '/lembaga', // GET lembaga (public)
     '/statistik', // GET statistik (public)
     '/struktur', // GET struktur (public)
@@ -101,7 +100,7 @@ export const uploadFile = async (endpoint, formData, method = 'POST') => {
     '/agenda', // GET agenda (public)
     '/berita', // GET berita (public)
     '/pengumuman', // GET pengumuman (public)
-    '/pariwisata', // GET pariwisata (public)
+    '/lembaga', // GET lembaga (public)
     '/statistik', // GET statistik (public)
     '/struktur', // GET struktur (public)
   ];

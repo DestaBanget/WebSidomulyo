@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { API_BASE_URL } from '../config/api';
+import images from '../config/images';
+import Hero from "../components/Hero";
 
 // Ambil base URL backend dari API_BASE_URL, hilangkan /api jika ada
 const BASE_URL = API_BASE_URL.replace(/\/api$/, '');
@@ -407,57 +409,19 @@ export default function ProfilePage() {
   return (
     <div>
       {/* Hero Section */}
-      <div
-        className="relative w-full flex items-center justify-center text-white px-4 text-center min-h-[350px] md:min-h-[450px] overflow-hidden"
-        style={{
-          backgroundImage:
-            "linear-gradient(135deg, rgba(37,99,235,0.9), rgba(96,165,250,0.9)), url('/surat2.jpeg')",
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          borderBottomLeftRadius: '3rem',
-          borderBottomRightRadius: '3rem',
-        }}
+      <Hero
+        title="Profil Saya"
+        description="Kelola informasi akun Anda dengan aman"
+        image={images.profil?.tentang || "/surat.jpg"}
+        gradient="from-primary/80 to-primary/60"
+        minHeight="350px"
+        borderRadius="0 0 3rem 3rem"
       >
-        {/* Animated background elements */}
-        <div className="absolute inset-0">
-          <div className="absolute top-10 left-10 w-20 h-20 bg-white/10 rounded-full animate-pulse"></div>
-          <div className="absolute top-20 right-20 w-16 h-16 bg-white/10 rounded-full animate-pulse delay-1000"></div>
-          <div className="absolute bottom-20 left-20 w-12 h-12 bg-white/10 rounded-full animate-pulse delay-2000"></div>
-          <div className="absolute bottom-10 right-10 w-24 h-24 bg-white/10 rounded-full animate-pulse delay-3000"></div>
+        <div className="mt-6 flex items-center space-x-2 text-white/80 justify-center">
+          <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+          <span className="text-sm">Status: {user.role === 'admin' ? 'Administrator' : 'Pengguna'}</span>
         </div>
-
-        <div className="relative z-10 flex flex-col items-center justify-center w-full h-full py-12 md:py-20">
-          <div className="mb-6">
-            <div className="w-32 h-32 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-4xl font-bold text-white border-8 border-white/30 shadow-2xl mb-4 transform hover:scale-105 transition-transform duration-300 overflow-hidden">
-              {user.profile_image ? (
-                <img
-                  src={getProfileImageUrl(user.profile_image)}
-                  alt="Profile"
-                  className="w-full h-full object-cover"
-                  onError={(e) => {
-                    // Fallback jika gambar gagal dimuat
-                    e.target.style.display = 'none';
-                    e.target.nextSibling.style.display = 'flex';
-                  }}
-                />
-              ) : null}
-              <div className={`w-full h-full flex items-center justify-center ${user.profile_image ? 'hidden' : ''}`}>
-                {user.nama ? user.nama[0].toUpperCase() : 'U'}
-              </div>
-            </div>
-          </div>
-          <h1 className="text-5xl md:text-6xl font-extrabold mb-3 drop-shadow-lg bg-gradient-to-r from-white to-blue-100 bg-clip-text text-transparent">
-            Profil Saya
-          </h1>
-          <p className="text-xl text-white/90 font-medium">
-            Kelola informasi akun Anda dengan aman
-          </p>
-          <div className="mt-6 flex items-center space-x-2 text-white/80">
-            <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-            <span className="text-sm">Status: {user.role === 'admin' ? 'Administrator' : 'Pengguna'}</span>
-          </div>
-        </div>
-      </div>
+      </Hero>
 
       <div className="max-w-4xl mx-auto px-4 mt-24 relative z-20">
         <div className="bg-white rounded-3xl shadow-2xl p-8 md:p-12">

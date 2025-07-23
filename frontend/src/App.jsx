@@ -3,9 +3,7 @@ import Header from './components/Header';
 import Hero from './components/Hero';
 import StatistikDesa from './components/StatistikDesa';
 import LayananUnggulan from './components/LayananUnggulan';
-import SelayangPandang from './components/SelayangPandang';
 import BeritaDesa from './components/BeritaDesa';
-import Pariwisata from './components/Pariwisata';
 import Footer from './components/Footer';
 import FloatingButton from './components/FloatingButton';
 import { Routes, Route, Link } from 'react-router-dom';
@@ -16,7 +14,6 @@ import StrukturOrganisasi from './components/StrukturOrganisasi';
 import PengaduanMasyarakat from './components/PengaduanMasyarakat';
 import PanduanLayanan from './components/PanduanLayanan';
 import Kontak from './components/Kontak';
-import PariwisataPage, { initialPariwisata } from './components/PariwisataPage';
 import BPD from './components/BPD';
 import LPM from './components/LPM';
 import PKK from './components/PKK';
@@ -28,7 +25,6 @@ import ScrollToTop from './components/ScrollToTop';
 import BeritaDetail from './components/BeritaDetail';
 import PengumumanDetail from './components/PengumumanDetail';
 import AgendaDetail from './components/AgendaDetail';
-import PariwisataDetail from './components/PariwisataDetail';
 import { BeritaProvider } from './contexts/BeritaContext';
 import { PengumumanProvider } from './contexts/PengumumanContext';
 import { AgendaProvider } from './contexts/AgendaContext';
@@ -96,10 +92,6 @@ function DummyChart() {
 }
 
 function App() {
-  // Ambil data pariwisata dari initialPariwisata di PariwisataPage
-  const sortedPariwisata = [...initialPariwisata].sort((a, b) => new Date(b.date) - new Date(a.date));
-  const latestPariwisata = sortedPariwisata.slice(0, 6);
-
   // State untuk statistik utama
   const [dashboardStats, setDashboardStats] = useState([]);
 
@@ -220,7 +212,6 @@ function App() {
           <Route path="/layanan/panduan" element={<PanduanLayanan />} />
           <Route path="/layanan/form-surat" element={<FormSuratPage />} />
           <Route path="/kontak" element={<Kontak />} />
-          <Route path="/pariwisata" element={<PariwisataPage />} />
           <Route path="/lembaga/bpd" element={<BPD />} />
           <Route path="/lembaga/lpm" element={<LPM />} />
           <Route path="/lembaga/pkk" element={<PKK />} />
@@ -238,7 +229,6 @@ function App() {
           <Route path="/publikasi/berita/:id" element={<BeritaDetail />} />
           <Route path="/publikasi/pengumuman/:id" element={<PengumumanDetail />} />
           <Route path="/publikasi/agenda/:id" element={<AgendaDetail />} />
-          <Route path="/pariwisata/:id" element={<PariwisataDetail />} />
           <Route path="/admin/tambah-berita" element={<AddBeritaPage />} />
           <Route path="/admin/tambah-pengumuman" element={<AddPengumumanPage />} />
           <Route path="/admin/agenda/tambah" element={<AddAgendaPage />} />

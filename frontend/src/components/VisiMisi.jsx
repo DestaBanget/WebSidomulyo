@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { API_BASE_URL } from '../config/api';
+import Hero from "./Hero";
+import images from '../config/images';
 
 export default function VisiMisi() {
   const { isAdmin } = useAuth();
@@ -114,22 +116,18 @@ export default function VisiMisi() {
     <div>
       {/* Hero Section */}
       <div
-        className="relative w-full flex items-center justify-center text-white px-3 sm:px-4 text-center min-h-[300px] sm:min-h-[400px] md:min-h-[500px] lg:min-h-[600px]"
+        className="relative w-full flex items-center justify-center text-white px-4 text-center min-h-[400px] md:min-h-[600px]"
         style={{
-          backgroundImage: "linear-gradient(90deg,rgba(37,99,235,0.7),rgba(96,165,250,0.7)), url('/surat2.jpeg')",
+          backgroundImage: `linear-gradient(90deg,rgba(37,99,235,0.7),rgba(96,165,250,0.7)), url('${images.profil.visimisi}')`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           color: '#fff',
-          borderRadius: '0 0 1.5rem 1.5rem sm:rounded-b-[2.5rem]',
+          borderRadius: '0 0 2.5rem 2.5rem',
         }}
       >
-        <div className="relative z-10 flex flex-col items-center justify-center w-full h-full py-8 sm:py-10 md:py-16 lg:py-20">
-          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-extrabold mb-4 sm:mb-6 drop-shadow-lg leading-tight">
-            Visi & Misi Desa Sidomulyo
-          </h1>
-          <p className="max-w-2xl mx-auto text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl font-medium drop-shadow mb-3 sm:mb-4 md:mb-6 lg:mb-8 leading-relaxed px-2">
-            Landasan dan tujuan pembangunan Desa Sidomulyo untuk masa depan yang lebih baik.
-          </p>
+        <div className="relative z-10 flex flex-col items-center justify-center w-full h-full py-10 md:py-20">
+          <h1 className="text-4xl md:text-6xl font-extrabold mb-6 drop-shadow-lg">Visi & Misi Desa Sidomulyo</h1>
+          <p className="max-w-2xl mx-auto text-lg md:text-2xl font-medium drop-shadow mb-4 md:mb-8">Landasan dan tujuan pembangunan Desa Sidomulyo untuk masa depan yang lebih baik.</p>
         </div>
       </div>
       

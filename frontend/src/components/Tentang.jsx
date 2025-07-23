@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { API_BASE_URL } from '../config/api';
+import Hero from "./Hero";
+import images from '../config/images';
 
 export default function Tentang() {
   const { isAdmin } = useAuth();
@@ -155,7 +157,7 @@ export default function Tentang() {
       <div
         className="relative w-full flex items-center justify-center text-white px-4 text-center min-h-[400px] md:min-h-[600px]"
         style={{
-          backgroundImage: "linear-gradient(90deg,rgba(37,99,235,0.7),rgba(96,165,250,0.7)), url('/surat.jpg')",
+          backgroundImage: `linear-gradient(90deg,rgba(37,99,235,0.7),rgba(96,165,250,0.7)), url('${images.profil.tentang}')`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           color: '#fff',
@@ -167,7 +169,6 @@ export default function Tentang() {
           <p className="max-w-2xl mx-auto text-lg md:text-2xl font-medium drop-shadow mb-4 md:mb-8">Mengenal lebih dalam tentang sejarah, kondisi geografis, dan karakteristik Desa Sidomulyo.</p>
         </div>
       </div>
-
       {/* Navigation Tabs */}
       <div className="max-w-6xl mx-auto py-8 px-4">
         <div className="flex flex-wrap justify-center gap-4 mb-8">

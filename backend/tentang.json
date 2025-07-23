@@ -1,11 +1,4 @@
 {
-  "selayangPandang": {
-    "id": 1,
-    "judul": "Selayang Pandang",
-    "konten": "Desa Sidomulyo adalah desa yang terletak di Kecamatan X, Kabupaten Y, Provinsi Z. Desa ini memiliki luas wilayah sekitar X hektar dengan jumlah penduduk sekitar X jiwa. Desa Sidomulyo dikenal dengan potensi pertaniannya yang subur dan masyarakatnya yang ramah serta gotong royong.",
-    "gambar": null,
-    "updatedAt": "2024-01-01T00:00:00.000Z"
-  },
   "visiMisi": {
     "id": 2,
     "judul": "Visi & Misi",

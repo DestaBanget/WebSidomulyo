@@ -9,7 +9,6 @@ const kategoriColor = {
   Pendidikan: 'bg-pink-500/90 text-white',
   Lingkungan: 'bg-emerald-600/90 text-white',
   Kesehatan: 'bg-red-500/90 text-white',
-  Pariwisata: 'bg-blue-500/90 text-white',
   Prestasi: 'bg-purple-500/90 text-white',
   Kuliner: 'bg-orange-500/90 text-white',
 };

@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { apiCall } from '../config/api';
 import { useAuth } from '../contexts/AuthContext';
+import Hero from "./Hero";
+import images from '../config/images';
 
 function BarStatEditable({ data, setData, isAdmin, title }) {
   const [edit, setEdit] = useState(false);
@@ -206,16 +208,20 @@ export default function StatistikDesa() {
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
-      {/* Hero Gradient Section - FULL WIDTH */}
-      <div id="statistik-hero" className="relative w-full min-h-[400px] md:min-h-[500px] flex flex-col items-center justify-center text-center px-4 overflow-hidden" style={{
-        background: `url(${heroImg}) center/cover no-repeat`,
-        borderRadius: '0 0 2.5rem 2.5rem',
-      }}>
-        <div className="absolute inset-0 bg-gradient-to-r from-blue-700/80 to-blue-400/80 z-0" />
-        <div className="relative z-10 w-full flex flex-col items-center">
-          <h1 className="text-4xl md:text-5xl font-extrabold drop-shadow-lg mb-3 tracking-tight text-white">Statistik Desa Sidomulyo</h1>
-          <div className="max-w-2xl mx-auto text-lg md:text-xl font-medium mb-4 text-white">Gambaran data kependudukan, pendidikan, pekerjaan, dan kehidupan sosial masyarakat Desa Sidomulyo secara visual dan informatif.</div>
-          <div className="max-w-xl mx-auto text-base opacity-90 text-white">Statistik ini membantu pemerintah desa dan masyarakat untuk memahami perkembangan, kebutuhan, serta potensi desa secara lebih baik. Data di bawah ini merupakan data dummy yang akan diperbarui secara berkala.</div>
+      {/* Hero Section */}
+      <div
+        className="relative w-full flex items-center justify-center text-white px-4 text-center min-h-[400px] md:min-h-[600px]"
+        style={{
+          backgroundImage: `linear-gradient(90deg,rgba(37,99,235,0.7),rgba(96,165,250,0.7)), url('${images.profil.statistik}')`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          color: '#fff',
+          borderRadius: '0 0 2.5rem 2.5rem',
+        }}
+      >
+        <div className="relative z-10 flex flex-col items-center justify-center w-full h-full py-10 md:py-20">
+          <h1 className="text-4xl md:text-6xl font-extrabold mb-6 drop-shadow-lg">Statistik Desa Sidomulyo</h1>
+          <p className="max-w-2xl mx-auto text-lg md:text-2xl font-medium drop-shadow mb-4 md:mb-8">Gambaran data kependudukan, pendidikan, pekerjaan, dan kehidupan sosial masyarakat Desa Sidomulyo secara visual dan informatif.</p>
         </div>
       </div>
       {/* Statistik Cards & Bar Stats */}

@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { API_BASE_URL } from '../config/api';
+import images from '../config/images';
+import Hero from '../components/Hero';
 
 export default function AdminSuratMasukPage() {
   const [surat, setSurat] = useState([]);
@@ -103,18 +105,14 @@ export default function AdminSuratMasukPage() {
   return (
     <div className="min-h-screen bg-gray-50 pb-10">
       {/* Hero Section */}
-      <div className="relative w-full flex items-center justify-center text-white px-4 text-center min-h-[300px] md:min-h-[400px]" style={{
-        backgroundImage: "linear-gradient(90deg,rgba(37,99,235,0.7),rgba(96,165,250,0.7)), url('/surat2.jpeg')",
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        color: '#fff',
-        borderRadius: '0 0 2.5rem 2.5rem',
-      }}>
-        <div className="relative z-10 flex flex-col items-center justify-center w-full h-full py-10 md:py-20">
-          <h1 className="text-3xl md:text-5xl font-extrabold mb-2 drop-shadow-lg">Surat Masuk</h1>
-          <p className="max-w-2xl mx-auto text-lg md:text-xl font-medium drop-shadow mb-2">Daftar pengajuan surat dari warga yang masuk ke sistem. Admin dapat memantau, memproses, dan mengubah status surat di sini.</p>
-        </div>
-      </div>
+      <Hero
+        title="Surat Masuk"
+        description="Daftar pengajuan surat dari warga yang masuk ke sistem. Admin dapat memantau, memproses, dan mengubah status surat di sini."
+        image={images.layanan.surat}
+        gradient="from-primary/80 to-primary/60"
+        minHeight="300px"
+        borderRadius="0 0 2.5rem 2.5rem"
+      />
       
       {/* Search & Table */}
       <div className="w-full flex justify-center pb-16">

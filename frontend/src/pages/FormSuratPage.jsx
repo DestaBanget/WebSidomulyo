@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import FormSurat from '../components/FormSurat';
+import images from '../config/images';
+import Hero from '../components/Hero';
 
 // Daftar jenis surat dan persyaratan
 const JENIS_SURAT = [
@@ -176,24 +178,14 @@ export default function FormSuratPage() {
   return (
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
-      <div
-        className="relative w-full flex items-center justify-center text-white px-4 text-center min-h-[320px] md:min-h-[380px]"
-        style={{
-          backgroundImage: "linear-gradient(90deg,rgba(37,99,235,0.7),rgba(96,165,250,0.7)), url('/surat2.jpeg')",
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          color: '#fff',
-        }}
-      >
-        <div className="relative z-10 flex flex-col items-center justify-center w-full h-full py-10 md:py-20">
-          <h1 className="text-4xl md:text-5xl font-extrabold mb-4 drop-shadow-lg uppercase tracking-tight">
-            {heroTitle}
-          </h1>
-          <p className="max-w-2xl mx-auto text-lg md:text-2xl font-medium drop-shadow mb-2 md:mb-4">
-            {heroSubtitle}
-          </p>
-        </div>
-      </div>
+      <Hero
+        title={heroTitle}
+        description={heroSubtitle}
+        image={images.layanan.surat}
+        gradient="from-primary/80 to-primary/60"
+        minHeight="320px"
+        borderRadius="0 0 2.5rem 2.5rem"
+      />
       {/* Form Section */}
       <div className="max-w-5xl mx-auto px-4 py-10">
         {selectedJenis ? (
