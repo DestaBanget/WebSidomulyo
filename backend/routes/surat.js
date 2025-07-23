@@ -186,11 +186,11 @@ router.post('/', auth, uploadMultiple, [
       `INSERT INTO surat (
         user_id, nama, nik, jenis_kelamin, tempat_lahir, tanggal_lahir,
         pekerjaan, kewarganegaraan, agama, no_hp, alamat_ktp, 
-        alamat_sekarang, jenis_surat
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        alamat_sekarang, jenis_surat, status
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [user_id, nama, nik, jenis_kelamin, tempat_lahir, tanggal_lahir,
        pekerjaan, kewarganegaraan, agama, no_hp, alamat_ktp,
-       alamat_sekarang, jenis_surat]
+       alamat_sekarang, jenis_surat, 'Menunggu']
     );
 
     const suratId = result.insertId;
@@ -290,6 +290,34 @@ router.delete('/:id', adminAuth, async (req, res) => {
     res.json({ message: 'Surat berhasil dihapus' });
   } catch (error) {
     console.error('Delete surat error:', error);
+    res.status(500).json({ error: 'Terjadi kesalahan server' });
+  }
+});
+
+// Cancel surat (user membatalkan pengajuan jika status masih Menunggu)
+router.delete('/:id/cancel', auth, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const userId = req.user.id;
+
+    // Cek surat milik user dan status masih Menunggu
+    const [surat] = await promisePool.query(
+      'SELECT * FROM surat WHERE id = ? AND user_id = ?',
+      [id, userId]
+    );
+    if (surat.length === 0) {
+      return res.status(404).json({ error: 'Surat tidak ditemukan atau bukan milik Anda' });
+    }
+    if (surat[0].status !== 'Menunggu') {
+      return res.status(400).json({ error: 'Surat hanya bisa dibatalkan jika status masih Menunggu' });
+    }
+    // Hapus lampiran dulu
+    await promisePool.query('DELETE FROM lampiran_surat WHERE surat_id = ?', [id]);
+    // Hapus surat
+    await promisePool.query('DELETE FROM surat WHERE id = ?', [id]);
+    res.json({ message: 'Pengajuan surat berhasil dibatalkan dan dihapus' });
+  } catch (error) {
+    console.error('Cancel surat error:', error);
     res.status(500).json({ error: 'Terjadi kesalahan server' });
   }
 });
