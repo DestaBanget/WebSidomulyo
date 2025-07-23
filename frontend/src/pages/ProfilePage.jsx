@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { API_BASE_URL } from '../config/api';
+import Swal from 'sweetalert2';
 
 // Ambil base URL backend dari API_BASE_URL, hilangkan /api jika ada
 const BASE_URL = API_BASE_URL.replace(/\/api$/, '');
@@ -58,6 +59,8 @@ export default function ProfilePage() {
   const [riwayatPengaduan, setRiwayatPengaduan] = useState([]);
   const [loadingPengaduan, setLoadingPengaduan] = useState(true);
   const [errorPengaduan, setErrorPengaduan] = useState('');
+  const [showCancelSurat, setShowCancelSurat] = useState(false);
+  const [selectedSuratId, setSelectedSuratId] = useState(null);
 
   React.useEffect(() => {
     const fetchRiwayatSurat = async () => {
@@ -382,6 +385,35 @@ export default function ProfilePage() {
     setSuccess('');
   };
 
+  // Tambahkan fungsi untuk membatalkan surat
+  const handleCancelSurat = async (id) => {
+    setLoading(true);
+    setError('');
+    setSuccess('');
+    try {
+      const token = localStorage.getItem('token');
+      const res = await fetch(`${API_BASE_URL}/surat/${id}/cancel`, {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Gagal membatalkan surat');
+      setSuccess(data.message || 'Pengajuan surat berhasil dibatalkan');
+      // Refresh daftar surat
+      const response = await fetch(`${API_BASE_URL}/surat/my-surat`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const d = await response.json();
+      setRiwayatSurat(d.surat || []);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+      setShowCancelSurat(false);
+      setSelectedSuratId(null);
+    }
+  };
+
   return (
     <div>
       {/* Hero Section */}
@@ -590,13 +622,25 @@ export default function ProfilePage() {
                                 {s.status}
                               </span>
                             </td>
-                            <td className="px-4 py-2 text-center">
+                            <td className="px-4 py-2 text-center flex flex-col gap-2 items-center justify-center">
                               <button
                                 className="px-3 py-1 rounded bg-primary text-white text-xs font-bold hover:bg-blue-800 transition"
                                 onClick={() => navigate(user.role === 'admin' ? `/admin/surat-masuk/${s.id}` : `/surat/${s.id}`)}
                               >
                                 Lihat Detail
                               </button>
+                              {s.status === 'Menunggu' && (
+                                <button
+                                  className="px-3 py-1 rounded bg-red-500 text-white text-xs font-bold hover:bg-red-700 transition mt-1"
+                                  disabled={loading}
+                                  onClick={() => {
+                                    setSelectedSuratId(s.id);
+                                    setShowCancelSurat(true);
+                                  }}
+                                >
+                                  Batalkan
+                                </button>
+                              )}
                             </td>
                           </tr>
                         ))}
@@ -1051,6 +1095,17 @@ export default function ProfilePage() {
             </form>
           </div>
         </div>
+      )}
+
+      {showCancelSurat && (
+        <Modal
+          title="Konfirmasi Pembatalan Surat"
+          message="Batalkan pengajuan surat ini? Surat akan dihapus dan tidak dapat dikembalikan."
+          confirmLabel={loading ? "Membatalkan..." : "Ya, Batalkan"}
+          onConfirm={() => handleCancelSurat(selectedSuratId)}
+          onCancel={() => { setShowCancelSurat(false); setSelectedSuratId(null); }}
+          disabled={loading}
+        />
       )}
     </div>
   );
