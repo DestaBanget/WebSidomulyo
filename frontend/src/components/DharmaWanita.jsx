@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { apiCall, publicApiCall, uploadFile } from '../config/api';
+import images from '../config/images';
 
 export default function DharmaWanita() {
-  const heroImg = '/surat.jpg';
+  // Ganti heroImg dengan images.lembaga.darmawanita
+  const heroImg = images.lembaga.darmawanita;
   const { isAdmin } = useAuth();
 
   // State utama
@@ -277,12 +279,19 @@ export default function DharmaWanita() {
   return (
     <div className="min-h-screen bg-white pb-10">
       {/* Hero Section dengan Background */}
-      <div className="relative w-full min-h-[400px] md:min-h-[500px] flex flex-col items-center text-center px-4 pt-32 md:pt-40 pb-12 md:pb-20 overflow-hidden" style={{background: `url(${heroImg}) center/cover no-repeat`, borderRadius: '0 0 2.5rem 2.5rem'}}>
-        <div className="absolute inset-0 bg-gradient-to-r from-blue-700/80 to-blue-400/80 z-0" />
-        <div className="relative z-10 w-full flex flex-col items-center">
-          <h1 className="text-4xl md:text-6xl font-extrabold mb-2 drop-shadow-lg text-white">DHARMA WANITA</h1>
-          <p className="text-lg md:text-xl font-medium text-white/90 drop-shadow-md mb-4">Organisasi Wanita Desa</p>
-          <div className="w-24 h-1 bg-white/80 rounded-full"></div>
+      <div
+        className="relative w-full flex items-center justify-center text-white px-4 text-center min-h-[400px] md:min-h-[600px]"
+        style={{
+          backgroundImage: `linear-gradient(90deg,rgba(37,99,235,0.7),rgba(96,165,250,0.7)), url('${heroImg}')`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          color: '#fff',
+          borderRadius: '0 0 2.5rem 2.5rem',
+        }}
+      >
+        <div className="relative z-10 flex flex-col items-center justify-center w-full h-full py-10 md:py-20">
+          <h1 className="text-4xl md:text-6xl font-extrabold mb-6 drop-shadow-lg">DHARMA WANITA</h1>
+          <p className="max-w-2xl mx-auto text-lg md:text-2xl font-medium drop-shadow mb-4 md:mb-8">Organisasi Wanita Desa</p>
         </div>
       </div>
 

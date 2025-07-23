@@ -3,27 +3,27 @@ import { Navigation, Pagination, Autoplay } from "swiper/modules"
 import "swiper/css"
 import "swiper/css/navigation"
 import "swiper/css/pagination"
+import images from '../config/images.js'
 
-const slides = [
-  {
-    title: "Selamat Datang di Desa Sidomulyo",
-    desc: "Website resmi layanan dan informasi digital Desa Sidomulyo. Mudahkan urusan surat-menyurat dan akses info desa secara online.",
-    img: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&q=80",
-    cta: { label: "Jelajahi Website", href: "/profil/tentang" },
-  },
-  {
-    title: "Layanan Surat Online",
-    desc: "Ajukan surat keterangan, domisili, SKTM, dan layanan lainnya secara online. Proses mudah, transparan, dan bisa dipantau.",
-    img: "https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=1200&q=80",
-    cta: { label: "Ajukan Surat", href: "/layanan/surat-online" },
-  },
-  {
-    title: "Pengaduan Masyarakat",
-    desc: "Sampaikan aspirasi dan pengaduan Anda langsung ke perangkat desa secara digital, mudah dan cepat.",
-    img: "https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=1200&q=80",
-    cta: { label: "Laporkan Masalah", href: "/layanan/pengaduan" },
-  }
-]
+const slides = images.hero.map((img, idx) => {
+  // Mapping manual deskripsi dan cta sesuai urutan lama
+  const descs = [
+    "Website resmi layanan dan informasi digital Desa Sidomulyo. Mudahkan urusan surat-menyurat dan akses info desa secara online.",
+    "Ajukan surat keterangan, domisili, SKTM, dan layanan lainnya secara online. Proses mudah, transparan, dan bisa dipantau.",
+    "Sampaikan aspirasi dan pengaduan Anda langsung ke perangkat desa secara digital, mudah dan cepat."
+  ];
+  const ctas = [
+    { label: "Jelajahi Website", href: "/profil/tentang" },
+    { label: "Ajukan Surat", href: "/layanan/surat-online" },
+    { label: "Laporkan Masalah", href: "/layanan/pengaduan" }
+  ];
+  return {
+    title: img.title,
+    desc: descs[idx] || '',
+    img: img.url,
+    cta: ctas[idx] || null
+  };
+});
 
 export default function Hero() {
   return (
