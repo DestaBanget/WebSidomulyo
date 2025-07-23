@@ -136,22 +136,6 @@ CREATE TABLE statistik (
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
--- =====================================================
--- Tabel Pengumuman
--- =====================================================
-CREATE TABLE pengumuman (
-  id INT PRIMARY KEY AUTO_INCREMENT,
-  title VARCHAR(255) NOT NULL,
-  content TEXT NOT NULL,
-  kategori VARCHAR(50) NOT NULL,
-  img VARCHAR(255),
-  tanggal DATE NOT NULL,
-  desc TEXT,
-  created_by INT,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL
-);
 
 -- =====================================================
 -- Tabel Agenda
@@ -206,7 +190,7 @@ CREATE TABLE pengurus_lembaga (
   status ENUM('Aktif', 'Tidak Aktif') DEFAULT 'Aktif',
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  FOREIGN KEY (lembaga_id) REFERENCES lembaga(id) ON DELETE CASCADE
+  FOREIGN KEY (lembaga_id) REFERENCES lembaga_desa(id) ON DELETE CASCADE
 );
 
 -- =====================================================
@@ -222,7 +206,7 @@ CREATE TABLE unit_kegiatan_lembaga (
   status ENUM('Aktif', 'Tidak Aktif') DEFAULT 'Aktif',
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  FOREIGN KEY (lembaga_id) REFERENCES lembaga(id) ON DELETE CASCADE
+  FOREIGN KEY (lembaga_id) REFERENCES lembaga_desa(id) ON DELETE CASCADE
 );
 
 -- =====================================================
@@ -327,7 +311,7 @@ INSERT INTO berita (title, content, kategori, tanggal, created_by) VALUES
 ('Rapat Koordinasi RT/RW', 'Rapat koordinasi rutin untuk membahas program desa telah dilaksanakan. Rapat ini membahas tentang pembangunan infrastruktur dan pemberdayaan masyarakat.', 'Sosial', '2024-01-25', 1);
 
 -- Insert sample pengumuman
-INSERT INTO pengumuman (title, content, kategori, tanggal, desc, created_by) VALUES
+INSERT INTO pengumuman (title, content, kategori, tanggal, deskripsi, created_by) VALUES
 ('Pemadaman Listrik Sementara', 'Akan ada pemadaman listrik di wilayah Dusun Barat pada 15 Januari 2025 pukul 09.00-15.00 WIB. Mohon warga mempersiapkan diri dan mengantisipasi kebutuhan listrik selama pemadaman berlangsung.', 'Penting', '2025-01-13', 'Akan ada pemadaman listrik di wilayah Dusun Barat pada 15 Januari 2025 pukul 09.00-15.00 WIB.', 1),
 ('Pendaftaran Bantuan Sosial Dibuka', 'Pendaftaran bantuan sosial untuk warga kurang mampu dibuka hingga 20 Januari 2025. Silakan datang ke kantor desa dengan membawa dokumen pendukung.', 'Informasi', '2025-01-12', 'Pendaftaran bantuan sosial untuk warga kurang mampu dibuka hingga 20 Januari 2025.', 1),
 ('Jadwal Posyandu Bulan Januari', 'Posyandu akan dilaksanakan pada 18 Januari 2025 di balai desa mulai pukul 08.00 WIB. Diharapkan seluruh ibu dan balita hadir tepat waktu.', 'Kesehatan', '2025-01-11', 'Posyandu akan dilaksanakan pada 18 Januari 2025 di balai desa mulai pukul 08.00 WIB.', 1);
@@ -344,11 +328,6 @@ INSERT INTO statistik (kategori, nilai, satuan, deskripsi, tahun) VALUES
 ('Jumlah Keluarga', 670, 'KK', 'Jumlah kepala keluarga', 2024),
 ('Luas Wilayah', 1250, 'hektar', 'Luas wilayah desa', 2024),
 ('Jumlah RT', 15, 'RT', 'Jumlah Rukun Tetangga', 2024);
-
--- Insert sample pariwisata
-INSERT INTO pariwisata (nama, deskripsi, lokasi, kategori) VALUES
-('Wisata Alam Gunung', 'Wisata alam dengan pemandangan gunung yang indah dan udara yang sejuk', 'Dusun Sidomulyo', 'Wisata Alam'),
-('Kolam Renang Desa', 'Kolam renang umum untuk warga desa dengan fasilitas yang lengkap', 'Pusat Desa', 'Wisata Buatan');
 
 -- Insert default kontak desa
 INSERT INTO kontak_desa (alamat, email, whatsapp, instagram, facebook) VALUES
@@ -412,11 +391,8 @@ CREATE INDEX idx_agenda_created_by ON agenda(created_by);
 CREATE INDEX idx_statistik_kategori ON statistik(kategori);
 CREATE INDEX idx_statistik_tahun ON statistik(tahun);
 
--- Index untuk tabel pariwisata
-CREATE INDEX idx_pariwisata_kategori ON pariwisata(kategori);
-
 -- Index untuk tabel lembaga
-CREATE INDEX idx_lembaga_nama ON lembaga(nama_lembaga);
+CREATE INDEX idx_lembaga_nama ON lembaga_desa(nama_lembaga);
 
 -- Index untuk tabel pengurus lembaga
 CREATE INDEX idx_pengurus_lembaga_id ON pengurus_lembaga(lembaga_id);
@@ -494,7 +470,7 @@ BEGIN
                 'status', u.status
             )
         ) as unit_kegiatan
-    FROM lembaga l
+    FROM lembaga_desa l
     LEFT JOIN pengurus_lembaga p ON l.id = p.lembaga_id AND p.status = 'Aktif'
     LEFT JOIN unit_kegiatan_lembaga u ON l.id = u.lembaga_id AND u.status = 'Aktif'
     WHERE l.nama_lembaga = lembaga_name
@@ -528,7 +504,7 @@ BEGIN
                 'status', u.status
             )
         ) as unit_kegiatan
-    FROM lembaga l
+    FROM lembaga_desa l
     LEFT JOIN pengurus_lembaga p ON l.id = p.lembaga_id AND p.status = 'Aktif'
     LEFT JOIN unit_kegiatan_lembaga u ON l.id = u.lembaga_id AND u.status = 'Aktif'
     GROUP BY l.id

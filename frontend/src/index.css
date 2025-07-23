@@ -32,7 +32,8 @@ html, body {
 
 /* Modal styles */
 body.modal-open {
-  overflow: hidden;
+  overflow: hidden !important;
+  touch-action: none;
 }
 
 /* Ensure modal inputs are clickable */odal input,

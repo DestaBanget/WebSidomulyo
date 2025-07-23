@@ -85,7 +85,7 @@ export default function AdminPengaduanMasukPage() {
         </div>
       </div>
       {/* Search & Table */}
-      <div className="max-w-6xl mx-auto bg-white rounded-2xl shadow-lg p-6 md:p-10 mt-[-60px] relative z-20">
+      <div className="max-w-6xl mx-auto bg-white rounded-2xl shadow-lg p-6 md:p-10 mt-12 relative z-20">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
           <div className="text-xl font-bold text-primary">Daftar Pengaduan Masuk</div>
           <input

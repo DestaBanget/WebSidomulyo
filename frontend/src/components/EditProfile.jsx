@@ -39,26 +39,28 @@ export default function EditProfile() {
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      // Validate file type
-      if (!file.type.startsWith('image/')) {
-        setError('File harus berupa gambar!');
+      const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
+      if (!allowedTypes.includes(file.type)) {
+        setError('File foto tidak valid. Hanya format JPG, JPEG, PNG, atau GIF yang diperbolehkan.');
+        setSelectedFile(null);
+        setImagePreview(null);
         return;
       }
-      
-      // Validate file size (max 5MB)
       if (file.size > 5 * 1024 * 1024) {
         setError('Ukuran file maksimal 5MB!');
+        setSelectedFile(null);
+        setImagePreview(null);
         return;
       }
-
       setSelectedFile(file);
-      
       const reader = new FileReader();
       reader.onload = (e) => {
         setImagePreview(e.target.result);
       };
       reader.onerror = () => {
         setError('Gagal membaca file gambar');
+        setSelectedFile(null);
+        setImagePreview(null);
       };
       reader.readAsDataURL(file);
       setError('');
@@ -125,7 +127,15 @@ export default function EditProfile() {
       } else if (error.message.includes('413')) {
         setError('Ukuran foto terlalu besar. Gunakan foto yang lebih kecil.');
       } else {
-        setError(error.message || 'Terjadi kesalahan saat mengupdate profil');
+        // Jika pesan error terlalu generic, tampilkan pesan fallback
+        if (
+          error.message === 'Terjadi kesalahan server' ||
+          error.message === 'Internal Server Error'
+        ) {
+          setError('Gagal mengunggah foto. Pastikan format file JPG/PNG dan ukuran maksimal 5MB.');
+        } else {
+          setError(error.message || 'Terjadi kesalahan saat mengupdate profil');
+        }
       }
     } finally {
       setLoading(false);
@@ -146,8 +156,9 @@ export default function EditProfile() {
       <h3 className="text-xl font-bold text-primary mb-6">Edit Profil</h3>
       
       {error && (
-        <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
-          {error}
+        <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded flex items-center gap-2 text-lg md:text-xl font-bold">
+          <span className="text-2xl">🚫</span>
+          <span>{error}</span>
         </div>
       )}
       

@@ -26,7 +26,8 @@ export default function PanduanLayanan() {
             <li>Klik <b>Ajukan Sekarang</b> pada surat yang diinginkan.</li>
             <li>Isi data diri dan unggah dokumen persyaratan sesuai instruksi.</li>
             <li>Pastikan semua data dan file sudah benar, lalu klik <b>Kirim</b>.</li>
-            <li>Unduh bukti pengajuan untuk monitoring status surat Anda.</li>
+            <li>Pantau dan tunggu hingga status pengajuan surat selesai.</li>
+            <li>Setelah selesai anda dapat mengambil surat di balai desa.</li>
           </ol>
           <div className="bg-blue-50 border-l-4 border-primary p-4 rounded mb-4 text-sm text-primary">
             <b>Tips:</b> Pastikan dokumen yang diunggah jelas dan sesuai persyaratan. Gunakan huruf kapital untuk nama lengkap.
@@ -43,7 +44,7 @@ export default function PanduanLayanan() {
             <li>Buka halaman <b>Pengaduan Masyarakat</b> dari menu layanan.</li>
             <li>Isi data diri pelapor dan uraikan pengaduan dengan jelas.</li>
             <li>Jika perlu, tambahkan lampiran pendukung (foto/dokumen).</li>
-            <li>Klik <b>Kirim</b> dan simpan bukti pelaporan untuk monitoring.</li>
+            <li>Klik <b>Kirim</b> dan pantau status pelaporan untuk monitoring.</li>
           </ol>
           <div className="bg-blue-50 border-l-4 border-primary p-4 rounded mb-4 text-sm text-primary">
             <b>Tips:</b> Data pelapor dijamin kerahasiaannya. Sampaikan pengaduan dengan bahasa yang sopan dan jelas.
@@ -58,7 +59,7 @@ export default function PanduanLayanan() {
           </div>
           <div className="mb-2">
             <b>Q:</b> Bagaimana cara mengetahui status pengajuan surat saya?<br />
-            <b>A:</b> Anda dapat memonitor status surat melalui bukti pengajuan yang berisi QR code atau nomor referensi.
+            <b>A:</b> Anda dapat memonitor status surat melalui riwayat pengajuan surat.
           </div>
           <div className="mb-2">
             <b>Q:</b> Apakah data saya aman dan rahasia?<br />

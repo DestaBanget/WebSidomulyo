@@ -58,6 +58,9 @@ export default function ProfilePage() {
   const [riwayatPengaduan, setRiwayatPengaduan] = useState([]);
   const [loadingPengaduan, setLoadingPengaduan] = useState(true);
   const [errorPengaduan, setErrorPengaduan] = useState('');
+  // Tambahkan state untuk loading dan konfirmasi pembatalan
+  const [cancelLoadingId, setCancelLoadingId] = useState(null);
+  const [cancelConfirmId, setCancelConfirmId] = useState(null);
 
   React.useEffect(() => {
     const fetchRiwayatSurat = async () => {
@@ -115,6 +118,18 @@ export default function ProfilePage() {
     setProfileImage(user?.profile_image || null);
     setImagePreview(user?.profile_image || null);
   }, [user?.profile_image]);
+
+  // Lock scroll saat EditProfile modal terbuka
+  React.useEffect(() => {
+    if (showEditProfile) {
+      document.body.classList.add('modal-open');
+    } else {
+      document.body.classList.remove('modal-open');
+    }
+    return () => {
+      document.body.classList.remove('modal-open');
+    };
+  }, [showEditProfile]);
 
   if (!user) {
     return <div className="p-8 text-center">Anda belum login.</div>;
@@ -370,6 +385,25 @@ export default function ProfilePage() {
     setSuccess('');
   };
 
+  // Tambahkan fungsi untuk membatalkan surat
+  const handleCancelSurat = async (id) => {
+    setCancelLoadingId(id);
+    try {
+      const token = localStorage.getItem('token');
+      const res = await fetch(`${API_BASE_URL}/surat/${id}/cancel`, {
+        method: 'PUT',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (!res.ok) throw new Error('Gagal membatalkan surat');
+      await fetchRiwayatSurat();
+      setCancelConfirmId(null);
+    } catch (e) {
+      alert(e.message);
+    } finally {
+      setCancelLoadingId(null);
+    }
+  };
+
   return (
     <div>
       {/* Hero Section */}
@@ -585,6 +619,15 @@ export default function ProfilePage() {
                               >
                                 Lihat Detail
                               </button>
+                             {['Menunggu', 'Diproses'].includes(s.status) && (
+                               <button
+                                 className="ml-2 px-3 py-1 rounded bg-red-500 text-white text-xs font-bold hover:bg-red-700 transition disabled:opacity-60"
+                                 disabled={cancelLoadingId === s.id}
+                                 onClick={() => setCancelConfirmId(s.id)}
+                               >
+                                 {cancelLoadingId === s.id ? '...' : 'Batalkan'}
+                               </button>
+                             )}
                             </td>
                           </tr>
                         ))}
@@ -1037,6 +1080,27 @@ export default function ProfilePage() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {cancelConfirmId && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+          <div className="bg-white rounded-xl shadow-xl p-6 max-w-sm w-full">
+            <h4 className="text-lg font-bold mb-2 text-red-600">Batalkan Pengajuan Surat?</h4>
+            <p className="mb-4 text-gray-700">Apakah Anda yakin ingin membatalkan pengajuan surat ini? Tindakan ini tidak dapat dibatalkan.</p>
+            <div className="flex justify-end gap-2">
+              <button
+                className="px-4 py-2 rounded bg-gray-200 text-gray-700 font-semibold hover:bg-gray-300"
+                onClick={() => setCancelConfirmId(null)}
+                disabled={cancelLoadingId === cancelConfirmId}
+              >Batal</button>
+              <button
+                className="px-4 py-2 rounded bg-red-500 text-white font-semibold hover:bg-red-700 disabled:opacity-60"
+                onClick={() => handleCancelSurat(cancelConfirmId)}
+                disabled={cancelLoadingId === cancelConfirmId}
+              >{cancelLoadingId === cancelConfirmId ? 'Memproses...' : 'Ya, Batalkan'}</button>
+            </div>
           </div>
         </div>
       )}

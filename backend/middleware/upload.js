@@ -21,14 +21,15 @@ const storage = multer.diskStorage({
 
 // File filter
 const fileFilter = (req, file, cb) => {
-  const allowedTypes = /jpeg|jpg|png/;
-  const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
-  const mimetype = allowedTypes.test(file.mimetype);
+  const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'application/pdf'];
+  const extAllowed = ['.jpg', '.jpeg', '.png', '.pdf'];
+  const extname = extAllowed.includes(path.extname(file.originalname).toLowerCase());
+  const mimetype = allowedTypes.includes(file.mimetype);
 
   if (mimetype && extname) {
     return cb(null, true);
   } else {
-    cb(new Error('Hanya file gambar JPG, JPEG, atau PNG yang diperbolehkan!'));
+    cb(new Error('Hanya file gambar JPG, JPEG, PNG, atau PDF yang diperbolehkan!'));
   }
 };
 

@@ -64,7 +64,7 @@ function PersonBox({ nama, jabatan, foto, color }) {
         {fotoUrl ? <img src={fotoUrl} alt={nama} className="object-cover w-full h-full" /> : <span className="text-gray-400 text-3xl">👤</span>}
       </div>
       <div className="font-bold text-base md:text-lg text-center leading-tight mb-1">{jabatan}</div>
-      <div className="text-base md:text-lg text-center font-bold text-gray-700 leading-tight">{nama}</div>
+      <div className="text-base md:text-lg text-center font-bold text-gray-700 leading-tight break-words max-w-[120px]">{nama}</div>
     </div>
   );
 }
@@ -119,6 +119,7 @@ export default function StrukturOrganisasi() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [saving, setSaving] = useState(false);
+  const [success, setSuccess] = useState(false); // Tambah state success
 
   // Fetch data dari API
   useEffect(() => {
@@ -325,6 +326,7 @@ export default function StrukturOrganisasi() {
   const handleSave = async () => {
     try {
       setSaving(true);
+      setError(null);
       
       const token = localStorage.getItem('token');
       if (!token) {
@@ -389,10 +391,12 @@ export default function StrukturOrganisasi() {
       // Refresh data dari API
       await fetchStrukturData();
       setEditMode(false);
-      alert('Struktur organisasi berhasil disimpan!');
+      setSuccess(true); // Ganti alert dengan setSuccess
+      setTimeout(() => setSuccess(false), 3000); // Auto-hide setelah 3 detik
     } catch (error) {
       console.error('Error saving struktur:', error);
-      alert(`Gagal menyimpan: ${error.message}`);
+      setError(`Gagal menyimpan: ${error.message}`);
+      setTimeout(() => setError(null), 4000);
     } finally {
       setSaving(false);
     }
@@ -419,12 +423,14 @@ export default function StrukturOrganisasi() {
     
     // Validasi file
     if (!file.type.startsWith('image/')) {
-      alert('File harus berupa gambar!');
+      setError('File harus berupa gambar!');
+      setTimeout(() => setError(null), 4000);
       return;
     }
     
     if (file.size > 5 * 1024 * 1024) { // 5MB limit
-      alert('Ukuran file terlalu besar! Maksimal 5MB.');
+      setError('Ukuran file foto terlalu besar. Maksimal yang diperbolehkan adalah 5MB. Silakan pilih foto lain.');
+      setTimeout(() => setError(null), 5000);
       return;
     }
     
@@ -458,8 +464,15 @@ export default function StrukturOrganisasi() {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <div className="text-red-500 mb-4">⚠️ Gagal memuat data</div>
-          <p className="text-gray-600 mb-4">{error}</p>
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6 text-center font-semibold shadow flex items-center justify-center gap-2 animate-fade-in relative">
+            <span className="text-2xl">🚫</span>
+            <span className="text-lg md:text-xl font-bold">{error}</span>
+            <button
+              className="absolute right-3 top-1 text-red-500 hover:text-red-700 text-lg"
+              onClick={() => setError(null)}
+              aria-label="Tutup"
+            >×</button>
+          </div>
           <button 
             onClick={fetchStrukturData} 
             className="px-4 py-2 bg-primary text-white rounded hover:bg-blue-700 transition"
@@ -490,7 +503,26 @@ export default function StrukturOrganisasi() {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 py-6 relative">
+      <div className="max-w-5xl mx-auto py-8 px-4 md:px-0">
+        <h1 className="text-3xl md:text-4xl font-extrabold text-primary mb-6 text-center drop-shadow">Struktur Organisasi Desa</h1>
+        {/* Error Pop-up */}
+        {error && (
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6 text-center font-semibold shadow flex items-center justify-center gap-2 animate-fade-in relative">
+            <span className="text-2xl">🚫</span>
+            <span className="text-lg md:text-xl font-bold">{error}</span>
+            <button
+              className="absolute right-3 top-1 text-red-500 hover:text-red-700 text-lg"
+              onClick={() => setError(null)}
+              aria-label="Tutup"
+            >×</button>
+          </div>
+        )}
+        {/* Success Pop-up */}
+        {success && (
+          <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-6 text-center font-semibold shadow animate-fade-in">
+            Struktur organisasi berhasil disimpan!
+          </div>
+        )}
         {isAdmin && !editMode && (
           <div className="flex gap-4 justify-end mb-6">
             <button 
@@ -535,6 +567,7 @@ export default function StrukturOrganisasi() {
                     onChange={(e) => handlePhotoChange('kepalaDesa', null, e)}
                     className="w-full"
                   />
+                  <p className="text-xs text-gray-500 mt-1">Ukuran maksimal foto 5MB</p>
                   {editStruktur.kepalaDesa.foto && (
                     <img src={getFotoUrl(editStruktur.kepalaDesa.foto)} alt="foto kepala desa" className="mt-2 w-20 h-20 object-cover rounded-full border" />
                   )}
@@ -572,6 +605,7 @@ export default function StrukturOrganisasi() {
                     onChange={(e) => handlePhotoChange('sekretaris', null, e)}
                     className="w-full"
                   />
+                  <p className="text-xs text-gray-500 mt-1">Ukuran maksimal foto 5MB</p>
                   {editStruktur.sekretaris.foto && (
                     <img src={getFotoUrl(editStruktur.sekretaris.foto)} alt="foto sekretaris" className="mt-2 w-20 h-20 object-cover rounded-full border" />
                   )}
@@ -611,6 +645,7 @@ export default function StrukturOrganisasi() {
                         onChange={(e) => handlePhotoChange('kasi', index, e)}
                         className="w-full"
                       />
+                      <p className="text-xs text-gray-500 mt-1">Ukuran maksimal foto 5MB</p>
                       {item.foto && (
                         <img src={getFotoUrl(item.foto)} alt={`foto ${item.jabatan}`} className="mt-2 w-20 h-20 object-cover rounded-full border" />
                       )}
@@ -652,6 +687,7 @@ export default function StrukturOrganisasi() {
                         onChange={(e) => handlePhotoChange('kaur', index, e)}
                         className="w-full"
                       />
+                      <p className="text-xs text-gray-500 mt-1">Ukuran maksimal foto 5MB</p>
                       {item.foto && (
                         <img src={getFotoUrl(item.foto)} alt={`foto ${item.jabatan}`} className="mt-2 w-20 h-20 object-cover rounded-full border" />
                       )}
@@ -693,6 +729,7 @@ export default function StrukturOrganisasi() {
                         onChange={(e) => handlePhotoChange('kasun', index, e)}
                         className="w-full"
                       />
+                      <p className="text-xs text-gray-500 mt-1">Ukuran maksimal foto 5MB</p>
                       {item.foto && (
                         <img src={getFotoUrl(item.foto)} alt={`foto ${item.jabatan}`} className="mt-2 w-20 h-20 object-cover rounded-full border" />
                       )}

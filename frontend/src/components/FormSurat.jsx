@@ -23,7 +23,10 @@ export default function FormSurat({ jenisSurat, persyaratan }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
+  const [errorFields, setErrorFields] = useState({});
   const fileRefs = useRef({});
+  const nikRef = useRef(null);
+  const tanggalLahirRef = useRef(null);
   const { user } = useAuth();
   const navigate = useNavigate();
 
@@ -36,7 +39,7 @@ export default function FormSurat({ jenisSurat, persyaratan }) {
   };
 
   const handleAreaClick = (key) => {
-    if (fileRefs.current[key]) fileRefs.current[key].click();
+    if (fileRefs.current[key] && !loading) fileRefs.current[key].click();
   };
 
   const handleSubmit = async (e) => {
@@ -44,12 +47,60 @@ export default function FormSurat({ jenisSurat, persyaratan }) {
     
     if (!user) {
       setError('Anda harus login terlebih dahulu');
+      setErrorFields({});
       return;
     }
 
     setLoading(true);
     setError('');
     setSuccess(false);
+    setErrorFields({});
+
+    // Validasi manual NIK
+    if (!/^\d{16}$/.test(data.nik)) {
+      setError('NIK harus 16 digit angka');
+      setErrorFields({ nik: 'NIK harus 16 digit angka' });
+      setLoading(false);
+      setTimeout(() => {
+        if (nikRef.current) nikRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 100);
+      return;
+    }
+    // Validasi tanggal lahir tidak boleh di masa depan
+    if (data.tanggalLahir && new Date(data.tanggalLahir) > new Date()) {
+      setError('Tanggal lahir tidak boleh di masa depan');
+      setErrorFields({ tanggalLahir: 'Tanggal lahir tidak boleh di masa depan' });
+      setLoading(false);
+      setTimeout(() => {
+        if (tanggalLahirRef.current) tanggalLahirRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 100);
+      return;
+    }
+    // Validasi lampiran (jika ada persyaratan wajib upload)
+    for (const key of Object.keys(uploads)) {
+      const file = uploads[key];
+      if (file) {
+        const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'application/pdf'];
+        if (!allowedTypes.includes(file.type)) {
+          setError('Format file lampiran tidak didukung. Hanya JPG, JPEG, PNG, atau PDF.');
+          setErrorFields({ [`lampiran_${key}`]: 'Format file lampiran tidak didukung.' });
+          setLoading(false);
+          setTimeout(() => {
+            if (fileRefs.current[key]) fileRefs.current[key].scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }, 100);
+          return;
+        }
+        if (file.size > 5 * 1024 * 1024) {
+          setError('Ukuran file lampiran maksimal 5MB.');
+          setErrorFields({ [`lampiran_${key}`]: 'Ukuran file lampiran maksimal 5MB.' });
+          setLoading(false);
+          setTimeout(() => {
+            if (fileRefs.current[key]) fileRefs.current[key].scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }, 100);
+          return;
+        }
+      }
+    }
 
     try {
       const formData = new FormData();
@@ -112,7 +163,7 @@ export default function FormSurat({ jenisSurat, persyaratan }) {
   return (
     <div className="bg-white/80 backdrop-blur-md rounded-2xl shadow-2xl p-8 md:p-12 mx-auto w-full">
       <h2 className="text-2xl md:text-3xl font-extrabold text-primary mb-2 text-center tracking-tight uppercase drop-shadow">Formulir {jenisSurat}</h2>
-      <p className="text-gray-600 text-center mb-8 text-base md:text-lg">Lengkapi form di bawah ini untuk mengajukan permohonan surat. Pastikan data benar dan lengkap.</p>
+      <p className="text-gray-600 text-center mb-8 text-base md:text-lg">Lengkapi form di bawah ini sesuai KTP anda untuk mengajukan permohonan surat. Pastikan data benar dan lengkap.</p>
       
       {error && (
         <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
@@ -131,9 +182,10 @@ export default function FormSurat({ jenisSurat, persyaratan }) {
         <div className="mb-10">
           <div className="font-bold mb-4 text-primary text-lg border-l-4 border-primary pl-3">A. DATA DIRI</div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Baris 1 */}
             <div>
               <label className="block mb-1 text-sm font-semibold text-gray-700">Nama lengkap <span className="text-red-500">*</span></label>
-              <span className="block text-xs text-red-500 mb-1">(gunakan huruf besar)</span>
+              <span className="block text-xs text-blue-500 mb-1">(gunakan nama sesuai KTP)</span>
               <input 
                 name="nama" 
                 value={data.nama} 
@@ -146,16 +198,20 @@ export default function FormSurat({ jenisSurat, persyaratan }) {
             </div>
             <div>
               <label className="block mb-1 text-sm font-semibold text-gray-700">NIK <span className="text-red-500">*</span></label>
+              <span className="block text-xs text-gray-500 mb-1">NIK harus 16 digit angka</span>
               <input 
                 name="nik" 
                 value={data.nik} 
                 onChange={handleChange} 
-                className="w-full px-4 py-2 border-2 border-gray-300 bg-gray-50 rounded-lg shadow-sm focus:outline-none focus:border-primary placeholder:text-gray-400 mb-4" 
+                className={`w-full px-4 py-2 border-2 rounded-lg shadow-sm focus:outline-none placeholder:text-gray-400 mb-1 ${errorFields.nik ? 'border-red-500 bg-red-50' : 'border-gray-300 bg-gray-50'} focus:border-primary`} 
+                ref={nikRef}
                 placeholder="Masukkan NIK" 
                 required 
                 disabled={loading}
               />
+              {errorFields.nik && <span className="text-xs text-red-500 mb-2 block">{errorFields.nik}</span>}
             </div>
+            {/* Baris 2 */}
             <div>
               <label className="block mb-1 text-sm font-semibold text-gray-700">Jenis kelamin <span className="text-red-500">*</span></label>
               <select 
@@ -183,39 +239,21 @@ export default function FormSurat({ jenisSurat, persyaratan }) {
                 disabled={loading}
               />
             </div>
+            {/* Baris 3 */}
             <div>
               <label className="block mb-1 text-sm font-semibold text-gray-700">Tanggal lahir <span className="text-red-500">*</span></label>
+
               <input 
                 name="tanggalLahir" 
                 type="date" 
                 value={data.tanggalLahir} 
                 onChange={handleChange} 
-                className="w-full px-4 py-2 border-2 border-gray-300 bg-gray-50 rounded-lg shadow-sm focus:outline-none focus:border-primary mb-4" 
+                className={`w-full px-4 py-2 border-2 rounded-lg shadow-sm focus:outline-none placeholder:text-gray-400 mb-1 ${errorFields.tanggalLahir ? 'border-red-500 bg-red-50' : 'border-gray-300 bg-gray-50'} focus:border-primary`} 
+                ref={tanggalLahirRef}
                 required 
                 disabled={loading}
               />
-            </div>
-            <div>
-              <label className="block mb-1 text-sm font-semibold text-gray-700">Pekerjaan</label>
-              <input 
-                name="pekerjaan" 
-                value={data.pekerjaan} 
-                onChange={handleChange} 
-                className="w-full px-4 py-2 border-2 border-gray-300 bg-gray-50 rounded-lg shadow-sm focus:outline-none focus:border-primary placeholder:text-gray-400 mb-4" 
-                placeholder="Masukkan pekerjaan" 
-                disabled={loading}
-              />
-            </div>
-            <div>
-              <label className="block mb-1 text-sm font-semibold text-gray-700">Kewarganegaraan</label>
-              <input 
-                name="kewarganegaraan" 
-                value={data.kewarganegaraan} 
-                onChange={handleChange} 
-                className="w-full px-4 py-2 border-2 border-gray-300 bg-gray-50 rounded-lg shadow-sm focus:outline-none focus:border-primary placeholder:text-gray-400 mb-4" 
-                placeholder="Masukkan kewarganegaraan" 
-                disabled={loading}
-              />
+              {errorFields.tanggalLahir && <span className="text-xs text-red-500 mb-2 block">{errorFields.tanggalLahir}</span>}
             </div>
             <div>
               <label className="block mb-1 text-sm font-semibold text-gray-700">Agama <span className="text-red-500">*</span></label>
@@ -236,20 +274,47 @@ export default function FormSurat({ jenisSurat, persyaratan }) {
                 <option value="Konghucu">Konghucu</option>
               </select>
             </div>
+            {/* Baris 4 */}
+            <div>
+              <label className="block mb-1 text-sm font-semibold text-gray-700">Pekerjaan</label>
+              <input 
+                name="pekerjaan" 
+                value={data.pekerjaan} 
+                onChange={handleChange} 
+                className="w-full px-4 py-2 border-2 border-gray-300 bg-gray-50 rounded-lg shadow-sm focus:outline-none focus:border-primary placeholder:text-gray-400 mb-4" 
+                placeholder="Masukkan pekerjaan" 
+                disabled={loading}
+              />
+            </div>
+            <div>
+              <label className="block mb-1 text-sm font-semibold text-gray-700">Kewarganegaraan</label>
+             
+              <input 
+                name="kewarganegaraan" 
+                value={data.kewarganegaraan} 
+                onChange={handleChange} 
+                className="w-full px-4 py-2 border-2 border-gray-300 bg-gray-50 rounded-lg shadow-sm focus:outline-none focus:border-primary placeholder:text-gray-400 mb-4" 
+                placeholder="Masukkan kewarganegaraan" 
+                disabled={loading}
+              />
+            </div>
+            {/* Baris 5 */}
             <div>
               <label className="block mb-1 text-sm font-semibold text-gray-700">Nomor ponsel <span className="text-red-500">*</span></label>
+              <span className="block text-xs text-gray-500 mb-1">Gunakan format 08xxxxxxxxxx</span>
               <input 
                 name="noHp" 
                 value={data.noHp} 
                 onChange={handleChange} 
                 className="w-full px-4 py-2 border-2 border-gray-300 bg-gray-50 rounded-lg shadow-sm focus:outline-none focus:border-primary placeholder:text-gray-400 mb-4" 
-                placeholder="62 Masukkan nomor ponsel" 
+                placeholder="Masukkan nomor ponsel" 
                 required 
                 disabled={loading}
               />
             </div>
             <div>
               <label className="block mb-1 text-sm font-semibold text-gray-700">Alamat KTP <span className="text-red-500">*</span></label>
+              <span className="block text-xs text-gray-500 mb-1">Isi sesuai alamat pada KTP</span>
               <textarea 
                 name="alamatKtp" 
                 value={data.alamatKtp} 
@@ -260,18 +325,20 @@ export default function FormSurat({ jenisSurat, persyaratan }) {
                 disabled={loading}
               />
             </div>
-            <div>
-              <label className="block mb-1 text-sm font-semibold text-gray-700">Alamat sekarang <span className="text-red-500">*</span></label>
-              <textarea 
-                name="alamatSekarang" 
-                value={data.alamatSekarang} 
-                onChange={handleChange} 
-                className="w-full px-4 py-2 border-2 border-gray-300 bg-gray-50 rounded-lg shadow-sm focus:outline-none focus:border-primary placeholder:text-gray-400 mb-4" 
-                placeholder="Masukkan alamat sekarang" 
-                required 
-                disabled={loading}
-              />
-            </div>
+          </div>
+          {/* Baris 6: Alamat sekarang full width */}
+          <div className="mt-6">
+            <label className="block mb-1 text-sm font-semibold text-gray-700">Alamat sekarang <span className="text-red-500">*</span></label>
+            <span className="block text-xs text-gray-500 mb-1">Isi alamat domisili saat ini</span>
+            <textarea 
+              name="alamatSekarang" 
+              value={data.alamatSekarang} 
+              onChange={handleChange} 
+              className="w-full px-4 py-2 border-2 border-gray-300 bg-gray-50 rounded-lg shadow-sm focus:outline-none focus:border-primary placeholder:text-gray-400 mb-4" 
+              placeholder="Masukkan alamat sekarang" 
+              required 
+              disabled={loading}
+            />
           </div>
         </div>
         {/* Section Lampiran Persyaratan */}
@@ -291,7 +358,7 @@ export default function FormSurat({ jenisSurat, persyaratan }) {
                   </label>
                 <div
                   className="w-full border-2 border-primary rounded-lg px-4 py-8 text-center bg-white cursor-pointer flex flex-col items-center justify-center mb-1 transition hover:bg-primary/5"
-                  onClick={() => !loading && handleAreaClick(p)}
+                  onClick={() => handleAreaClick(p)}
                 >
                   <img src="/file.svg" alt="Pilih Berkas" className="mx-auto mb-2 w-10 h-10 object-contain" />
                   <span className="text-gray-500 text-sm">{uploads[p] ? uploads[p].name : 'Pilih berkas'}</span>
@@ -301,10 +368,12 @@ export default function FormSurat({ jenisSurat, persyaratan }) {
                     onChange={e => handleUpload(e, p)}
                     className="hidden"
                     ref={el => (fileRefs.current[p] = el)}
-                      required={isLuarDesa ? false : (!notRequired && !isPasFoto)}
+                    required={isLuarDesa ? false : (!notRequired && !isPasFoto)}
                     disabled={loading}
                   />
+                  <span className="block text-xs text-gray-500 mt-2">Format file: JPG, JPEG, PNG, atau PDF. Ukuran maksimal 5MB.</span>
                 </div>
+                {errorFields[`lampiran_${p}`] && <span className="text-xs text-red-500 mt-1 block">{errorFields[`lampiran_${p}`]}</span>}
               </div>
               );
             })}

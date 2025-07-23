@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken');
 const { body, validationResult } = require('express-validator');
 const { promisePool } = require('../config');
 const { auth } = require('../middleware/auth');
-const { uploadImage } = require('../middleware/upload');
+const { uploadImage, handleMulterError } = require('../middleware/upload');
 
 const router = express.Router();
 
@@ -200,7 +200,7 @@ router.put('/change-password', auth, [
 });
 
 // Update profile
-router.put('/profile', auth, uploadImage, [
+router.put('/profile', auth, uploadImage, handleMulterError, [
   body('nama').notEmpty().withMessage('Nama wajib diisi'),
   body('email').isEmail().withMessage('Email tidak valid'),
   body('no_hp').optional().custom((value) => {

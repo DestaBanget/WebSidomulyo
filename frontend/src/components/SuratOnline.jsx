@@ -22,12 +22,12 @@ const mekanisme = [
   {
     icon: <FaSearch className="text-3xl text-primary mb-2" />,
     title: 'Lakukan Monitoring',
-    desc: 'Lakukan monitoring status surat dengan scan qrcode yang ada pada bukti pembuatan surat',
+    desc: 'Lakukan monitoring status surat dengan melihat status surat pada profil',
   },
   {
     icon: <FaRegSmile className="text-3xl text-primary mb-2" />,
     title: 'Surat Selesai',
-    desc: 'Setelah data dikonfirmasi valid oleh petugas, surat keterangan dapat langsung diunduh',
+    desc: 'Setelah surat memiliki status selesai. Anda bisa mengambil surat di kantor desa',
   },
 ];
 
