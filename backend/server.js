@@ -61,7 +61,8 @@ const allowedOrigins = [
   'https://web-sidomulyo.vercel.app',
   'https://websidomulyo.vercel.app',
   'https://*.vercel.app', // Allow all Vercel subdomains
-  'https://*.railway.app' // Allow all Railway subdomains
+  'https://*.railway.app', // Allow all Railway subdomains
+  'http://145.79.11.150:5000' // <--- Tambahkan IP backend di sini
 ];
 
 app.use(cors({
