@@ -2,11 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { apiCall, publicApiCall, uploadFile } from '../config/api';
 import images from '../config/images';
+import { useNavigate } from 'react-router-dom';
 
 export default function BPD() {
   // Ganti heroImg dengan images.lembaga.bpd
   const heroImg = images.lembaga.bpd;
   const { isAdmin } = useAuth();
+  const navigate = useNavigate();
 
   // State utama
   const [lembaga, setLembaga] = useState(null);
@@ -67,12 +69,6 @@ export default function BPD() {
     setLoading(true);
     setError(null);
     try {
-      // Validasi sederhana
-      if (!tentangEdit.trim() && !visiEdit.trim() && !misiEdit.trim()) {
-        setError('Semua field tidak boleh kosong!');
-        setLoading(false);
-        return;
-      }
       await apiCall(`/lembaga`, {
         method: 'PUT',
         body: JSON.stringify({
@@ -83,10 +79,8 @@ export default function BPD() {
         })
       });
       setEditMode(false);
-      // Refresh data
-      const data = await publicApiCall('/lembaga');
-      const bpd = (data.lembaga || []).find(l => l.nama_lembaga && l.nama_lembaga.toLowerCase() === 'bpd');
-      setLembaga(bpd);
+      // Redirect ke halaman BPD setelah simpan
+      navigate('/lembaga/bpd');
     } catch (err) {
       setError(err.message || 'Gagal update data');
     } finally {
