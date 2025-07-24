@@ -78,8 +78,10 @@ export default function BPD() {
         })
       });
       setEditMode(false);
-      // Redirect ke halaman BPD setelah simpan
-      navigate('/lembaga/bpd');
+      // Refresh data
+      const data = await publicApiCall('/lembaga');
+      const bpd = (data.lembaga || []).find(l => l.nama_lembaga && l.nama_lembaga.toLowerCase() === 'bpd');
+      setLembaga(bpd);
     } catch (err) {
       setError(err.message || 'Gagal update data');
     } finally {
