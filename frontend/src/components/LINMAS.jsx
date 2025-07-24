@@ -118,7 +118,7 @@ export default function LINMAS() {
         if (pengurus.foto && pengurus.foto !== '/dummy-profile.png') {
           formData.append('foto', pengurus.foto);
         }
-        await uploadFile(`/lembaga/${lembaga.nama_lembaga}/pengurus`, formData);
+        await uploadFile(`/lembaga/${lembaga.id}/pengurus`, formData);
       } else {
         // Update existing pengurus
         const formData = new FormData();
@@ -194,7 +194,7 @@ export default function LINMAS() {
         if (unit.icon && unit.icon !== '/dummy-unit.png') {
           formData.append('icon', unit.icon);
         }
-        await uploadFile(`/lembaga/${lembaga.nama_lembaga}/unit-kegiatan`, formData);
+        await uploadFile(`/lembaga/${lembaga.id}/unit-kegiatan`, formData);
       } else {
         // Update existing unit
         const formData = new FormData();
