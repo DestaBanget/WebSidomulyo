@@ -116,7 +116,7 @@ router.post('/', adminAuth, [
 });
 
 // Update lembaga (admin only)
-router.put('/:id', adminAuth, [
+router.put('/:nama_lembaga', adminAuth, [
   body('deskripsi').optional().notEmpty().withMessage('Deskripsi tidak boleh kosong jika diisi'),
   body('tentang').optional(),
   body('visi').optional(),
@@ -128,13 +128,13 @@ router.put('/:id', adminAuth, [
       return res.status(400).json({ errors: errors.array() });
     }
 
-    const { id } = req.params;
+    const { nama_lembaga } = req.params;
     const { deskripsi, tentang, visi, misi } = req.body;
 
-    // Check if lembaga exists
+    // Check if lembaga exists by nama_lembaga
     const [existingLembaga] = await promisePool.query(
-      'SELECT * FROM lembaga_desa WHERE id = ?',
-      [id]
+      'SELECT * FROM lembaga_desa WHERE nama_lembaga = ?',
+      [nama_lembaga]
     );
 
     if (existingLembaga.length === 0) {
@@ -143,13 +143,13 @@ router.put('/:id', adminAuth, [
 
     // Update lembaga - hanya update field yang diubah, bukan nama_lembaga
     await promisePool.query(
-      'UPDATE lembaga_desa SET deskripsi = ?, tentang = ?, visi = ?, misi = ? WHERE id = ?',
-      [deskripsi, tentang, visi, misi, id]
+      'UPDATE lembaga_desa SET deskripsi = ?, tentang = ?, visi = ?, misi = ? WHERE nama_lembaga = ?',
+      [deskripsi, tentang, visi, misi, nama_lembaga]
     );
 
     const [updatedLembaga] = await promisePool.query(
-      'SELECT * FROM lembaga_desa WHERE id = ?',
-      [id]
+      'SELECT * FROM lembaga_desa WHERE nama_lembaga = ?',
+      [nama_lembaga]
     );
 
     res.json({
