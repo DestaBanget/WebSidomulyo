@@ -1,5 +1,5 @@
 // Konfigurasi API
-export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://backendsidomulyo-production.up.railway.app/api';
+export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://backend.desasidomulyo.org/api';
 console.log('API_BASE_URL:', API_BASE_URL);
 
 // Helper functions untuk API calls
