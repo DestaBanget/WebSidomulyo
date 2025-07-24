@@ -67,7 +67,13 @@ export default function BPD() {
     setLoading(true);
     setError(null);
     try {
-      await apiCall(`/lembaga`, {
+      // Validasi sederhana
+      if (!tentangEdit.trim() && !visiEdit.trim() && !misiEdit.trim()) {
+        setError('Semua field tidak boleh kosong!');
+        setLoading(false);
+        return;
+      }
+      await apiCall(`/lembaga/${lembaga.nama_lembaga}`, {
         method: 'PUT',
         body: JSON.stringify({
           deskripsi: lembaga.deskripsi || '',
