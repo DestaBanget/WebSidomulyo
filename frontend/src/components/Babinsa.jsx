@@ -526,17 +526,19 @@ export default function Babinsa() {
                 </div>
               </div>
               {/* Tombol Simpan/Batal */}
-              <div className="flex gap-2 justify-end mt-8">
-                <button
-                  className="px-4 py-2 bg-primary text-white rounded font-semibold text-sm hover:bg-blue-800 transition"
+              <div className="flex gap-4 justify-center pt-6">
+                <button 
+                  className="px-6 py-3 bg-primary text-white rounded-lg shadow-lg hover:bg-blue-800 transition-all duration-300 transform hover:scale-105 flex items-center" 
                   onClick={handleSave}
                 >
-                  Simpan
+                  <span className="mr-2">💾</span>
+                  Simpan Perubahan
                 </button>
-                <button
-                  className="px-4 py-2 bg-gray-300 text-gray-700 rounded font-semibold text-sm hover:bg-gray-400 transition"
+                <button 
+                  className="px-6 py-3 bg-gray-300 text-gray-700 rounded-lg shadow-lg hover:bg-gray-400 transition-all duration-300 transform hover:scale-105 flex items-center" 
                   onClick={handleCancel}
                 >
+                  <span className="mr-2">❌</span>
                   Batal
                 </button>
               </div>
