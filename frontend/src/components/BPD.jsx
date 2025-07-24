@@ -70,7 +70,7 @@ export default function BPD() {
     setError(null);
     try {
       await apiCall(`/lembaga/${lembaga.id}`, {
-        method: 'PUT',
+        method: 'GET',
         body: JSON.stringify({
           deskripsi: lembaga.deskripsi || '',
           tentang: tentangEdit,
