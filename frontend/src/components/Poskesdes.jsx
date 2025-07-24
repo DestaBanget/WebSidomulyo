@@ -516,6 +516,14 @@ export default function Poskesdes() {
                         ) : (
                           <div className="w-full text-center">
                             <div className="font-bold text-gray-800 text-sm mb-1">{u.nama}</div>
+                            {isAdmin && editMode && (
+                              <button
+                                onClick={() => setEditingUnit(u.id)}
+                                className="px-3 py-1 bg-teal-500 text-white text-xs rounded-lg hover:bg-teal-600 transition-colors"
+                              >
+                                Edit
+                              </button>
+                            )}
                           </div>
                         )}
                       </div>

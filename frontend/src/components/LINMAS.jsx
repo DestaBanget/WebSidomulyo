@@ -516,6 +516,14 @@ export default function LINMAS() {
                         ) : (
                           <div className="w-full text-center">
                             <div className="font-bold text-gray-800 text-sm mb-1">{u.nama}</div>
+                            {isAdmin && editMode && (
+                              <button
+                                onClick={() => setEditingUnit(u.id)}
+                                className="px-3 py-1 bg-teal-500 text-white text-xs rounded-lg hover:bg-teal-600 transition-colors"
+                              >
+                                Edit
+                              </button>
+                            )}
                           </div>
                         )}
                       </div>
@@ -580,7 +588,9 @@ export default function LINMAS() {
                   {(lembaga.unit_kegiatan || []).map((u, i) => (
                     <div key={i} className="bg-white p-4 rounded-xl border border-teal-200 shadow-sm flex flex-col items-center">
                       <img src={getIconUrl(u.icon)} alt={u.nama} className="w-16 h-16 object-contain bg-gray-50 rounded-lg border-2 border-teal-100 mb-2" />
-                      <div className="font-bold text-gray-800 text-sm text-center">{u.nama}</div>
+                      <div className="w-full text-center">
+                        <div className="font-bold text-gray-800 text-sm mb-1">{u.nama}</div>
+                      </div>
                     </div>
                   ))}
                 </div>
