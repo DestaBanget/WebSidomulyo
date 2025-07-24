@@ -255,7 +255,12 @@ export default function Poskesdes() {
   const getFotoUrl = (foto) => {
     if (!foto) return '/dummy-profile.png';
     if (foto instanceof File) return URL.createObjectURL(foto);
-    if (typeof foto === 'string' && (foto.startsWith('http://') || foto.startsWith('https://'))) return foto;
+    if (typeof foto === 'string' && (foto.startsWith('http://') || foto.startsWith('https://'))) {
+      if (foto.includes('localhost')) {
+        return foto.replace('http://localhost:5000', 'https://backend.desasidomulyo.org');
+      }
+      return foto;
+    }
     if (typeof foto === 'string' && foto.startsWith('/uploads/')) {
       let base = API_BASE_URL.replace('/api', '');
       if (base.includes('localhost')) base = 'https://backend.desasidomulyo.org';
@@ -268,7 +273,12 @@ export default function Poskesdes() {
   const getIconUrl = (icon) => {
     if (!icon) return '/dummy-unit.png';
     if (icon instanceof File) return URL.createObjectURL(icon);
-    if (typeof icon === 'string' && (icon.startsWith('http://') || icon.startsWith('https://'))) return icon;
+    if (typeof icon === 'string' && (icon.startsWith('http://') || icon.startsWith('https://'))) {
+      if (icon.includes('localhost')) {
+        return icon.replace('http://localhost:5000', 'https://backend.desasidomulyo.org');
+      }
+      return icon;
+    }
     if (typeof icon === 'string' && icon.startsWith('/uploads/')) {
       let base = API_BASE_URL.replace('/api', '');
       if (base.includes('localhost')) base = 'https://backend.desasidomulyo.org';
