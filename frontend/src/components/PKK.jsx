@@ -67,7 +67,7 @@ export default function PKK() {
     setLoading(true);
     setError(null);
     try {
-      await apiCall(`/lembaga/${lembaga.id}`, {
+      await apiCall(`/lembaga/${lembaga.nama_lembaga}`, {
         method: 'PUT',
         body: JSON.stringify({
           tentang: tentangEdit,
