@@ -61,7 +61,7 @@ router.get('/:id', async (req, res) => {
     );
 
     res.json({ 
-      lembaga: { ...lembaga[0], pengurus, unit_kegiatan } 
+      lembaga: { ...lembaga[0], pengurus, unit_kegiatan: unitKegiatan } 
     });
   } catch (error) {
     console.error('Get lembaga by ID error:', error);
@@ -158,6 +158,53 @@ router.put('/:nama_lembaga', adminAuth, [
     });
   } catch (error) {
     console.error('Update lembaga error:', error);
+    res.status(500).json({ error: 'Terjadi kesalahan server' });
+  }
+});
+
+// Update lembaga by ID (admin only)
+router.put('/id/:id', adminAuth, [
+  body('deskripsi').optional().notEmpty().withMessage('Deskripsi tidak boleh kosong jika diisi'),
+  body('tentang').optional(),
+  body('visi').optional(),
+  body('misi').optional()
+], async (req, res) => {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    const { id } = req.params;
+    const { deskripsi, tentang, visi, misi } = req.body;
+
+    // Check if lembaga exists by id
+    const [existingLembaga] = await promisePool.query(
+      'SELECT * FROM lembaga_desa WHERE id = ?',
+      [id]
+    );
+
+    if (existingLembaga.length === 0) {
+      return res.status(404).json({ error: 'Lembaga tidak ditemukan' });
+    }
+
+    // Update lembaga - hanya update field yang diubah, bukan id
+    await promisePool.query(
+      'UPDATE lembaga_desa SET deskripsi = ?, tentang = ?, visi = ?, misi = ? WHERE id = ?',
+      [deskripsi, tentang, visi, misi, id]
+    );
+
+    const [updatedLembaga] = await promisePool.query(
+      'SELECT * FROM lembaga_desa WHERE id = ?',
+      [id]
+    );
+
+    res.json({
+      message: 'Lembaga berhasil diupdate',
+      lembaga: updatedLembaga[0]
+    });
+  } catch (error) {
+    console.error('Update lembaga by ID error:', error);
     res.status(500).json({ error: 'Terjadi kesalahan server' });
   }
 });

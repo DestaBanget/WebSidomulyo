@@ -64,7 +64,7 @@ export default function Poskesdes() {
     setLoading(true);
     setError(null);
     try {
-      await apiCall(`/lembaga/${lembaga.nama_lembaga}`, {
+      await apiCall(`/lembaga/id/${lembaga.id}`, {
         method: 'PUT',
         body: JSON.stringify({
           tentang: tentangEdit,
