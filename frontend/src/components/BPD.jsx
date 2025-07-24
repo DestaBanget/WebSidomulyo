@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import { apiCall, publicApiCall, uploadFile } from '../config/api';
+import { apiCall, publicApiCall, uploadFile, API_BASE_URL } from '../config/api';
 import images from '../config/images';
 import { useNavigate } from 'react-router-dom';
 
@@ -266,7 +266,8 @@ export default function BPD() {
   const getFotoUrl = (foto) => {
     if (!foto) return '/dummy-profile.png';
     if (foto instanceof File) return URL.createObjectURL(foto);
-    if (typeof foto === 'string' && foto.startsWith('/uploads/')) return `http://localhost:5000${foto}`;
+    if (typeof foto === 'string' && (foto.startsWith('http://') || foto.startsWith('https://'))) return foto;
+    if (typeof foto === 'string' && foto.startsWith('/uploads/')) return `${API_BASE_URL.replace('/api', '')}${foto}`;
     return foto;
   };
 
@@ -274,7 +275,8 @@ export default function BPD() {
   const getIconUrl = (icon) => {
     if (!icon) return '/dummy-unit.png';
     if (icon instanceof File) return URL.createObjectURL(icon);
-    if (typeof icon === 'string' && icon.startsWith('/uploads/')) return `http://localhost:5000${icon}`;
+    if (typeof icon === 'string' && (icon.startsWith('http://') || icon.startsWith('https://'))) return icon;
+    if (typeof icon === 'string' && icon.startsWith('/uploads/')) return `${API_BASE_URL.replace('/api', '')}${icon}`;
     return icon;
   };
 
