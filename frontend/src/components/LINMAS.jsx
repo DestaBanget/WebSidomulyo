@@ -456,77 +456,73 @@ export default function LINMAS() {
                 </div>
                 <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
                   {unitEdit.map((u, i) => (
-                    <div key={i} className="bg-white p-4 rounded-xl border border-teal-200 shadow-sm hover:shadow-md transition-shadow">
-                      <div className="flex flex-col items-center">
-                        <div className="relative mb-3">
-                          <img 
-                            src={getIconUrl(u.icon)} 
-                            alt={u.nama} 
-                            className="w-16 h-16 object-contain bg-gray-50 rounded-lg border-2 border-teal-100 hover:border-teal-300 transition-colors" 
-                          />
-                          {editingUnit === u.id && (
-                            <>
-                              <input
-                                type="file"
-                                accept="image/*"
-                                onChange={e => handleUnitIcon(u.id, e)}
-                                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
-                              />
-                              <div className="absolute inset-0 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity pointer-events-none">
-                                <div className="bg-black/50 text-white text-xs px-2 py-1 rounded">Ganti Icon</div>
-                              </div>
-                            </>
-                          )}
-                        </div>
-                        {editingUnit === u.id ? (
-                          <div className="w-full space-y-2">
+                    <div key={i} className="bg-white p-4 rounded-xl border border-teal-200 shadow-sm hover:shadow-md transition-shadow flex flex-col items-center">
+                      <div className="relative mb-3">
+                        <img 
+                          src={getIconUrl(u.icon)} 
+                          alt={u.nama} 
+                          className="w-16 h-16 object-contain bg-gray-50 rounded-lg border-2 border-teal-100 hover:border-teal-300 transition-colors" 
+                        />
+                        {editingUnit === u.id && (
+                          <>
                             <input
-                              type="text"
-                              value={u.nama}
-                              onChange={e => handleUnitChange(u.id, 'nama', e.target.value)}
-                              className="w-full text-center text-sm text-gray-700 border-b-2 border-teal-300 bg-transparent focus:outline-none focus:border-teal-500"
-                              placeholder="Nama Unit"
+                              type="file"
+                              accept="image/*"
+                              onChange={e => handleUnitIcon(u.id, e)}
+                              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
                             />
-                            <div className="flex gap-2 mt-2 justify-center">
-                              <button
-                                onClick={() => handleSaveUnit(u)}
-                                className="px-3 py-1 bg-green-500 text-white text-xs rounded-lg hover:bg-green-600 transition-colors"
-                                title="Simpan"
-                              >
-                                ✓
-                              </button>
-                              <button
-                                onClick={() => setEditingUnit(null)}
-                                className="px-3 py-1 bg-gray-500 text-white text-xs rounded-lg hover:bg-gray-600 transition-colors"
-                                title="Batal"
-                              >
-                                ✕
-                              </button>
-                              {!u.isNew && (
-                                <button
-                                  onClick={() => handleDeleteUnit(u.id)}
-                                  className="px-3 py-1 bg-red-500 text-white text-xs rounded-lg hover:bg-red-600 transition-colors"
-                                  title="Hapus"
-                                >
-                                  🗑
-                                </button>
-                              )}
+                            <div className="absolute inset-0 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity pointer-events-none">
+                              <div className="bg-black/50 text-white text-xs px-2 py-1 rounded">Ganti Icon</div>
                             </div>
-                          </div>
-                        ) : (
-                          <div className="w-full text-center">
-                            <div className="font-bold text-gray-800 text-sm mb-1">{u.nama}</div>
-                            {isAdmin && editMode && (
-                              <button
-                                onClick={() => setEditingUnit(u.id)}
-                                className="px-3 py-1 bg-teal-500 text-white text-xs rounded-lg hover:bg-teal-600 transition-colors"
-                              >
-                                Edit
-                              </button>
-                            )}
-                          </div>
+                          </>
                         )}
                       </div>
+                      {editingUnit === u.id ? (
+                        <div className="w-full space-y-2">
+                          <input
+                            type="text"
+                            value={u.nama}
+                            onChange={e => handleUnitChange(u.id, 'nama', e.target.value)}
+                            className="w-full text-center text-sm text-gray-700 border-b-2 border-teal-300 bg-transparent focus:outline-none focus:border-teal-500"
+                            placeholder="Nama Unit"
+                          />
+                          <div className="flex gap-2 mt-2 justify-center">
+                            <button
+                              onClick={() => handleSaveUnit(u)}
+                              className="px-2 py-1 bg-green-500 text-white text-xs rounded hover:bg-green-600 transition-colors"
+                              title="Simpan"
+                            >
+                              ✓
+                            </button>
+                            <button
+                              onClick={() => setEditingUnit(null)}
+                              className="px-2 py-1 bg-gray-500 text-white text-xs rounded hover:bg-gray-600 transition-colors"
+                              title="Batal"
+                            >
+                              ✕
+                            </button>
+                            <button
+                              onClick={() => handleDeleteUnit(u.id)}
+                              className="px-2 py-1 bg-red-500 text-white text-xs rounded hover:bg-red-600 transition-colors"
+                              title="Hapus"
+                            >
+                              🗑
+                            </button>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="w-full text-center">
+                          <div className="text-sm text-gray-700 mb-2">{u.nama}</div>
+                          {isAdmin && editMode && (
+                            <button
+                              onClick={() => handleEditUnit(u)}
+                              className="px-3 py-1 bg-teal-500 text-white text-xs rounded hover:bg-teal-600 transition-colors"
+                            >
+                              Edit
+                            </button>
+                          )}
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>
