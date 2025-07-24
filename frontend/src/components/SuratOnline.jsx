@@ -2,6 +2,7 @@ import React from 'react';
 import { FaArrowRight, FaCheckCircle, FaFileAlt, FaDownload, FaClipboardList, FaSearch, FaRegSmile } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import FormSurat from './FormSurat';
+import images from '../config/images';
 
 const mekanisme = [
   {
@@ -219,13 +220,14 @@ export default function SuratOnline() {
     s.title.toLowerCase().includes(search.toLowerCase()) ||
     s.desc.toLowerCase().includes(search.toLowerCase())
   );
+  const heroImg = images.layanan.surat;
   return (
     <div className="min-h-screen bg-white pb-10">
       {/* Hero Section */}
       <div
         className="relative w-full flex items-center justify-center text-white px-4 text-center min-h-[400px] md:min-h-[500px]"
         style={{
-          backgroundImage: "linear-gradient(90deg,rgba(37,99,235,0.7),rgba(96,165,250,0.7)), url('/surat2.jpeg')",
+          backgroundImage: `linear-gradient(90deg,rgba(37,99,235,0.7),rgba(96,165,250,0.7)), url('${heroImg}')`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           color: '#fff',
@@ -233,8 +235,8 @@ export default function SuratOnline() {
         }}
       >
         <div className="relative z-10 flex flex-col items-center justify-center w-full h-full py-10 md:py-20">
-          <h1 className="text-4xl md:text-6xl font-extrabold mb-6 drop-shadow-lg">Surat Online</h1>
-          <p className="max-w-2xl mx-auto text-lg md:text-2xl font-medium drop-shadow mb-4 md:mb-8">Kemudahan pembuatan surat keterangan secara digital. Segera akses layanan ini untuk pengalaman yang lebih efisien dan terhubung dengan cepat.</p>
+          <h1 className="text-4xl md:text-6xl font-extrabold mb-4 drop-shadow-lg">Surat Online</h1>
+          <p className="max-w-2xl mx-auto text-lg md:text-2xl font-medium drop-shadow mb-2">Ajukan berbagai surat keterangan secara online, mudah, cepat, dan transparan.</p>
         </div>
       </div>
 

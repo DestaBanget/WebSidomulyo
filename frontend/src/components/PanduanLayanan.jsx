@@ -1,11 +1,12 @@
 import React from 'react';
 import { FaFileAlt, FaComments, FaQuestionCircle } from 'react-icons/fa';
+import images from '../config/images';
 
 export default function PanduanLayanan() {
-  const heroImg = '/surat.jpg';
+  const heroImg = images.layanan.panduan;
   return (
     <div className="min-h-screen bg-white pb-10">
-      <div className="relative w-full min-h-[400px] md:min-h-[500px] flex flex-col items-center text-center px-4 pt-32 md:pt-40 pb-12 md:pb-20 overflow-hidden" style={{background: `url(${heroImg}) center/cover no-repeat`, borderRadius: '0 0 2.5rem 2.5rem'}}>
+      <div className="relative w-full min-h-[400px] md:min-h-[500px] flex flex-col items-center text-center px-4 pt-32 md:pt-40 pb-12 md:pb-20 overflow-hidden" style={{background: `linear-gradient(90deg,rgba(37,99,235,0.7),rgba(96,165,250,0.7)), url('${heroImg}')`, borderRadius: '0 0 2.5rem 2.5rem', backgroundSize: 'cover', backgroundPosition: 'center', color: '#fff'}}>
         <div className="absolute inset-0 bg-gradient-to-r from-blue-700/80 to-blue-400/80 z-0" />
         <div className="relative z-10 w-full flex flex-col items-center">
           <h1 className="text-4xl md:text-5xl font-extrabold mb-4 drop-shadow-lg text-white">Panduan Layanan Desa</h1>

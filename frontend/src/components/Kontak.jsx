@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { FaInstagram, FaFacebook, FaWhatsapp, FaEnvelope } from 'react-icons/fa';
 import { apiCall } from '../config/api';
+import images from '../config/images';
 
 function TooltipIcon({ href, icon, tooltip, disabled }) {
   const [show, setShow] = useState(false);
@@ -80,13 +81,15 @@ export default function Kontak() {
     }
   };
 
+  const heroImg = images.kontak;
+
   return (
     <div className="min-h-screen bg-white pb-10">
       {/* Hero Section */}
       <div
         className="relative w-full flex items-center justify-center text-white px-4 text-center min-h-[400px] md:min-h-[500px]"
         style={{
-          backgroundImage: "linear-gradient(90deg,rgba(37,99,235,0.7),rgba(96,165,250,0.7)), url('/surat.jpg')",
+          backgroundImage: `linear-gradient(90deg,rgba(37,99,235,0.7),rgba(96,165,250,0.7)), url('${heroImg}')`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           color: '#fff',
