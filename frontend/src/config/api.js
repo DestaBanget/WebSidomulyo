@@ -1,5 +1,7 @@
 // Konfigurasi API
+// Ganti default ke domain produksi, jangan localhost
 export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://backend.desasidomulyo.org/api';
+// Jika ingin development, buat file .env dan isi VITE_API_BASE_URL
 console.log('API_BASE_URL:', API_BASE_URL);
 
 // Helper functions untuk API calls

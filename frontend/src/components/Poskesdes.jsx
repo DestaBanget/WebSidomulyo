@@ -256,7 +256,11 @@ export default function Poskesdes() {
     if (!foto) return '/dummy-profile.png';
     if (foto instanceof File) return URL.createObjectURL(foto);
     if (typeof foto === 'string' && (foto.startsWith('http://') || foto.startsWith('https://'))) return foto;
-    if (typeof foto === 'string' && foto.startsWith('/uploads/')) return `${API_BASE_URL.replace('/api', '')}${foto}`;
+    if (typeof foto === 'string' && foto.startsWith('/uploads/')) {
+      let base = API_BASE_URL.replace('/api', '');
+      if (base.includes('localhost')) base = 'https://backend.desasidomulyo.org';
+      return `${base}${foto}`;
+    }
     return foto;
   };
 
@@ -265,7 +269,11 @@ export default function Poskesdes() {
     if (!icon) return '/dummy-unit.png';
     if (icon instanceof File) return URL.createObjectURL(icon);
     if (typeof icon === 'string' && (icon.startsWith('http://') || icon.startsWith('https://'))) return icon;
-    if (typeof icon === 'string' && icon.startsWith('/uploads/')) return `${API_BASE_URL.replace('/api', '')}${icon}`;
+    if (typeof icon === 'string' && icon.startsWith('/uploads/')) {
+      let base = API_BASE_URL.replace('/api', '');
+      if (base.includes('localhost')) base = 'https://backend.desasidomulyo.org';
+      return `${base}${icon}`;
+    }
     return icon;
   };
 
