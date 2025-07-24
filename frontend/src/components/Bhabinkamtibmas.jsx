@@ -64,7 +64,7 @@ export default function Bhabinkamtibmas() {
     setLoading(true);
     setError(null);
     try {
-      await apiCall(`/lembaga/${lembaga.id}`, {
+      await apiCall(`/lembaga/id/${lembaga.id}`, {
         method: 'PUT',
         body: JSON.stringify({
           tentang: tentangEdit,
