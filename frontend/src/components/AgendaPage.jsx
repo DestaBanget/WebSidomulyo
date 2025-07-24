@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useAgenda } from '../contexts/AgendaContext';
+import images from '../config/images';
 
 function ConfirmModal({ open, onClose, onConfirm, title, message, loading }) {
   if (!open) return null;
@@ -100,6 +101,8 @@ export default function AgendaPage() {
     setConfirmId(null);
   };
 
+  const heroImg = images.publikasi.agenda;
+
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
       {/* Konfirmasi Modal */}
@@ -112,23 +115,19 @@ export default function AgendaPage() {
         loading={deletingId === confirmId}
       />
       {/* Hero Section */}
-      <div className="relative w-full h-[400px] md:h-[500px] flex items-center justify-center overflow-hidden" style={{
-        background: `url('/surat.jpg') center/cover no-repeat`,
-        borderRadius: '0 0 2.5rem 2.5rem',
-      }}>
-        <div className="absolute inset-0 bg-gradient-to-r from-blue-700/80 to-blue-400/80 z-0" />
-        <div className="relative z-10 flex flex-col items-center justify-center w-full h-full">
-          <h1 className="text-5xl md:text-6xl font-extrabold text-white mb-4 drop-shadow-lg">Agenda</h1>
-          <p className="text-white text-lg md:text-xl font-medium mb-6 drop-shadow text-center max-w-2xl">
-            Jadwal kegiatan dan acara penting desa Sidomulyo
-          </p>
-          <input
-            type="text"
-            placeholder="Cari agenda..."
-            value={search}
-            onChange={e => setSearch(e.target.value)}
-            className="w-full max-w-xl px-5 py-3 rounded-full border-2 border-white/80 focus:border-primary outline-none text-lg bg-white/90 placeholder-gray-400 shadow"
-          />
+      <div
+        className="relative w-full flex items-center justify-center text-white px-4 text-center min-h-[400px] md:min-h-[600px]"
+        style={{
+          backgroundImage: `linear-gradient(90deg,rgba(37,99,235,0.7),rgba(96,165,250,0.7)), url('${heroImg}')`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          color: '#fff',
+          borderRadius: '0 0 2.5rem 2.5rem',
+        }}
+      >
+        <div className="relative z-10 flex flex-col items-center justify-center w-full h-full py-10 md:py-20">
+          <h1 className="text-4xl md:text-6xl font-extrabold mb-6 drop-shadow-lg">Agenda</h1>
+          <p className="max-w-2xl mx-auto text-lg md:text-2xl font-medium drop-shadow mb-4 md:mb-8">Jadwal kegiatan dan agenda penting desa Sidomulyo.</p>
         </div>
       </div>
 

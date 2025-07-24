@@ -22,16 +22,16 @@ const images = {
     statistik: "https://puyuhkuayan.com/wp-content/uploads/2025/02/Istilah-PNS-Pusat-dan-Daerah-Resmi-Dihapus-Simak-Info-Terbarunya.jpg"
   },
   layanan: {
-    surat: "https://images.unsplash.com/photo-1528329140527-75853b1e1650?w=1920&auto=format&fit=crop&q=80&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    pengaduan: "https://images.unsplash.com/photo-1479920252409-6e3d8e8d4866?w=1920&auto=format&fit=crop&q=80&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8dHlwaW5nfGVufDB8fDB8fHww",
-    panduan: "https://images.unsplash.com/photo-1458419948946-19fb2cc296af?w=1920&auto=format&fit=crop&q=80&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OXx8cXVlc3Rpb258ZW58MHx8MHx8fDI%3D"
+    surat: "/my-landscape-sidomulyo.jpg",
+    pengaduan: "/my-landscape-sidomulyo.jpg",
+    panduan: "/my-landscape-sidomulyo.jpg"
   },
   publikasi: {
-    berita: "https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=1920&auto=format&fit=crop&q=80&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NXx8bmV3c3xlbnwwfHwwfHx8Mg%3D%3D",
-    pengumuman: "https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=1920&auto=format&fit=crop&q=80&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NXx8bmV3c3xlbnwwfHwwfHx8Mg%3D%3D",
-    agenda: "https://images.unsplash.com/photo-1653669485150-3eda1804e4d2?w=1920&auto=format&fit=crop&q=80&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+    berita: "/my-landscape-sidomulyo.jpg",
+    pengumuman: "/my-landscape-sidomulyo.jpg",
+    agenda: "/my-landscape-sidomulyo.jpg"
   },
-  kontak: "https://images.unsplash.com/photo-1520923642038-b4259acecbd7?w=1920&auto=format&fit=crop&q=80&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTl8fGNvbnRhY3R8ZW58MHx8MHx8fDI%3D",
+  kontak: "/my-landscape-sidomulyo.jpg",
   lembaga: {
     bpd: "/my-landscape-sidomulyo.jpg",
     lpm: "/my-landscape-sidomulyo.jpg",

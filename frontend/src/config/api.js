@@ -105,18 +105,26 @@ export const uploadFile = async (endpoint, formData, method = 'POST') => {
     '/struktur', // GET struktur (public)
   ];
   
-  // Cek apakah endpoint ini public
-  const isPublicEndpoint = publicEndpoints.some(publicEndpoint => 
+  // Cek endpoint pengurus/unit-kegiatan (selalu butuh token)
+  const isPengurusOrUnitEndpoint =
+    endpoint.startsWith('/lembaga/pengurus') ||
+    endpoint.includes('/pengurus') ||
+    endpoint.startsWith('/lembaga/unit-kegiatan') ||
+    endpoint.includes('/unit-kegiatan');
+
+  // Cek apakah endpoint ini public (tapi pengurus/unit-kegiatan tidak pernah public)
+  const isPublicEndpoint = !isPengurusOrUnitEndpoint && publicEndpoints.some(publicEndpoint => 
     endpoint === publicEndpoint || endpoint.startsWith(publicEndpoint + '/')
   );
   
-  // Untuk upload (POST), selalu kirim token jika ada
+  // Untuk upload (POST/PUT/DELETE), selalu kirim token jika ada dan endpoint bukan public
   const shouldSendToken = token && !isPublicEndpoint;
   
   // Debug logging
   console.log('Upload File Debug:', {
     endpoint,
     isPublicEndpoint,
+    isPengurusOrUnitEndpoint,
     hasToken: !!token,
     willSendToken: shouldSendToken
   });

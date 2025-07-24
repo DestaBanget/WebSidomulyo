@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { API_BASE_URL, uploadFile } from '../config/api';
 import { useAuth } from '../contexts/AuthContext';
+import images from '../config/images';
 
 export default function PengaduanMasyarakat() {
   const { user } = useAuth();
@@ -77,13 +78,15 @@ export default function PengaduanMasyarakat() {
     }
   };
 
+  const heroImg = images.layanan.pengaduan;
+
   return (
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
       <div
         className="relative w-full flex items-center justify-center text-white px-4 text-center min-h-[400px] md:min-h-[500px]"
         style={{
-          backgroundImage: "linear-gradient(90deg,rgba(37,99,235,0.7),rgba(96,165,250,0.7)), url('/surat.jpg')",
+          backgroundImage: `linear-gradient(90deg,rgba(37,99,235,0.7),rgba(96,165,250,0.7)), url('${heroImg}')`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           color: '#fff',
