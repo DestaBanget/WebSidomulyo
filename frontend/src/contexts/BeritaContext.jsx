@@ -21,10 +21,7 @@ export function BeritaProvider({ children }) {
       setLoading(true);
       setError(null);
       
-      console.log('Fetching berita from:', `${API_BASE_URL}/berita`);
       const response = await fetch(`${API_BASE_URL}/berita`);
-      
-      console.log('Response status:', response.status);
       
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({ error: 'Gagal mengambil data berita' }));
@@ -32,7 +29,6 @@ export function BeritaProvider({ children }) {
       }
       
       const data = await response.json();
-      console.log('Berita data received:', data);
       
       setBerita(data.berita || []);
     } catch (error) {
@@ -46,11 +42,9 @@ export function BeritaProvider({ children }) {
 
   const addBerita = async (beritaData) => {
     try {
-      console.log('=== Starting addBerita ===');
       
       // Get token from localStorage
       const token = localStorage.getItem('token');
-      console.log('Token available:', !!token);
       
       if (!token) {
         throw new Error('Token tidak ditemukan. Silakan login ulang.');
@@ -67,8 +61,6 @@ export function BeritaProvider({ children }) {
         formData.append('img', beritaData.img);
       }
 
-      console.log('Making API call to /berita with token');
-      
       const response = await fetch(`${API_BASE_URL}/berita`, {
         method: 'POST',
         headers: {
@@ -77,8 +69,6 @@ export function BeritaProvider({ children }) {
         body: formData
       });
 
-      console.log('Response status:', response.status);
-      
       if (!response.ok) {
         const errorData = await response.json();
         console.error('API Error:', errorData);
@@ -86,7 +76,6 @@ export function BeritaProvider({ children }) {
       }
 
       const data = await response.json();
-      console.log('Berita added successfully:', data);
       
       // Refresh berita list
       await fetchBerita();

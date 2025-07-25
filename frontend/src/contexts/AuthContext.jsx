@@ -21,14 +21,11 @@ export function AuthProvider({ children }) {
       const lastVerified = localStorage.getItem('tokenLastVerified');
       const now = Date.now();
       
-      console.log('AuthContext: Checking token on mount:', !!token, 'last verified:', lastVerified, 'online:', isOnline);
-      
       if (token) {
         // Optimistic loading: set user data from cache immediately
         if (cachedUser) {
           try {
             const userData = JSON.parse(cachedUser);
-            console.log('AuthContext: Setting cached user data immediately:', userData.username);
             setUser(userData);
             setIsLoggedIn(true);
             setIsAdmin(userData.role === 'admin');
@@ -44,7 +41,6 @@ export function AuthProvider({ children }) {
         
         if (shouldVerify) {
           try {
-            console.log('AuthContext: Verifying token with smart fetch...');
             
             const data = await smartFetch(`${API_BASE_URL}/auth/me`, {
               headers: {
@@ -53,7 +49,6 @@ export function AuthProvider({ children }) {
               }
             });
             
-            console.log('AuthContext: Token valid, updating user data:', data.user);
             setUser(data.user);
             setIsLoggedIn(true);
             setIsAdmin(data.user.role === 'admin');

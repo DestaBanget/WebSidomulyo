@@ -17,17 +17,14 @@ export function useNetworkStatus() {
     };
 
     const handleOnline = () => {
-      console.log('Network: Back online');
       setIsOnline(true);
     };
 
     const handleOffline = () => {
-      console.log('Network: Gone offline');
       setIsOnline(false);
     };
 
     const handleConnectionChange = () => {
-      console.log('Network: Connection type changed');
       updateNetworkStatus();
     };
 

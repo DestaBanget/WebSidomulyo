@@ -86,7 +86,6 @@ export function useSmartCache() {
     if ((options.method === 'GET' || !options.method) && (!isOnline || isSlowConnection)) {
       const cachedData = getFromCache(key);
       if (cachedData) {
-        console.log('SmartCache: Using cached data for', url);
         return cachedData;
       }
     }
@@ -107,7 +106,6 @@ export function useSmartCache() {
       // Try cache as fallback
       const cachedData = getFromCache(key);
       if (cachedData) {
-        console.log('SmartCache: Using cached data as fallback for', url);
         return cachedData;
       }
       throw error;
