@@ -62,7 +62,9 @@ const allowedOrigins = [
   'https://websidomulyo.vercel.app',
   'https://*.vercel.app', // Allow all Vercel subdomains
   'https://*.railway.app', // Allow all Railway subdomains
-  'http://145.79.11.150:5000' // <--- Tambahkan IP backend di sini
+  'http://145.79.11.150:5000', // <--- Tambahkan IP backend di sini
+  'https://www.desasidomulyo.org', // <--- Tambahkan domain utama
+  'https://desasidomulyo.org'      // <--- Tambahkan domain tanpa www
 ];
 
 app.use(cors({

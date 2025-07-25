@@ -2,7 +2,6 @@
 // Ganti default ke domain produksi, jangan localhost
 export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://backend.desasidomulyo.org/api';
 // Jika ingin development, buat file .env dan isi VITE_API_BASE_URL
-console.log('API_BASE_URL:', API_BASE_URL);
 
 // Helper functions untuk API calls
 export const apiCall = async (endpoint, options = {}) => {
@@ -26,15 +25,6 @@ export const apiCall = async (endpoint, options = {}) => {
   // Untuk POST, PUT, DELETE requests, selalu kirim token jika ada
   const shouldSendToken = token && (options.method !== 'GET' || !isPublicEndpoint);
   
-  // Debug logging
-  console.log('API Call Debug:', {
-    endpoint,
-    method: options.method || 'GET',
-    isPublicEndpoint,
-    hasToken: !!token,
-    willSendToken: shouldSendToken
-  });
-  
   const config = {
     headers: {
       'Content-Type': 'application/json',
@@ -45,16 +35,8 @@ export const apiCall = async (endpoint, options = {}) => {
     ...options
   };
 
-  console.log('Request config:', {
-    url: `${API_BASE_URL}${endpoint}`,
-    headers: config.headers
-  });
-
   const response = await fetch(`${API_BASE_URL}${endpoint}`, config);
   const data = await response.json();
-
-  console.log('Response status:', response.status);
-  console.log('Response data:', data);
 
   if (!response.ok) {
     throw new Error(data.error || 'Request gagal');
@@ -65,7 +47,6 @@ export const apiCall = async (endpoint, options = {}) => {
 
 // Function khusus untuk endpoint public (tidak pernah mengirim token)
 export const publicApiCall = async (endpoint, options = {}) => {
-  console.log('Public API Call:', endpoint);
   
   const config = {
     headers: {
@@ -75,16 +56,8 @@ export const publicApiCall = async (endpoint, options = {}) => {
     ...options
   };
 
-  console.log('Public request config:', {
-    url: `${API_BASE_URL}${endpoint}`,
-    headers: config.headers
-  });
-
   const response = await fetch(`${API_BASE_URL}${endpoint}`, config);
   const data = await response.json();
-
-  console.log('Public response status:', response.status);
-  console.log('Public response data:', data);
 
   if (!response.ok) {
     throw new Error(data.error || 'Request gagal');
@@ -122,15 +95,6 @@ export const uploadFile = async (endpoint, formData, method = 'POST') => {
   // Untuk upload (POST/PUT/DELETE), selalu kirim token jika ada dan endpoint bukan public
   const shouldSendToken = token && !isPublicEndpoint;
   
-  // Debug logging
-  console.log('Upload File Debug:', {
-    endpoint,
-    isPublicEndpoint,
-    isPengurusOrUnitEndpoint,
-    hasToken: !!token,
-    willSendToken: shouldSendToken
-  });
-  
   const response = await fetch(`${API_BASE_URL}${endpoint}`, {
     method,
     headers: {
@@ -141,9 +105,6 @@ export const uploadFile = async (endpoint, formData, method = 'POST') => {
   });
 
   const data = await response.json();
-
-  console.log('Upload response status:', response.status);
-  console.log('Upload response data:', data);
 
   if (!response.ok) {
     throw new Error(data.error || 'Upload gagal');
