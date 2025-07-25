@@ -1,0 +1,6 @@
+{
+  "ignore": [
+    "statistik.json",
+    "statistik.tmp.json"
+  ]
+} 
