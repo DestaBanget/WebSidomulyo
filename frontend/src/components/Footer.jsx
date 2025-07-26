@@ -68,7 +68,7 @@ export default function Footer() {
         {/* Logo dan Info */}
         <div className="flex flex-col items-center md:items-start gap-7">
           <div className="flex items-center gap-4 mb-2">
-            <img src="/Logo Only.svg" alt="Logo Desa Sidomulyo" className="w-14 h-14 object-contain drop-shadow-lg" />
+            <img src="/Desain tanpa judul_20250724_184707_0000.png" alt="Logo Desa Sidomulyo" className="w-14 h-14 object-contain drop-shadow-lg" />
             <span className="text-2xl font-extrabold tracking-widest uppercase" style={{ fontFamily: 'inherit' }}>Desa Sidomulyo</span>
           </div>
           <div className="text-2xl font-bold">Desa Sidomulyo</div>

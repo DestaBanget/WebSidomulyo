@@ -4,7 +4,7 @@ const images = {
   hero: [
     {
       title: "Selamat datang di desa sidomulyo",
-      url: "/my-landscape-sidomulyo.jpg"
+      url: "/buat-tentang-sidomulyo-dari-dinda.jpg"
     },
     {
       title: "Layanan surat online",

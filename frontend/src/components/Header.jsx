@@ -64,7 +64,7 @@ function Logo({ scrolled }) {
   return (
     <Link to="/" className="flex items-center gap-3 select-none">
       <img
-        src="/Logo Only.svg"
+        src="/Desain tanpa judul_20250724_184707_0000.png"
         alt="Logo Desa"
         className="w-8 h-8 lg:w-10 lg:h-10 object-contain drop-shadow-lg"
       />
