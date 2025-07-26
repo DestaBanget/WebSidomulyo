@@ -28,17 +28,9 @@ export default function AddBeritaPage() {
   // Redirect jika bukan admin
   useEffect(() => {
     if (!authLoading && (!isLoggedIn || !isAdmin)) {
-      console.log('User is not admin, redirecting...');
       navigate('/publikasi/berita');
     }
   }, [isLoggedIn, isAdmin, authLoading, navigate]);
-
-  // Debug: Log authentication status
-  useEffect(() => {
-    console.log('Auth status:', { isAdmin, isLoggedIn, authLoading });
-    const token = localStorage.getItem('token');
-    console.log('Token in localStorage:', !!token);
-  }, [isAdmin, isLoggedIn, authLoading]);
 
   // Tampilkan loading jika masih mengecek autentikasi
   if (authLoading) {
@@ -106,8 +98,6 @@ export default function AddBeritaPage() {
         throw new Error('Anda tidak memiliki akses admin');
       }
 
-      console.log('Submitting berita with token:', !!token);
-
       const result = await addBerita(addData);
       
       if (result.success) {
@@ -117,7 +107,6 @@ export default function AddBeritaPage() {
         setError(result.error);
       }
     } catch (error) {
-      console.error('Error submitting berita:', error);
       setError(error.message || 'Terjadi kesalahan pada server');
     } finally {
       setLoading(false);

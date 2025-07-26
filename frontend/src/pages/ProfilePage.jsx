@@ -10,23 +10,19 @@ const BASE_URL = API_BASE_URL.replace(/\/api$/, '');
 // Fungsi helper untuk mendapatkan URL foto yang benar
 const getProfileImageUrl = (imagePath) => {
   if (!imagePath) return null;
-  
-  // Jika sudah full URL, gunakan langsung
-  if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
+  // Paksa upgrade ke https jika dari backend.desasidomulyo.org
+  if (imagePath.startsWith('http://backend.desasidomulyo.org')) {
+    return imagePath.replace('http://', 'https://');
+  }
+  if (imagePath.startsWith('https://') || imagePath.startsWith('http://')) {
     return imagePath;
   }
-  
-  // Jika data URL (base64), gunakan langsung
   if (imagePath.startsWith('data:')) {
     return imagePath;
   }
-  
-  // Jika path relatif, tambahkan base URL backend
   if (imagePath.startsWith('/')) {
     return BASE_URL + imagePath;
   }
-  
-  // Jika tidak ada prefix, tambahkan /uploads/
   return BASE_URL + '/uploads/' + imagePath;
 };
 
@@ -104,7 +100,6 @@ export default function ProfilePage() {
         const data = await response.json();
         setRiwayatPengaduan(data.pengaduan || []);
       } catch (err) {
-        console.error('Error fetch pengaduan:', err);
         setErrorPengaduan(err.message);
       } finally {
         setLoadingPengaduan(false);

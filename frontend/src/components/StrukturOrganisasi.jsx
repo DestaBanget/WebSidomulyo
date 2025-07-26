@@ -6,23 +6,19 @@ import images from '../config/images';
 // Fungsi helper untuk mendapatkan URL foto yang benar
 const getFotoUrl = (fotoPath) => {
   if (!fotoPath) return null;
-  
-  // Jika sudah full URL, gunakan langsung
-  if (fotoPath.startsWith('http://') || fotoPath.startsWith('https://')) {
+  // Paksa upgrade ke https jika dari backend.desasidomulyo.org
+  if (fotoPath.startsWith('http://backend.desasidomulyo.org')) {
+    return fotoPath.replace('http://', 'https://');
+  }
+  if (fotoPath.startsWith('https://') || fotoPath.startsWith('http://')) {
     return fotoPath;
   }
-  
-  // Jika data URL (base64), gunakan langsung
   if (fotoPath.startsWith('data:')) {
     return fotoPath;
   }
-  
-  // Jika path relatif, tambahkan base URL backend
   if (fotoPath.startsWith('/')) {
     return `${API_BASE_URL.replace('/api', '')}${fotoPath}`;
   }
-  
-  // Jika tidak ada prefix, tambahkan /uploads/
   return `${API_BASE_URL.replace('/api', '')}/uploads/${fotoPath}`;
 };
 
@@ -132,8 +128,6 @@ export default function StrukturOrganisasi() {
       setLoading(true);
       setError(null);
       
-      console.log('Fetching struktur data from:', `${API_BASE_URL}/struktur`);
-      
       // Try multiple approaches to handle CORS issues
       let response = null;
       let data = null;
@@ -149,12 +143,10 @@ export default function StrukturOrganisasi() {
         
         if (response.ok) {
           data = await response.json();
-          console.log('✅ API Response (approach 1):', data);
         } else {
           throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
       } catch (error) {
-        console.log('❌ Approach 1 failed:', error.message);
         
         // Approach 2: Try without Content-Type header
         try {
@@ -166,12 +158,10 @@ export default function StrukturOrganisasi() {
           
           if (response.ok) {
             data = await response.json();
-            console.log('✅ API Response (approach 2):', data);
           } else {
             throw new Error(`HTTP ${response.status}: ${response.statusText}`);
           }
         } catch (error2) {
-          console.log('❌ Approach 2 failed:', error2.message);
           
           // Approach 3: Try with no headers
           try {
@@ -179,12 +169,10 @@ export default function StrukturOrganisasi() {
             
             if (response.ok) {
               data = await response.json();
-              console.log('✅ API Response (approach 3):', data);
             } else {
               throw new Error(`HTTP ${response.status}: ${response.statusText}`);
             }
           } catch (error3) {
-            console.log('❌ Approach 3 failed:', error3.message);
             throw new Error(`Semua pendekatan gagal. Error terakhir: ${error3.message}`);
           }
         }
@@ -196,7 +184,6 @@ export default function StrukturOrganisasi() {
       setEditStruktur(transformedData);
       
     } catch (error) {
-      console.error('Error fetching struktur:', error);
       setError(`Gagal memuat data dari server: ${error.message}. Menggunakan data default.`);
       // Gunakan data default jika API gagal
       setStruktur(strukturDefault);
@@ -395,7 +382,6 @@ export default function StrukturOrganisasi() {
       setSuccess(true); // Ganti alert dengan setSuccess
       setTimeout(() => setSuccess(false), 3000); // Auto-hide setelah 3 detik
     } catch (error) {
-      console.error('Error saving struktur:', error);
       setError(`Gagal menyimpan: ${error.message}`);
       setTimeout(() => setError(null), 4000);
     } finally {

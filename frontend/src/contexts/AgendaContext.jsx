@@ -21,15 +21,11 @@ export const AgendaProvider = ({ children }) => {
       setLoading(true);
       setError(null);
       
-      console.log('=== Starting fetchAgenda ===');
-      
       // Clear any invalid tokens that might cause issues
       const token = localStorage.getItem('token');
-      console.log('Token in localStorage:', !!token);
       
       if (token) {
         try {
-          console.log('Testing token validity...');
           // Test if token is valid by calling a protected endpoint
           const tokenTest = await fetch(`${API_BASE_URL}/auth/me`, {
             headers: {
@@ -38,28 +34,20 @@ export const AgendaProvider = ({ children }) => {
           });
           
           if (!tokenTest.ok) {
-            console.log('Token invalid, clearing from localStorage');
             localStorage.removeItem('token');
             localStorage.removeItem('user');
-          } else {
-            console.log('Token is valid');
           }
         } catch (err) {
-          console.log('Token test failed, clearing from localStorage:', err.message);
           localStorage.removeItem('token');
           localStorage.removeItem('user');
         }
       }
       
-      console.log('Calling publicApiCall for /agenda...');
-      
       // Use publicApiCall for agenda (never sends token)
       const response = await publicApiCall('/agenda');
-      console.log('Response received:', response);
       
       // Mengambil semua agenda tanpa pagination
       setAgenda(response.agenda || []);
-      console.log('Agenda set successfully:', response.agenda?.length || 0, 'items');
       
     } catch (err) {
       console.error('Error fetching agenda:', err);
@@ -72,17 +60,14 @@ export const AgendaProvider = ({ children }) => {
       setAgenda([]);
     } finally {
       setLoading(false);
-      console.log('=== fetchAgenda completed ===');
     }
   };
 
   const addAgenda = async (agendaData) => {
     try {
-      console.log('=== Starting addAgenda ===');
       
       // Get token from localStorage
       const token = localStorage.getItem('token');
-      console.log('Token available:', !!token);
       
       if (!token) {
         throw new Error('Token tidak ditemukan. Silakan login ulang.');
@@ -98,16 +83,12 @@ export const AgendaProvider = ({ children }) => {
         headers['Authorization'] = `Bearer ${token}`;
       }
 
-      console.log('Making API call to /agenda with token');
-      
       const response = await fetch(`${API_BASE_URL}/agenda`, {
         method: 'POST',
         headers,
         body: agendaData instanceof FormData ? agendaData : JSON.stringify(agendaData)
       });
 
-      console.log('Response status:', response.status);
-      
       if (!response.ok) {
         const errorData = await response.json();
         console.error('API Error:', errorData);
@@ -115,7 +96,6 @@ export const AgendaProvider = ({ children }) => {
       }
 
       const data = await response.json();
-      console.log('Agenda added successfully:', data);
       
       // Refresh agenda list
       await fetchAgenda();
@@ -159,7 +139,6 @@ export const AgendaProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    console.log('AgendaProvider mounted, calling fetchAgenda...');
     fetchAgenda();
   }, []);
 

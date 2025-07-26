@@ -29,17 +29,9 @@ export default function AddPengumumanPage() {
   // Redirect jika bukan admin
   useEffect(() => {
     if (!authLoading && (!isLoggedIn || !isAdmin)) {
-      console.log('User is not admin, redirecting...');
       navigate('/publikasi/pengumuman');
     }
   }, [isLoggedIn, isAdmin, authLoading, navigate]);
-
-  // Debug: Log authentication status
-  useEffect(() => {
-    console.log('Auth status:', { isAdmin, isLoggedIn, authLoading });
-    const token = localStorage.getItem('token');
-    console.log('Token in localStorage:', !!token);
-  }, [isAdmin, isLoggedIn, authLoading]);
 
   // Tampilkan loading jika masih mengecek autentikasi
   if (authLoading) {
@@ -107,8 +99,6 @@ export default function AddPengumumanPage() {
         throw new Error('Anda tidak memiliki akses admin');
       }
 
-      console.log('Submitting pengumuman with token:', !!token);
-
       const result = await addPengumuman(addData);
       
       if (result.success) {
@@ -118,7 +108,6 @@ export default function AddPengumumanPage() {
         setError(result.error);
       }
     } catch (error) {
-      console.error('Error submitting pengumuman:', error);
       setError(error.message || 'Terjadi kesalahan pada server');
     } finally {
       setLoading(false);

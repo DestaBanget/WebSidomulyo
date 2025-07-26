@@ -41,11 +41,9 @@ export function PengumumanProvider({ children }) {
 
   const addPengumuman = async (pengumumanData) => {
     try {
-      console.log('=== Starting addPengumuman ===');
       
       // Get token from localStorage
       const token = localStorage.getItem('token');
-      console.log('Token available:', !!token);
       
       if (!token) {
         throw new Error('Token tidak ditemukan. Silakan login ulang.');
@@ -66,7 +64,6 @@ export function PengumumanProvider({ children }) {
         formData.append('img', pengumumanData.img);
       }
 
-      console.log('Making API call to /pengumuman with token');
       
       const response = await fetch(`${API_BASE_URL}/pengumuman`, {
         method: 'POST',
@@ -76,7 +73,6 @@ export function PengumumanProvider({ children }) {
         body: formData
       });
 
-      console.log('Response status:', response.status);
       
       if (!response.ok) {
         const errorData = await response.json();
@@ -85,7 +81,6 @@ export function PengumumanProvider({ children }) {
       }
 
       const data = await response.json();
-      console.log('Pengumuman added successfully:', data);
       
       // Refresh pengumuman list
       await fetchPengumuman();
