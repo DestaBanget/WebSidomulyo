@@ -3,21 +3,21 @@
 const images = {
   hero: [
     {
-      title: "Selamat datang di desa sidomulyo",
+      title: "Selamat Datang Di Desa Sidomulyo",
       url: "/buat-tentang-sidomulyo-dari-dinda.jpg"
     },
     {
-      title: "Layanan surat online",
-      url: "/photo-1515378791036-0648a3ef77b2.avif"
+      title: "Layanan Surat Online",
+      url: "/my-landscape-sidomulyo.jpg"
     },
     {
-      title: "Pengaduan masyarakat",
-      url: "https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=1920&q=80"
+      title: "Pengaduan Masyarakat",
+      url: "/pengaduan_masyarakat.jpg"
     }
   ],
   profil: {
     tentang: "https://cdn1.photostockeditor.com/c/2311/aerial-view-of-trees-and-houses-landscape-nature.jpg",
-    visimisi: "https://images.unsplash.com/photo-1499424180600-8d243b10320a?w=1920&auto=format&fit=crop&q=80&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OHx8cHVycG9zZXxlbnwwfHwwfHx8Mg%3D%3D",
+    visimisi: "https://images.unsplash.com/photo-1499424180600-8d243b10320a?w=1920&auto=format&fit=crop&q=100&dpr=2&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OHx8cHVycG9zZXxlbnwwfHwwfHx8Mg%3D%3D",
     struktur: "https://puyuhkuayan.com/wp-content/uploads/2025/02/Istilah-PNS-Pusat-dan-Daerah-Resmi-Dihapus-Simak-Info-Terbarunya.jpg",
     statistik: "https://puyuhkuayan.com/wp-content/uploads/2025/02/Istilah-PNS-Pusat-dan-Daerah-Resmi-Dihapus-Simak-Info-Terbarunya.jpg"
   },

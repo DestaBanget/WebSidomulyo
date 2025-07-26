@@ -26,6 +26,33 @@
   }
 }
 
+/* Optimasi gambar HD */
+img {
+  image-rendering: auto;
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+/* Optimasi khusus untuk gambar hero */
+.hero-image {
+  image-rendering: auto;
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  will-change: transform;
+}
+
+/* Menghilangkan efek blur yang tidak diinginkan */
+* {
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+
 html, body {
   font-family: 'Inter', 'Poppins', sans-serif;
 }
@@ -36,7 +63,8 @@ body.modal-open {
   touch-action: none;
 }
 
-/* Ensure modal inputs are clickable */odal input,
+/* Ensure modal inputs are clickable */
+.modal input,
 .modal select,
 .modal textarea {
   pointer-events: auto;

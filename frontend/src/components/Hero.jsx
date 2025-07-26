@@ -4,6 +4,14 @@ import "swiper/css"
 import "swiper/css/navigation"
 import "swiper/css/pagination"
 import images from '../config/images.js'
+import { useState, useEffect } from 'react'
+
+// Fungsi untuk mengubah teks menjadi Title Case (huruf pertama setiap kata kapital)
+const toTitleCase = (text) => {
+  return text.replace(/\w\S*/g, (txt) => {
+    return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+  });
+};
 
 const slides = images.hero.map((img, idx) => {
   // Mapping manual deskripsi dan cta sesuai urutan lama
@@ -18,7 +26,7 @@ const slides = images.hero.map((img, idx) => {
     { label: "Laporkan Masalah", href: "/layanan/pengaduan" }
   ];
   return {
-    title: img.title,
+    title: toTitleCase(img.title), // Mengubah judul menjadi Title Case
     desc: descs[idx] || '',
     img: img.url,
     cta: ctas[idx] || null
@@ -26,6 +34,32 @@ const slides = images.hero.map((img, idx) => {
 });
 
 export default function Hero() {
+  const [imagesLoaded, setImagesLoaded] = useState(false);
+
+  useEffect(() => {
+    // Preload semua gambar hero
+    const preloadImages = async () => {
+      const imagePromises = slides.map((slide) => {
+        return new Promise((resolve, reject) => {
+          const img = new Image();
+          img.onload = resolve;
+          img.onerror = reject;
+          img.src = slide.img;
+        });
+      });
+
+      try {
+        await Promise.all(imagePromises);
+        setImagesLoaded(true);
+      } catch (error) {
+        console.warn('Some hero images failed to preload:', error);
+        setImagesLoaded(true); // Continue anyway
+      }
+    };
+
+    preloadImages();
+  }, []);
+
   return (
     <section className="relative w-full h-[400px] md:h-[650px] overflow-hidden bg-background">
       <Swiper
@@ -35,6 +69,7 @@ export default function Hero() {
         autoplay={{ delay: 3500, disableOnInteraction: false }}
         loop
         className="w-full h-full"
+        speed={800}
       >
         {slides.map((slide, idx) => (
           <SwiperSlide key={slide.title}>
@@ -42,17 +77,34 @@ export default function Hero() {
               <img
                 src={slide.img || "/placeholder.svg"}
                 alt={slide.title}
-                className="w-full h-full object-cover object-center scale-105 brightness-90 saturate-90"
+                className="w-full h-full object-cover object-center hero-image"
                 draggable="false"
+                loading="eager"
+                decoding="sync"
+                style={{
+                  imageRendering: 'auto',
+                  imageRendering: '-webkit-optimize-contrast',
+                  imageRendering: 'crisp-edges',
+                  transform: 'translateZ(0)',
+                  backfaceVisibility: 'hidden',
+                  opacity: imagesLoaded ? 1 : 0,
+                  transition: 'opacity 0.3s ease-in-out'
+                }}
+                onLoad={(e) => {
+                  e.target.style.opacity = 1;
+                }}
+                onError={(e) => {
+                  e.target.src = "/my-landscape-sidomulyo.jpg"; // Fallback image
+                }}
               />
-              {/* Overlay glassmorphism */}
-              <div className="absolute inset-0 bg-gradient-to-b from-green-900/70 via-green-800/40 to-transparent backdrop-blur-sm" />
+              {/* Overlay gradient tanpa blur */}
+              <div className="absolute inset-0 bg-gradient-to-b from-green-900/60 via-green-800/30 to-transparent" />
 
               <div className="absolute left-0 right-0 bottom-0 top-0 flex flex-col items-center justify-center text-center px-4 z-20">
                 <h1 className="text-4xl md:text-6xl font-extrabold text-white drop-shadow-2xl mb-6 animate-fadeInDown" style={{animationDelay: '0.1s'}}>
                   {slide.title}
                 </h1>
-                <p className="text-white/90 text-xl md:text-2xl max-w-3xl mx-auto mb-8 font-medium animate-fadeInUp" style={{animationDelay: '0.3s'}}>{slide.desc}</p>
+                <p className="text-white/95 text-xl md:text-2xl max-w-3xl mx-auto mb-8 font-medium animate-fadeInUp" style={{animationDelay: '0.3s'}}>{slide.desc}</p>
                 {slide.cta && (
                   <a
                     href={slide.cta.href}
@@ -68,7 +120,12 @@ export default function Hero() {
         ))}
       </Swiper>
 
-      {/* Hapus SVG wave di bawah hero */}
+      {/* Loading indicator */}
+      {!imagesLoaded && (
+        <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+        </div>
+      )}
     </section>
   )
 }
