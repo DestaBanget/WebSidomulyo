@@ -3,7 +3,7 @@
 const images = {
   hero: [
     {
-      title: "Selamat Datang Di Desa Sidomulyo",
+      title: "Selamat Datang di Desa Sidomulyo",
       url: "/buat-tentang-sidomulyo-dari-dinda.jpg"
     },
     {
@@ -19,11 +19,11 @@ const images = {
     tentang: "https://cdn1.photostockeditor.com/c/2311/aerial-view-of-trees-and-houses-landscape-nature.jpg",
     visimisi: "https://images.unsplash.com/photo-1499424180600-8d243b10320a?w=1920&auto=format&fit=crop&q=100&dpr=2&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OHx8cHVycG9zZXxlbnwwfHwwfHx8Mg%3D%3D",
     struktur: "https://puyuhkuayan.com/wp-content/uploads/2025/02/Istilah-PNS-Pusat-dan-Daerah-Resmi-Dihapus-Simak-Info-Terbarunya.jpg",
-    statistik: "https://puyuhkuayan.com/wp-content/uploads/2025/02/Istilah-PNS-Pusat-dan-Daerah-Resmi-Dihapus-Simak-Info-Terbarunya.jpg"
+    statistik: "/statistik-desa-baru.jpg"
   },
   layanan: {
     surat: "/my-landscape-sidomulyo.jpg",
-    pengaduan: "/my-landscape-sidomulyo.jpg",
+    pengaduan: "/pengaduan_masyarakat.jpg",
     panduan: "/my-landscape-sidomulyo.jpg"
   },
   publikasi: {

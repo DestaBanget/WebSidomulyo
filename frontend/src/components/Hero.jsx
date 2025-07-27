@@ -26,7 +26,7 @@ const slides = images.hero.map((img, idx) => {
     { label: "Laporkan Masalah", href: "/layanan/pengaduan" }
   ];
   return {
-    title: toTitleCase(img.title), // Mengubah judul menjadi Title Case
+    title: idx === 0 ? img.title : toTitleCase(img.title), // Slide pertama gunakan teks asli, lainnya Title Case
     desc: descs[idx] || '',
     img: img.url,
     cta: ctas[idx] || null
@@ -82,8 +82,6 @@ export default function Hero() {
                 loading="eager"
                 decoding="sync"
                 style={{
-                  imageRendering: 'auto',
-                  imageRendering: '-webkit-optimize-contrast',
                   imageRendering: 'crisp-edges',
                   transform: 'translateZ(0)',
                   backfaceVisibility: 'hidden',
