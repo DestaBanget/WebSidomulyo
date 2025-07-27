@@ -2,7 +2,7 @@ const express = require('express');
 const { body, validationResult } = require('express-validator');
 const { promisePool } = require('../config');
 const { auth, adminAuth } = require('../middleware/auth');
-const { uploadMultiple } = require('../middleware/upload');
+const { uploadMultiple, handleMulterError } = require('../middleware/upload');
 
 const router = express.Router();
 
@@ -153,7 +153,7 @@ router.get('/:id', auth, async (req, res) => {
 });
 
 // Create surat (user)
-router.post('/', auth, uploadMultiple, [
+router.post('/', auth, uploadMultiple, handleMulterError, [
   body('nama').notEmpty().withMessage('Nama wajib diisi'),
   body('nik').isLength({ min: 16, max: 16 }).withMessage('NIK harus 16 digit'),
   body('jenis_kelamin').isIn(['Laki-laki', 'Perempuan']).withMessage('Jenis kelamin tidak valid'),

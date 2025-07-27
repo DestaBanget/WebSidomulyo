@@ -37,7 +37,9 @@ const fileFilter = (req, file, cb) => {
 const upload = multer({
   storage: storage,
   limits: {
-    fileSize: 5 * 1024 * 1024 // 5MB limit
+    fileSize: 500 * 1024 * 1024, // 500MB limit untuk handle file besar
+    files: 50, // Maksimal 50 file sekaligus
+    fieldSize: 500 * 1024 * 1024 // 500MB untuk field size
   },
   fileFilter: fileFilter
 });
@@ -46,10 +48,13 @@ const upload = multer({
 const handleMulterError = (err, req, res, next) => {
   if (err instanceof multer.MulterError) {
     if (err.code === 'LIMIT_FILE_SIZE') {
-      return res.status(400).json({ error: 'File terlalu besar. Maksimal 5MB.' });
+      return res.status(400).json({ error: 'File terlalu besar. Maksimal 500MB.' });
+    }
+    if (err.code === 'LIMIT_FILE_COUNT') {
+      return res.status(400).json({ error: 'Terlalu banyak file. Maksimal 50 file sekaligus.' });
     }
     if (err.code === 'LIMIT_UNEXPECTED_FILE') {
-      return res.status(400).json({ error: `Field '${err.field}' tidak diharapkan. Gunakan field 'img' untuk upload gambar.` });
+      return res.status(400).json({ error: `Field '${err.field}' tidak diharapkan. Gunakan field 'files' untuk upload file.` });
     }
     return res.status(400).json({ error: 'Error upload file: ' + err.message });
   }
@@ -62,7 +67,7 @@ const handleMulterError = (err, req, res, next) => {
 // Specific upload configurations
 const uploadImage = upload.single('foto'); // Changed to 'foto' to match frontend
 const uploadDocument = upload.single('document');
-const uploadMultiple = upload.array('files', 5); // Max 5 files
+const uploadMultiple = upload.array('files'); // Tidak ada batasan jumlah file
 
 // Flexible upload middleware that accepts multiple field names
 const uploadFlexible = (fieldNames = ['foto', 'img', 'image', 'file']) => {
