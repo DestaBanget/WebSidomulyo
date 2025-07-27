@@ -13,6 +13,7 @@ cd backend
 if exist node_modules\.cache rmdir /s /q node_modules\.cache
 
 echo [3/4] Starting server with new configuration...
+set NODE_OPTIONS=--max-old-space-size=4096
 start "WebSidomulyo Backend" cmd /k "npm start"
 
 echo [4/4] Waiting for server to start...

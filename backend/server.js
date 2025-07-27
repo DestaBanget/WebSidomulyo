@@ -145,8 +145,12 @@ app.use('/api/surat', (req, res, next) => {
 app.use('/api/surat', (req, res, next) => {
   if (req.method === 'POST') {
     // Set timeout lebih lama untuk upload
-    req.setTimeout(900000); // 15 minutes
-    res.setTimeout(900000); // 15 minutes
+    req.setTimeout(1800000); // 30 minutes
+    res.setTimeout(1800000); // 30 minutes
+    
+    // Tambahkan keep-alive headers
+    res.setHeader('Connection', 'keep-alive');
+    res.setHeader('Keep-Alive', 'timeout=1800, max=1000');
     
     console.log(`📤 Upload request detected - Content-Length: ${req.headers['content-length'] || 'Unknown'}`);
   }
@@ -185,17 +189,27 @@ app.use((req, res, next) => {
 
 // Error handling untuk payload too large
 app.use((err, req, res, next) => {
+  console.error('Error caught in middleware:', err);
+  
   if (err.code === 'LIMIT_FILE_SIZE') {
     return res.status(413).json({ 
       error: 'Payload terlalu besar',
       message: 'Ukuran file atau data terlalu besar. Maksimal 500MB.',
-      details: err.message
+      details: err.message,
+      suggestion: 'Coba kompres file atau gunakan file yang lebih kecil'
     });
   }
   if (err.code === 'LIMIT_UNEXPECTED_FILE') {
     return res.status(400).json({ 
       error: 'Field tidak valid',
       message: err.message
+    });
+  }
+  if (err.code === 'ECONNRESET' || err.code === 'ETIMEDOUT') {
+    return res.status(408).json({
+      error: 'Connection timeout',
+      message: 'Koneksi timeout. Coba lagi atau gunakan file yang lebih kecil.',
+      details: err.message
     });
   }
   next(err);
@@ -223,7 +237,21 @@ app.get('/api/health', (req, res) => {
     status: 'OK', 
     message: 'WebSidomulyo API is running',
     timestamp: new Date().toISOString(),
-    environment: process.env.NODE_ENV || 'development'
+    environment: process.env.NODE_ENV || 'development',
+    uploadLimits: {
+      maxFileSize: '500MB',
+      maxFiles: 50,
+      timeout: '30 minutes'
+    }
+  });
+});
+
+// Upload test endpoint
+app.post('/api/test-upload', (req, res) => {
+  res.json({
+    message: 'Upload endpoint is accessible',
+    timestamp: new Date().toISOString(),
+    headers: req.headers
   });
 });
 
