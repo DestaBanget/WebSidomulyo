@@ -28,7 +28,7 @@ app.use(helmet({
 
 const isDev = process.env.NODE_ENV !== 'production';
 
-// Rate limiting (longgar untuk dev, ketat untuk login/register)
+// Rate limiting (hanya untuk endpoint data, tidak ada limit untuk login/register)
 const generalLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: isDev ? 1000 : 200,
@@ -36,19 +36,10 @@ const generalLimiter = rateLimit({
     error: 'Terlalu banyak permintaan, silakan coba lagi beberapa saat lagi.'
   }
 });
-const authLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: isDev ? 20 : 10,
-  message: {
-    error: 'Terlalu banyak percobaan login/register, silakan coba lagi nanti.'
-  }
-});
 
 // Terapkan general limiter hanya untuk endpoint data
 app.use(['/api/berita', '/api/surat', '/api/pengaduan', '/api/statistik', '/api/pengumuman', '/api/lembaga', '/api/struktur', '/api/tentang'], generalLimiter);
-// Terapkan limiter ketat hanya untuk login/register
-app.use('/api/auth/login', authLimiter);
-app.use('/api/auth/register', authLimiter);
+// Tidak ada rate limit untuk login/register - user bebas mencoba login/register tanpa batasan
 
 // CORS configuration - lebih permisif untuk development dan production
 const allowedOrigins = [
