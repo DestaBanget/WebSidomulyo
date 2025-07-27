@@ -84,7 +84,7 @@ export default function PengaduanMasyarakat() {
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
       <div
-        className="relative w-full flex items-center justify-center text-white px-4 text-center min-h-[400px] md:min-h-[500px]"
+        className="relative w-full flex items-center justify-center text-white px-4 text-center min-h-[400px] md:min-h-[600px]"
         style={{
           backgroundImage: `linear-gradient(90deg,rgba(37,99,235,0.7),rgba(96,165,250,0.7)), url('${heroImg}')`,
           backgroundSize: 'cover',
@@ -100,7 +100,7 @@ export default function PengaduanMasyarakat() {
       </div>
 
       {/* Alur Pelayanan */}
-      <section className="max-w-5xl mx-auto px-4 py-12">
+      <section className="max-w-6xl mx-auto px-4 py-12">
         <h2 className="text-center text-primary font-bold text-base mb-10 tracking-widest">ALUR PELAYANAN PENGADUAN</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
           <div className="flex flex-col items-center">
@@ -122,7 +122,7 @@ export default function PengaduanMasyarakat() {
       </section>
 
       {/* Formulir Pengaduan */}
-      <section className="max-w-4xl mx-auto px-4 py-10">
+      <section className="max-w-6xl mx-auto px-4 py-10">
         <h2 className="text-center text-primary font-bold text-base mb-8 tracking-widest">FORMULIR PENGADUAN</h2>
         
         {error && (

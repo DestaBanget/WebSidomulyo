@@ -325,16 +325,6 @@ export default function Header({ onShowLogin }) {
               })
           )}
           {/* Hapus tombol Surat Masuk di luar dropdown */}
-          {isLoggedIn && (
-            <div className="relative group flex items-center h-16">
-              <button
-                className="font-semibold px-3 py-2 rounded-xl flex items-center h-16 hover:bg-primary/10 hover:text-primary focus:outline-none transition-all duration-200 whitespace-nowrap"
-                onClick={() => window.location.href = '/profil'}
-              >
-                Profil
-              </button>
-            </div>
-          )}
         </nav>
         {/* Tombol Login di kanan */}
         <div className="hidden lg:flex items-center ml-auto">
@@ -475,15 +465,6 @@ export default function Header({ onShowLogin }) {
                   ))
               )}
               {/* Hapus link Surat Masuk di luar dropdown */}
-              {isLoggedIn && (
-                <a
-                  href="/profil"
-                  className="font-semibold block py-2 text-primary hover:underline"
-                  style={{ marginTop: 0 }}
-                >
-                  Profil
-                </a>
-              )}
             </div>
             {/* Tombol Login di mobile */}
             {loading ? (

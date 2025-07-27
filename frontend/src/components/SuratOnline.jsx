@@ -225,7 +225,7 @@ export default function SuratOnline() {
     <div className="min-h-screen bg-white pb-10">
       {/* Hero Section */}
       <div
-        className="relative w-full flex items-center justify-center text-white px-4 text-center min-h-[400px] md:min-h-[500px]"
+        className="relative w-full flex items-center justify-center text-white px-4 text-center min-h-[400px] md:min-h-[600px]"
         style={{
           backgroundImage: `linear-gradient(90deg,rgba(37,99,235,0.7),rgba(96,165,250,0.7)), url('${heroImg}')`,
           backgroundSize: 'cover',
@@ -241,7 +241,7 @@ export default function SuratOnline() {
       </div>
 
       {/* Mekanisme Section */}
-      <section className="max-w-5xl mx-auto px-4 py-14 mt-10">
+      <section className="max-w-6xl mx-auto px-4 py-12">
         <h2 className="text-center text-primary font-bold text-lg mb-10 tracking-widest">MEKANISME SURAT ONLINE</h2>
         <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-5 gap-8 mb-4">
           {mekanisme.map((m, i) => (
@@ -255,7 +255,7 @@ export default function SuratOnline() {
       </section>
 
       {/* Daftar Surat Section */}
-      <section className="max-w-7xl mx-auto px-4 py-6">
+      <section className="max-w-6xl mx-auto px-4 py-6">
         <h2 className="text-center text-primary font-bold text-lg mb-6 tracking-widest">LAYANAN SURAT ONLINE</h2>
         <div className="flex justify-center mb-8">
           <input
