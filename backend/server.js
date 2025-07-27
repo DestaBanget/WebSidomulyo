@@ -130,13 +130,15 @@ app.use('/api/surat', (req, res, next) => {
   if (req.method === 'OPTIONS') {
     res.header('Access-Control-Allow-Origin', req.headers.origin || '*');
     res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Accept, Content-Length');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Accept, Content-Length, User-Agent');
     res.header('Access-Control-Allow-Credentials', 'true');
+    res.header('Access-Control-Max-Age', '86400'); // 24 hours
     res.status(200).end();
   } else {
     // Tambahkan header untuk handle large uploads
     res.header('X-Content-Type-Options', 'nosniff');
     res.header('X-Frame-Options', 'DENY');
+    res.header('X-XSS-Protection', '1; mode=block');
     next();
   }
 });
@@ -152,7 +154,25 @@ app.use('/api/surat', (req, res, next) => {
     res.setHeader('Connection', 'keep-alive');
     res.setHeader('Keep-Alive', 'timeout=1800, max=1000');
     
-    console.log(`📤 Upload request detected - Content-Length: ${req.headers['content-length'] || 'Unknown'}`);
+    // Detect mobile device
+    const userAgent = req.headers['user-agent'] || '';
+    const isMobile = /Mobile|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(userAgent);
+    
+    const contentLength = req.headers['content-length'] || 'Unknown';
+    const contentLengthMB = contentLength !== 'Unknown' ? (parseInt(contentLength) / (1024 * 1024)).toFixed(2) : 'Unknown';
+    
+    console.log(`📤 Upload request detected - Content-Length: ${contentLength} (${contentLengthMB}MB) - Mobile: ${isMobile ? 'Yes' : 'No'}`);
+    
+    // Log warning untuk mobile dengan file besar
+    if (isMobile && contentLength !== 'Unknown' && parseInt(contentLength) > 1024 * 1024) {
+      console.log(`⚠️ Mobile device detected with large file: ${contentLengthMB}MB`);
+    }
+    
+    // Log untuk multiple file upload
+    const fileCount = req.files ? req.files.length : 0;
+    if (fileCount > 1) {
+      console.log(`📦 Multiple file upload detected: ${fileCount} files`);
+    }
   }
   next();
 });
@@ -191,12 +211,21 @@ app.use((req, res, next) => {
 app.use((err, req, res, next) => {
   console.error('Error caught in middleware:', err);
   
+  // Detect mobile device
+  const userAgent = req.headers['user-agent'] || '';
+  const isMobile = /Mobile|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(userAgent);
+  
   if (err.code === 'LIMIT_FILE_SIZE') {
+    const message = isMobile 
+      ? 'File terlalu besar untuk mobile device. Coba kompres file atau gunakan file < 1MB.'
+      : 'Ukuran file atau data terlalu besar. Maksimal 500MB.';
+      
     return res.status(413).json({ 
       error: 'Payload terlalu besar',
-      message: 'Ukuran file atau data terlalu besar. Maksimal 500MB.',
+      message: message,
       details: err.message,
-      suggestion: 'Coba kompres file atau gunakan file yang lebih kecil'
+      suggestion: isMobile ? 'Gunakan file yang lebih kecil atau kompres gambar' : 'Coba kompres file atau gunakan file yang lebih kecil',
+      device: isMobile ? 'mobile' : 'desktop'
     });
   }
   if (err.code === 'LIMIT_UNEXPECTED_FILE') {
@@ -206,10 +235,15 @@ app.use((err, req, res, next) => {
     });
   }
   if (err.code === 'ECONNRESET' || err.code === 'ETIMEDOUT') {
+    const message = isMobile
+      ? 'Koneksi timeout pada mobile device. Coba lagi dengan file yang lebih kecil.'
+      : 'Koneksi timeout. Coba lagi atau gunakan file yang lebih kecil.';
+      
     return res.status(408).json({
       error: 'Connection timeout',
-      message: 'Koneksi timeout. Coba lagi atau gunakan file yang lebih kecil.',
-      details: err.message
+      message: message,
+      details: err.message,
+      device: isMobile ? 'mobile' : 'desktop'
     });
   }
   next(err);

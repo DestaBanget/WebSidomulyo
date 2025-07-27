@@ -26,9 +26,12 @@ echo ========================================
 echo.
 echo New configuration applied:
 echo - Request size limit: 500MB
-echo - File upload limit: 500MB per file
-echo - Max files: 50 files
-echo - Timeout: 15 minutes for uploads
+echo - File upload limit: 500MB per file (Desktop) / 5MB per file (Mobile)
+echo - Max files: 50 files (Desktop) / 10 files (Mobile)
+echo - Optimized upload: 20 files untuk multiple upload
+echo - Timeout: 30 minutes for uploads
+echo - Mobile detection: Automatic device detection
+echo - Progress tracking: File processing logs
 echo.
 echo Server should be running on: http://localhost:5000
 echo Health check: http://localhost:5000/api/health

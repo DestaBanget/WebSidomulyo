@@ -44,14 +44,62 @@ const upload = multer({
   fileFilter: fileFilter
 });
 
+// Mobile-specific upload dengan limit lebih kecil
+const mobileUpload = multer({
+  storage: storage,
+  limits: {
+    fileSize: 5 * 1024 * 1024, // 5MB untuk mobile (lebih kecil)
+    files: 10, // Maksimal 10 file untuk mobile
+    fieldSize: 10 * 1024 * 1024 // 10MB untuk field size mobile
+  },
+  fileFilter: fileFilter
+});
+
+// Optimized upload untuk multiple files dengan progress tracking
+const optimizedUpload = multer({
+  storage: multer.diskStorage({
+    destination: (req, file, cb) => {
+      cb(null, uploadDir);
+    },
+    filename: (req, file, cb) => {
+      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+      const filename = file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname);
+      console.log(`📄 Processing file: ${file.originalname} -> ${filename}`);
+      cb(null, filename);
+    }
+  }),
+  limits: {
+    fileSize: 10 * 1024 * 1024, // 10MB per file untuk multiple upload
+    files: 20, // Maksimal 20 file untuk multiple upload
+    fieldSize: 20 * 1024 * 1024 // 20MB untuk field size
+  },
+  fileFilter: fileFilter
+});
+
 // Error handling middleware for multer
 const handleMulterError = (err, req, res, next) => {
+  // Detect mobile device
+  const userAgent = req.headers['user-agent'] || '';
+  const isMobile = /Mobile|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(userAgent);
+  
   if (err instanceof multer.MulterError) {
     if (err.code === 'LIMIT_FILE_SIZE') {
-      return res.status(400).json({ error: 'File terlalu besar. Maksimal 500MB.' });
+      const maxSize = isMobile ? '5MB' : '500MB';
+      const message = isMobile 
+        ? `File terlalu besar untuk mobile device. Maksimal ${maxSize}.`
+        : `File terlalu besar. Maksimal ${maxSize}.`;
+      return res.status(400).json({ 
+        error: message,
+        device: isMobile ? 'mobile' : 'desktop',
+        suggestion: isMobile ? 'Gunakan file yang lebih kecil atau kompres gambar' : 'Coba kompres file'
+      });
     }
     if (err.code === 'LIMIT_FILE_COUNT') {
-      return res.status(400).json({ error: 'Terlalu banyak file. Maksimal 50 file sekaligus.' });
+      const maxFiles = isMobile ? '10' : '50';
+      return res.status(400).json({ 
+        error: `Terlalu banyak file. Maksimal ${maxFiles} file sekaligus.`,
+        device: isMobile ? 'mobile' : 'desktop'
+      });
     }
     if (err.code === 'LIMIT_UNEXPECTED_FILE') {
       return res.status(400).json({ error: `Field '${err.field}' tidak diharapkan. Gunakan field 'files' untuk upload file.` });
@@ -95,6 +143,8 @@ const uploadFlexible = (fieldNames = ['foto', 'img', 'image', 'file']) => {
 
 module.exports = {
   upload,
+  mobileUpload,
+  optimizedUpload,
   uploadImage,
   uploadDocument,
   uploadMultiple,

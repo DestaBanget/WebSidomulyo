@@ -2,7 +2,7 @@ const express = require('express');
 const { body, validationResult } = require('express-validator');
 const { promisePool } = require('../config');
 const { auth, adminAuth } = require('../middleware/auth');
-const { uploadMultiple, handleMulterError } = require('../middleware/upload');
+const { uploadMultiple, mobileUpload, optimizedUpload, handleMulterError } = require('../middleware/upload');
 
 const router = express.Router();
 
@@ -152,8 +152,27 @@ router.get('/:id', auth, async (req, res) => {
   }
 });
 
-// Create surat (user)
-router.post('/', auth, uploadMultiple, handleMulterError, [
+// Create surat (user) - dengan mobile detection dan optimized upload
+router.post('/', auth, (req, res, next) => {
+  // Detect mobile device
+  const userAgent = req.headers['user-agent'] || '';
+  const isMobile = /Mobile|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(userAgent);
+  
+  // Detect multiple file upload (seperti Kartu KK)
+  const contentLength = req.headers['content-length'] || '0';
+  const isLargeUpload = parseInt(contentLength) > 5 * 1024 * 1024; // > 5MB
+  
+  if (isMobile) {
+    console.log('📱 Using mobile upload middleware');
+    mobileUpload.array('files')(req, res, next);
+  } else if (isLargeUpload) {
+    console.log('🚀 Using optimized upload middleware for large/multiple files');
+    optimizedUpload.array('files')(req, res, next);
+  } else {
+    console.log('💻 Using desktop upload middleware');
+    uploadMultiple(req, res, next);
+  }
+}, handleMulterError, [
   body('nama').notEmpty().withMessage('Nama wajib diisi'),
   body('nik').isLength({ min: 16, max: 16 }).withMessage('NIK harus 16 digit'),
   body('jenis_kelamin').isIn(['Laki-laki', 'Perempuan']).withMessage('Jenis kelamin tidak valid'),
@@ -167,6 +186,8 @@ router.post('/', auth, uploadMultiple, handleMulterError, [
   body('alamat_sekarang').notEmpty().withMessage('Alamat sekarang wajib diisi'),
   body('jenis_surat').notEmpty().withMessage('Jenis surat wajib diisi')
 ], async (req, res) => {
+  const startTime = Date.now();
+  
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -195,17 +216,31 @@ router.post('/', auth, uploadMultiple, handleMulterError, [
 
     const suratId = result.insertId;
 
-    // Insert lampiran if files uploaded
+    // Insert lampiran if files uploaded - dengan parallel processing
     if (req.files && req.files.length > 0) {
+      console.log(`📁 Processing ${req.files.length} files for surat ${suratId}`);
+      
+      // Prepare batch insert untuk performa lebih baik
       const lampiranValues = req.files.map((file, index) => {
-        const jenis_persyaratan = req.body[`jenis_persyaratan_${index}`] || 'Dokumen Pendukung';
+        const jenis_persyaratan = req.body[`jenis_persyaratan_${index}`] || 
+                                 req.body[`jenis_persyaratan`] || 
+                                 'Dokumen Pendukung';
         return [suratId, file.originalname, `/uploads/${file.filename}`, jenis_persyaratan];
       });
 
-      await promisePool.query(
-        'INSERT INTO lampiran_surat (surat_id, nama_file, url_file, jenis_persyaratan) VALUES ?',
-        [lampiranValues]
-      );
+      // Batch insert untuk performa optimal
+      try {
+        await promisePool.query(
+          'INSERT INTO lampiran_surat (surat_id, nama_file, url_file, jenis_persyaratan) VALUES ?',
+          [lampiranValues]
+        );
+        console.log(`✅ Successfully inserted ${req.files.length} lampiran files`);
+      } catch (error) {
+        console.error('Error inserting lampiran:', error);
+        // Rollback surat jika lampiran gagal
+        await promisePool.query('DELETE FROM surat WHERE id = ?', [suratId]);
+        throw new Error('Gagal menyimpan lampiran file');
+      }
     }
 
     const [newSurat] = await promisePool.query(
@@ -213,9 +248,16 @@ router.post('/', auth, uploadMultiple, handleMulterError, [
       [suratId]
     );
 
+    const endTime = Date.now();
+    const processingTime = endTime - startTime;
+    
+    console.log(`⏱️ Surat processing completed in ${processingTime}ms`);
+    
     res.status(201).json({
       message: 'Surat berhasil diajukan',
-      surat: newSurat[0]
+      surat: newSurat[0],
+      processingTime: `${processingTime}ms`,
+      fileCount: req.files ? req.files.length : 0
     });
   } catch (error) {
     console.error('Create surat error:', error);
